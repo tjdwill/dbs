@@ -28,7 +28,13 @@ find_package(Threads REQUIRED)
 find_package(bdl REQUIRED)
 #find_package(bsl REQUIRED)
 
-
-
+# Create a symbolic link to point to the correct compile_commands.json directory
+if (CMAKE_HOST_UNIX)
+  execute_process(
+    COMMAND       rm ${CMAKE_SOURCE_DIR}/build
+    ERROR_FILE    /dev/null
+  )
+  execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/build)
+endif ()
 #============Subdirectories====================
 add_subdirectory(src)
