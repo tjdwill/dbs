@@ -2,7 +2,7 @@
   "version": 10,
   "configurePresets": [
     {
-      "name": "basic",
+      "name": "default",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
@@ -14,7 +14,7 @@
     },
     {
       "name": "vcpkg",
-      "inherits": "basic",
+      "inherits": "default",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",
