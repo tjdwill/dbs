@@ -1,0 +1,34 @@
+---
+# Default
+BasedOnStyle: Mozilla
+---
+Language: Cpp
+
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: Consecutive
+AlignOperands: AlignAfterOperator
+#AlignTrailingComments: 
+# Kind: Always
+# OverEmptyLines: 2
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: true
+#BraceWrapping:
+BreakAfterReturnType: Automatic
+BreakBeforeBinaryOperators: NonAssignment
+#BreakBeforeTernaryOperators: true
+ColumnLimit: 80
+#Cpp11BracedListStyle: false
+FixNamespaceComments: true
+#IncludeCategories:
+IndentWrappedFunctionNames: true
+InsertBraces: true
+IntegerLiteralSeparator:
+  Decimal: 3
+  DecimalMinDigits: 7
+NamespaceIndentation: Inner
+QualifierAlignment: Custom
+QualifierOrder: [inline, static, type, const]
+PointerAlignment: Left
+RemoveEmptyLinesInUnwrappedLines: true
+SeparateDefinitionBlocks: Always
+SpaceBeforeCpp11BracedList: true
