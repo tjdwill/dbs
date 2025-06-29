@@ -1,5 +1,42 @@
 # DBS Journal
 
+## 28 June 2025
+
+Now that I have the stduuid library, I can generate UUIDs for unique identification. How
+will this work in practice, however? Obviously, since the data will need to be serialized,
+each id will need to be converted to a string when written to file. However, when loading,
+should I keep it as a string, or should I make the effort of converting to a UUID object?
+As of now, there is no perceived benefit to using the class itself. The string
+rerpesentation can be used as map keys just as readily as the class, and, if we are
+considering the principle of minimizing dependencies, the design would transform from
+depending on the specific library used for generating uuids to simply needing *some*
+library that can produce a UUID as a text string. I prefer the former, so that is the
+direction I will choose. The design can always be changed if need demands it.
+
+### Accounts
+
+What do I need to represent a given "account"?
+
+- Account number (uuid)
+- Account name (possibly non-unique)
+- Account Description
+- Balance
+- Transaction History (a collection of transactions)
+
+### Transactions
+
+A transaction is a financial event that occurs for a given account. One can either transfer
+money into an account or out of an account. For a transaction between two accounts, we need
+for the accounts to have the same transaction IDs. 
+
+- Transaction ID (uuid)
+- Date Time
+- Transaction Amount (+Deposit, -Withdrawl)
+- Source (?)
+- Additional notes
+
+Both transactions and accounts need to be serializable.
+
 ## 21 June 2025
 
 I have a means of working with decimal floating point and a means of serializing the data

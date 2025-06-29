@@ -19,7 +19,26 @@ BreakBeforeBinaryOperators: NonAssignment
 ColumnLimit: 80
 #Cpp11BracedListStyle: false
 FixNamespaceComments: true
-#IncludeCategories:
+IncludeBlocks: Regroup
+IncludeCategories:
+# - Regex:          ''
+#   Priority:       # Numeric; Defines the order of the #include blocks
+#   SortPriority:   # Optional; same as Priority by default
+#   CaseSensitive:  # Optional; true/false
+- Regex:          '".*\.h"'               # Component header (main include)
+  Priority:       1
+- Regex:          '<(s_)?b[ads]l.*\.h>'   # Bloomberg BDE includes
+  Priority:       11
+- Regex:          '<(stduuid|toml\+\+)/'  # Other Third-Party
+  Priority:       101
+- Regex:          '<Q.+>'                 # Qt
+  Priority:       201
+  CaseSensitive:  true
+- Regex:          '<[a-z_]+>'             # STL includes
+  Priority:       301
+  CaseSensitive:  true  
+
+
 IndentWrappedFunctionNames: true
 InsertBraces: true
 IntegerLiteralSeparator:
