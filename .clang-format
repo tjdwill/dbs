@@ -27,15 +27,17 @@ IncludeCategories:
 #   CaseSensitive:  # Optional; true/false
 - Regex:          '".*\.h"'               # Component header (main include)
   Priority:       1
-- Regex:          '<(s_)?b[ads]l.*\.h>'   # Bloomberg BDE includes
+- Regex:          '<dbs.*\.h>'            # Core
   Priority:       11
-- Regex:          '<(stduuid|toml\+\+)/'  # Other Third-Party
+- Regex:          '<(s_)?b[ads]l.*\.h>'   # Bloomberg BDE includes
   Priority:       101
-- Regex:          '<Q.+>'                 # Qt
+- Regex:          '<(stduuid|toml\+\+)/'  # Other Third-Party
   Priority:       201
+- Regex:          '<Q.+>'                 # Qt
+  Priority:       301
   CaseSensitive:  true
 - Regex:          '<[a-z_]+>'             # STL includes
-  Priority:       301
+  Priority:       401
   CaseSensitive:  true  
 
 
