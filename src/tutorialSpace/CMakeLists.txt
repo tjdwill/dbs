@@ -6,3 +6,6 @@ target_include_directories(hello
 add_executable(uuidTest uuid_test.m.cpp)
 target_include_directories(uuidTest
   PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty)
+
+add_executable(dateParseTest date_parse.m.cpp)
+

@@ -1,5 +1,15 @@
 # DBS Journal
 
+## 3 July 2025
+
+Today, I continued yesterday's work by testing the formatting of the date time string.
+The chrono library is still a bit confusing, but I have enough to do what I need.
+
+## 2 July 2025
+
+- Basic class design
+- Edited clang format file.
+
 ## 28 June 2025
 
 Now that I have the stduuid library, I can generate UUIDs for unique identification. How
