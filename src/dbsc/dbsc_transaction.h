@@ -24,6 +24,10 @@
 
 namespace dbsc {
 using TimeStamp = std::chrono::time_point<std::chrono::system_clock>;
+// So that we aren't confined to a specific uuid library, we use strings for the
+// interface. However, these strings are generated internally, and no one can
+// set an ID once the containing object is instantiated, so
+using UuidString = std::string;
 
 class Transaction
 {
@@ -36,13 +40,13 @@ public:
 
   auto amount() const -> BloombergLP::bdldfp::Decimal64;
   auto notes() const -> std::string const&;
-  auto otherPartyId() const -> std::string const&;
+  auto otherPartyId() const -> UuidString const&;
   auto timeStamp() const -> TimeStamp;
-  auto transactionId() const -> std::string const&;
+  auto transactionId() const -> UuidString const&;
 
 private:
-  std::string mTransactionId;
-  std::string mOtherPartyId;
+  UuidString mTransactionId;
+  UuidString mOtherPartyId;
   std::string mNotes {};
   BloombergLP::bdldfp::Decimal64 mAmount;
   TimeStamp mTimeStamp;

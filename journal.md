@@ -1,5 +1,12 @@
 # DBS Journal
 
+## 4 July 2025
+
+- Created a class that represents a UUID string (read-only, valid UUID).
+  This will make programming easier to think about because UUID semantics are enforced programmatically instead of implicitly.
+- Reorganized project tree a bit. The `tutorialSpace/` directory had nothing to do with the
+  actual application, so it is now outside of the `src/` directory.
+
 ## 3 July 2025
 
 Today, I continued yesterday's work by testing the formatting of the date time string.

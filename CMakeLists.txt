@@ -37,4 +37,5 @@ if (CMAKE_HOST_UNIX)
   execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/build)
 endif ()
 #============Subdirectories====================
+add_subdirectory(tutorialSpace)
 add_subdirectory(src)

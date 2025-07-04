@@ -14,8 +14,8 @@
 
 #include <bdldfp_decimal.h>
 
+#include <map>
 #include <string>
-#include <vector>
 
 namespace dbsc {
 
@@ -23,11 +23,13 @@ class Account
 {
 public:
 private:
+  using UuidString = std::string;
+
   std::string mId;
   std::string mName {};
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
-  std::vector<Transaction> mTransactions {}; // change to map?
+  std::map<UuidString, Transaction> mTransactions {}; // change to map?
 };
 
 } // namespace dbsc

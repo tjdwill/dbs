@@ -1,8 +1,22 @@
 include_directories(.)
 
+set(debugOptions -Wall -Werror -Wextra -Wpedantic)
+
+# dbsc_uuid_string
+add_library(dbscUuidString dbsc_uuid_string.cpp)
+target_compile_options(dbscUuidString PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
+target_include_directories(dbscUuidString PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty)
+add_executable(testDbscUuidString dbsc_uuid_string.t.cpp)
+target_link_libraries(testDbscUuidString PRIVATE
+  dbscUuidString
+)
+add_test(NAME dbscUuidString.t COMMAND testDbscUuidString)
+
+# dbsc_transaction
 add_library(dbsTransaction dbsc_transaction.cpp)
 target_link_libraries(dbsTransaction PUBLIC bdl)
 
+# dbsc_account
 add_library(dbsAccount dbsc_account.cpp)
 target_link_libraries(dbsAccount PUBLIC 
     dbsTransaction
