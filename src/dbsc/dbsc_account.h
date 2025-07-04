@@ -19,8 +19,6 @@
 
 namespace dbsc {
 
-class Transaction;
-
 class Account
 {
 public:
@@ -29,7 +27,7 @@ private:
   std::string mName {};
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
-  std::vector<Transaction> mTransactions {};
+  std::vector<Transaction> mTransactions {}; // change to map?
 };
 
 } // namespace dbsc
