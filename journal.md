@@ -1,5 +1,17 @@
 # DBS Journal
 
+## 5 July 2025
+
+Another class to consider creating is a broker class, a class responsible for actually
+making transactions for given accounts. This component would need to build
+upon `dbsc::{UuidString, Transaction, and Account}` at minimum.
+
+The broker would have at least three static functions:
+ 
+1. a function to perform a transaction between two `dbsc::Account` objects.
+0. a function to perform a deposit into a `dbsc::Account`.
+0. a function to perform a withdrawl from a `dbsc::Account`.
+
 ## 4 July 2025
 
 - Created a class that represents a UUID string (read-only, valid UUID).

@@ -9,3 +9,9 @@ target_include_directories(uuidTest
 
 add_executable(dateParseTest date_parse.m.cpp)
 
+add_executable(bdlDecimal decimal_print.m.cpp)
+target_link_libraries(bdlDecimal PRIVATE bdl)
+
+add_executable(bdlDecimalQt decimalQt.m.cpp)
+target_link_libraries(bdlDecimalQt PRIVATE bdl Qt::Core)
+

@@ -27,8 +27,9 @@ using TimeStamp = std::chrono::time_point<std::chrono::system_clock>;
 
 /// Represents a transaction between two entities. A negative amount implies the
 /// account to which this object belongs had a withdrawl. A positive amount
-/// indicates a deposit. If the otherPartyID is nil, the otherParty is some
-/// unspecified external source (ex. payment from a source of income.).
+/// indicates a deposit. If the otherPartyID is nil (see UuidString), the
+/// otherParty is some unspecified external source (ex. payment from a source of
+/// income.).
 class Transaction
 {
 public:

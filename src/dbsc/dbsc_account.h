@@ -11,6 +11,7 @@
 //     - Transaction Record
 
 #include <dbsc_transaction.h>
+#include <dbsc_uuid_string.h>
 
 #include <bdldfp_decimal.h>
 
@@ -22,14 +23,22 @@ namespace dbsc {
 class Account
 {
 public:
-private:
-  using UuidString = std::string;
+  [[nodiscard]] explicit Account(std::string const& name,
+                                 std::string const& description);
 
-  std::string mId;
+  // Accessors
+  [[nodiscard]] auto transaction(UuidString const& transactionId) const
+    -> Transaction const&;
+
+  // Manipulators
+  void logTransaction(Transaction tranaction);
+
+private:
+  UuidString mId;
   std::string mName {};
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
-  std::map<UuidString, Transaction> mTransactions {}; // change to map?
+  std::map<UuidString, Transaction> mTransactions {};
 };
 
 } // namespace dbsc
