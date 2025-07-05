@@ -8,15 +8,15 @@
 //  dbsc::Transaction: in-memory representation of an account transaction.
 //
 //@DESCRIPTION:
-//
+// This component defines the representation of a transaction in
 //  - Unique Transaction ID
 //  - Other Party's ID
 //  - Amount ($)
 //  - DateTime
 //  - Extra Notes
-//
 
-#include <bdldfp_decimal.fwd.h>
+#include <dbsc/dbsc_uuid_string.h>
+
 #include <bdldfp_decimal.h>
 
 #include <chrono>
@@ -24,32 +24,49 @@
 
 namespace dbsc {
 using TimeStamp = std::chrono::time_point<std::chrono::system_clock>;
-// So that we aren't confined to a specific uuid library, we use strings for the
-// interface. However, these strings are generated internally, and no one can
-// set an ID once the containing object is instantiated, so
-using UuidString = std::string;
 
+/// Represents a transaction between two entities. A negative amount implies the
+/// account to which this object belongs had a withdrawl. A positive amount
+/// indicates a deposit. If the otherPartyID is nil, the otherParty is some
+/// unspecified external source (ex. payment from a source of income.).
 class Transaction
 {
 public:
-  Transaction(std::string const& transactionId,
-              std::string const& otherPartyID,
-              BloombergLP::bdldfp::Decimal64 amount,
-              TimeStamp timeStamp,
-              std::string const& notes);
+  [[nodiscard]] explicit Transaction(UuidString const& transactionId,
+                                     UuidString const& otherPartyID,
+                                     BloombergLP::bdldfp::Decimal64 amount,
+                                     TimeStamp timeStamp,
+                                     std::string const& notes);
 
-  auto amount() const -> BloombergLP::bdldfp::Decimal64;
-  auto notes() const -> std::string const&;
-  auto otherPartyId() const -> UuidString const&;
-  auto timeStamp() const -> TimeStamp;
-  auto transactionId() const -> UuidString const&;
+  [[nodiscard]] auto amount() const -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] auto notes() const -> std::string const&;
+  [[nodiscard]] auto otherPartyId() const -> UuidString const&;
+  [[nodiscard]] auto timeStamp() const -> TimeStamp;
+  [[nodiscard]] auto transactionId() const -> UuidString const&;
 
 private:
   UuidString mTransactionId;
   UuidString mOtherPartyId;
-  std::string mNotes {};
   BloombergLP::bdldfp::Decimal64 mAmount;
   TimeStamp mTimeStamp;
+  std::string mNotes {};
 };
 } // namespace dbsc
 #endif // include guard
+
+// -----------------------------------------------------------------------------
+// Copyright (C) 2025 Terrance Williams
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// ------------------------------ END_OF_FILE ----------------------------------
