@@ -7,8 +7,8 @@
 //@CLASSES:
 //  dbsc::Transaction: in-memory representation of an account transaction.
 //
-//@DESCRIPTION:
-// This component defines the representation of a transaction in
+//@DESCRIPTION: This component defines the representation of a transaction in
+// DBS. Required data are:
 //  - Unique Transaction ID
 //  - Other Party's ID
 //  - Amount ($)
@@ -23,7 +23,7 @@
 #include <string>
 
 namespace dbsc {
-using TimeStamp = std::chrono::time_point<std::chrono::system_clock>;
+using TimeStamp = std::chrono::time_point< std::chrono::system_clock >;
 
 /// Represents a transaction between two entities. A negative amount implies the
 /// account to which this object belongs had a withdrawl. A positive amount

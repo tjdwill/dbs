@@ -10,11 +10,10 @@
 //  dbsc::UuidString: a non-modifiable string representing a valid RFC4122 UUID.
 //  dbsc::UuidStringFactory: an interface to create UuidStrings.
 //
-//@DESCRIPTION:
-// This component defines a wrapper to a string that ensures its RFC4122
-// compliance as a universal unique indentifier (UUID). Since it is intended to
-// represent uniqueness, the string should be read-only, immune to outside (and
-// possibly internal) modification.
+//@DESCRIPTION: This component defines a wrapper to a string that ensures its
+// RFC4122 compliance as a universal unique indentifier (UUID). Since it is
+// intended to represent uniqueness, the string should be read-only, immune to
+// outside (and possibly internal) modification.
 //
 /// Usage
 /// -----
@@ -82,11 +81,11 @@ struct UuidStringUtil
 {
   /// Attempt to construct a UuidString from an external source. Throws
   /// `dbsc::InvalidUuidException` if input is non-conformant.
-  static auto fromString(std::string candidate) -> UuidString;
+  [[nodiscard]] static auto fromString(std::string candidate) -> UuidString;
   /// Generate a UUIDv4 (i.e. randomly-generated) string
-  static auto generate() -> UuidString;
+  [[nodiscard]] static auto generate() -> UuidString;
   /// Queries if the uuid is the "00000000-0000-0000-0000-000000000000" string.
-  static auto isNil(UuidString const& uuid) -> bool;
+  [[nodiscard]] static auto isNil(UuidString const& uuid) -> bool;
 };
 } // namespace dbsc
 
