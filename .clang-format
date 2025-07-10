@@ -53,3 +53,4 @@ PointerAlignment: Left
 RemoveEmptyLinesInUnwrappedLines: true
 SeparateDefinitionBlocks: Always
 SpaceBeforeCpp11BracedList: true
+SpacesInAngles: Always

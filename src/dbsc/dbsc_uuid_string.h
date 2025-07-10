@@ -1,4 +1,7 @@
 // dbsc_uuid_string.h
+#ifndef INCLUDED_DBSC_UUID_STRING
+#define INCLUDED_DBSC_UUID_STRING
+
 //@PURPOSE: Provide a wrapper around a string that enforces UUID format.
 //
 //@CLASSES:
@@ -27,9 +30,6 @@
 /// std::cout << randomId << "\n";
 /// ```
 ///
-
-#ifndef INCLUDED_DBSC_UUID_STRING
-#define INCLUDED_DBSC_UUID_STRING
 
 #include <exception>
 #include <iosfwd>

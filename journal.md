@@ -1,5 +1,57 @@
 # DBS Journal
 
+## 9 July 2025
+
+- Finished initial draft of the serialization interface.
+
+## 8 July 2025
+
+- Attempted to implement serailization interface as a concept
+    - Still much to learn. Doing it as an abstract base class instead.
+
+## 7 July 2025
+
+Today, I would like to think about DBS' serialization subsystem.
+
+Goal: *Given multiple account objects, write them to file and load them from file.*
+
+Ideally, we want to be able to add additional transactions without needing to rewrite the
+entire file every time, but this is likely an implementation detail instead of a hard
+requirement. Now, the naive solution is to assume this serialization is done using one
+format (TOML, in this case). However, since this is also intended to be a learning project,
+I'd like to take the time to make it more "robust".
+
+So, what do I need? Currently, I have two "major" classes: `dbsc::Account` and
+`dbsc::Transaction`. An account has a collection of transactions. At the top-level, I think
+I would have a map whose keys are `dbsc::UuidString`s and whose values are
+`dbsc::Account`s. That would essentially make a "Patron". For a given patron, one needs to
+parse all of the Accounts (and therefore all Transactions). This means I need a way to
+serialize:
+
+- Accounts
+    - ID
+    - Name
+    - Description
+    - Balance (possibly)
+- Transactions
+    - Transaction ID
+    - Other Party ID
+    - Amount
+    - DateTime
+    - Extra Notes 
+
+In the abstract, `DbscParser` would have:
+
+- `readPatron`
+- `readAccount`
+- `readTransaction`
+- `writePatron`
+- `writeAccount`
+- `writeTransaction`
+
+Implementers would then be responsible for adhering to this interface, regardless of the
+means used to do so.
+
 ## 5 July 2025
 
 Another class to consider creating is a broker class, a class responsible for actually
