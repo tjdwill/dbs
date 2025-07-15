@@ -1,6 +1,6 @@
 // dbsc_uuid_string.t.cpp
 // Test Driver for UuidString and its factory
-#include <dbsc/dbsc_uuid_string.h>
+#include <dbsc/dbsc_uuidstring.h>
 
 #include <cassert>
 #include <iostream>
@@ -10,7 +10,7 @@ namespace {
 static void testException()
 {
   try {
-    dbsc::UuidStringUtil::fromString("Invalid UUID");
+    auto const failedUuid = dbsc::UuidStringUtil::fromString("Invalid UUID");
   } catch (dbsc::InvalidUuidException const& e) {
   }
 }

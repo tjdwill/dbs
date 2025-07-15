@@ -1,8 +1,7 @@
 // dbsc_transaction.t.cpp
 // Test driver for the dbsc::Transaction class.
-#include "dbsc_uuid_string.h"
-
 #include <dbsc/dbsc_transaction.h>
+#include <dbsc/dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 

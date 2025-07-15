@@ -5,9 +5,12 @@
 //@PURPOSE: Provide a wrapper around a string that enforces UUID format.
 //
 //@CLASSES:
-//  dbsc::InvalidUuidException: communicate that a non-uuid-conforming string
+//  dbsc::DuplicateUuidException: error to note that an entity with some Uuid
+//    already exists.
+//  dbsc::InvalidUuidException: error to note that a non-uuid-conforming string
 //    was provided.
-//  dbsc::UuidString: a non-modifiable string representing a valid RFC4122 UUID.
+//  dbsc::UuidString: a non-modifiable string representing a valid
+//    RFC4122 UUID.
 //  dbsc::UuidStringFactory: an interface to create UuidStrings.
 //
 //@DESCRIPTION: This component defines a wrapper to a string that ensures its
@@ -37,6 +40,20 @@
 
 namespace dbsc {
 
+/// Communicate that an entity with a specific Uuid already exists.
+class DuplicateUuidException : std::exception
+{
+public:
+  DuplicateUuidException(std::string const& errorMsg) noexcept;
+  DuplicateUuidException() noexcept;
+
+  auto what() const noexcept -> char const* override;
+
+private:
+  std::string mErrorMsg {};
+};
+
+/// Represents a Uuid construction error due to invalid formatting.
 class InvalidUuidException : std::exception
 {
 public:

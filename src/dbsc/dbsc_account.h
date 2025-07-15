@@ -11,7 +11,7 @@
 //     - Transaction Record
 
 #include <dbsc_transaction.h>
-#include <dbsc_uuid_string.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 
@@ -31,14 +31,17 @@ public:
     -> Transaction const&;
 
   // Manipulators
-  void logTransaction(Transaction tranaction);
+
+  /// Store the provided transaction into the account's store.
+  /// Throws `dbsc::DuplicateUuid` if the transaction is a duplicate.
+  void logTransaction(Transaction transaction);
 
 private:
   UuidString mId;
   std::string mName {};
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
-  std::map<UuidString, Transaction> mTransactions {};
+  std::map< UuidString, Transaction > mTransactions {};
 };
 
 } // namespace dbsc

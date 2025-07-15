@@ -1,5 +1,5 @@
 // dbsc_uuid_string.cpp
-#include "dbsc_uuid_string.h"
+#include "dbsc_uuidstring.h"
 
 #include <stduuid/uuid.h>
 
@@ -10,6 +10,22 @@
 #include <random>
 
 namespace dbsc {
+
+DuplicateUuidException::DuplicateUuidException(
+  std::string const& errorMessage) noexcept
+  : mErrorMsg(std::move(errorMessage))
+{
+}
+
+DuplicateUuidException::DuplicateUuidException() noexcept
+  : dbsc::DuplicateUuidException("An object with this UUID already exists.")
+{
+}
+
+auto DuplicateUuidException::what() const noexcept -> char const*
+{
+  return mErrorMsg.c_str();
+}
 
 InvalidUuidException::InvalidUuidException() noexcept {};
 
@@ -55,7 +71,7 @@ auto UuidStringUtil::generate() -> UuidString
 
   if (not sGeneratorInitialized) {
     std::random_device rd {};
-    auto seedData = std::array<int, std::mt19937::state_size> {};
+    auto seedData = std::array< int, std::mt19937::state_size > {};
     std::generate(std::begin(seedData), std::end(seedData), std::ref(rd));
     std::seed_seq seq(std::begin(seedData), std::end(seedData));
     std::mt19937 generator { seq };
