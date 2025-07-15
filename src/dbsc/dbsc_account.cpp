@@ -1,5 +1,94 @@
 #include "dbsc_account.h"
 
+#include "dbsc_transaction.h"
+
+#include <dbsc/dbsc_uuidstring.h>
+
+#include <bdldfp_decimal.fwd.h>
+
+#include <cassert>
+#include <format>
+
+namespace dbsc {
+
+Account::Account(std::string const& name, std::string const& description)
+  : mId(UuidStringUtil::generate())
+  , mName(name)
+  , mDescription(description)
+{
+  using namespace BloombergLP::bdldfp::DecimalLiterals;
+  assert(mBalance == "0.0"_d64);
+}
+
+auto Account::balance() const -> BloombergLP::bdldfp::Decimal64
+{
+  return mBalance;
+}
+
+auto Account::description() const -> std::string const&
+{
+  return mDescription;
+}
+
+auto Account::id() const -> UuidString const&
+{
+  return mId;
+}
+
+auto Account::name() const -> std::string const&
+{
+  return mName;
+}
+
+auto Account::begin() -> iterator
+{
+  return mTransactions.begin();
+}
+
+auto Account::begin() const -> const_iterator
+{
+  return mTransactions.begin();
+}
+
+auto Account::cbegin() const noexcept -> const_iterator
+{
+  return mTransactions.cbegin();
+}
+
+auto Account::end() -> iterator
+{
+  return mTransactions.end();
+}
+
+auto Account::end() const -> const_iterator
+{
+  return mTransactions.end();
+}
+
+auto Account::cend() const noexcept -> const_iterator
+{
+  return mTransactions.cend();
+}
+
+auto Account::transaction(UuidString const& transactionId) const
+  -> Transaction const&
+{
+  return mTransactions.at(transactionId);
+}
+
+void Account::logTransaction(Transaction transaction)
+{
+  UuidString const transactionId = transaction.transactionId();
+
+  if (mTransactions.contains(transactionId)) {
+    throw DuplicateUuidException(
+      std::format("Transaction {0} already exists.", transactionId.view()));
+  }
+  mTransactions.insert({ transactionId, std::move(transaction) });
+  mBalance += mTransactions.at(transactionId).amount();
+}
+} // namespace dbsc
+
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
 //

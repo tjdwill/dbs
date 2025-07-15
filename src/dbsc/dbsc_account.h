@@ -13,6 +13,7 @@
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
 
+#include <bdldfp_decimal.fwd.h>
 #include <bdldfp_decimal.h>
 
 #include <map>
@@ -23,10 +24,29 @@ namespace dbsc {
 class Account
 {
 public:
+  using const_iterator =                                          // NOLINT
+    std::map< UuidString, Transaction >::const_iterator;          // NOLINT
+  using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
+
   [[nodiscard]] explicit Account(std::string const& name,
                                  std::string const& description);
 
   // Accessors
+
+  [[nodiscard]] auto balance() const -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] auto description() const -> std::string const&;
+  [[nodiscard]] auto id() const -> UuidString const&;
+  [[nodiscard]] auto name() const -> std::string const&;
+  auto begin() -> iterator;
+  auto begin() const -> const_iterator;
+  auto cbegin() const noexcept -> const_iterator;
+  auto end() -> iterator;
+  auto end() const -> const_iterator;
+  auto cend() const noexcept -> const_iterator;
+
+  /// Retrieve the transaction data associated with the input transactionID.
+  /// Propagates the `std::out_of_range` error if the transaction doesn't exists
+  /// for the account.
   [[nodiscard]] auto transaction(UuidString const& transactionId) const
     -> Transaction const&;
 
