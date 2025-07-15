@@ -1,7 +1,6 @@
 #include "dbsc_account.h"
 
-#include "dbsc_transaction.h"
-
+#include <dbsc/dbsc_transaction.h>
 #include <dbsc/dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
