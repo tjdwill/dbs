@@ -14,7 +14,6 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
-#include <bdldfp_decimal.h>
 
 #include <map>
 #include <string>

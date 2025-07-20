@@ -3,13 +3,13 @@
 #include <dbsc/dbsc_transaction.h>
 #include <dbsc/dbsc_uuidstring.h>
 
-#include <bdldfp_decimal.fwd.h>
+#include <bdldfp_decimal.h>
 
 #include <cassert>
 #include <format>
 
 namespace dbsc {
-//
+
 Account::Account( std::string const& name, std::string const& description )
   : mId( UuidStringUtil::generate() )
   , mName( name )

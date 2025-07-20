@@ -13,18 +13,22 @@ target_link_libraries(testDbscUuidString PRIVATE
 add_test(NAME dbscUuidString.t COMMAND testDbscUuidString)
 
 # dbsc_transaction
-add_library(dbsTransaction dbsc_transaction.cpp)
-target_link_libraries(dbsTransaction PUBLIC 
+add_library(dbscTransaction dbsc_transaction.cpp)
+target_link_libraries(dbscTransaction PUBLIC 
   dbscUuidString
   bdl
 )
 add_executable(testDbscTransaction dbsc_transaction.t.cpp)
-target_link_libraries(testDbscTransaction PRIVATE dbsTransaction)
+target_link_libraries(testDbscTransaction PRIVATE dbscTransaction bdl)
 add_test(NAME dbscTransaction.t COMMAND testDbscTransaction)
 
 # dbsc_account
-add_library(dbsAccount dbsc_account.cpp)
-target_link_libraries(dbsAccount PUBLIC 
-    dbsTransaction
+add_library(dbscAccount dbsc_account.cpp)
+target_link_libraries(dbscAccount PUBLIC 
+    dbscTransaction
+    dbscUuidString
     bdl
 )
+add_executable(testDbscAccount dbsc_account.t.cpp)
+target_link_libraries(testDbscAccount PRIVATE dbscAccount)
+add_test(NAME dbscAccount.t COMMAND testDbscAccount)
