@@ -28,8 +28,8 @@ public:
     std::map< UuidString, Transaction >::const_iterator;          // NOLINT
   using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
 
-  [[nodiscard]] explicit Account(std::string const& name,
-                                 std::string const& description);
+  [[nodiscard]] explicit Account( std::string const& name,
+                                  std::string const& description );
 
   // Accessors
 
@@ -47,14 +47,14 @@ public:
   /// Retrieve the transaction data associated with the input transactionID.
   /// Propagates the `std::out_of_range` error if the transaction doesn't exists
   /// for the account.
-  [[nodiscard]] auto transaction(UuidString const& transactionId) const
+  [[nodiscard]] auto transaction( UuidString const& transactionId ) const
     -> Transaction const&;
 
   // Manipulators
 
   /// Store the provided transaction into the account's store.
   /// Throws `dbsc::DuplicateUuid` if the transaction is a duplicate.
-  void logTransaction(Transaction transaction);
+  void logTransaction( Transaction transaction );
 
 private:
   UuidString mId;

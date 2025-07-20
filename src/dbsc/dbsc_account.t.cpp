@@ -1,4 +1,8 @@
 #include <dbsc/dbsc_account.h>
+#include <dbsc/dbsc_transaction.h>
+#include <dbsc/dbsc_uuidstring.h>
+
+int main() {}
 
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
