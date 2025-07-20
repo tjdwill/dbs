@@ -27,16 +27,16 @@ class DbsArchivistInterface // NOLINT
 public:
   virtual ~DbsArchivistInterface() = default;
 
-  [[nodiscard]] virtual auto readTransaction(std::istream& source)
-    -> Transaction                                                        = 0;
-  [[nodiscard]] virtual auto readAccount(std::istream& source) -> Account = 0;
-  [[nodiscard]] virtual auto readAccountBook(std::istream& source)
-    -> AccountBook                                                     = 0;
-  virtual void writeTransaction(std::ostream& destination,
-                                Transaction const&)                    = 0;
-  virtual void writeAccount(std::ostream& destination, Account const&) = 0;
-  virtual void writeAccountBook(std::ostream& destination,
-                                AccountBook const&)                    = 0;
+  [[nodiscard]] virtual auto readTransaction( std::istream& source )
+    -> Transaction                                                          = 0;
+  [[nodiscard]] virtual auto readAccount( std::istream& source ) -> Account = 0;
+  [[nodiscard]] virtual auto readAccountBook( std::istream& source )
+    -> AccountBook                                                       = 0;
+  virtual void writeTransaction( std::ostream& destination,
+                                 Transaction const& )                    = 0;
+  virtual void writeAccount( std::ostream& destination, Account const& ) = 0;
+  virtual void writeAccountBook( std::ostream& destination,
+                                 AccountBook const& )                    = 0;
 };
 } // namespace dbsc
 

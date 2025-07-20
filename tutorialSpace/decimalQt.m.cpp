@@ -8,6 +8,7 @@
 #include <bslstl_string.h>
 
 #include <QString>
+
 #include <cassert>
 
 using namespace BloombergLP;
@@ -21,11 +22,11 @@ int main()
   bsl::ostringstream oss {};
   oss << fp;
   QString fpQt { oss.str().data() };
-  bsl::cout << "Stringified: " << qPrintable(fpQt) << "\n";
+  bsl::cout << "Stringified: " << qPrintable( fpQt ) << "\n";
   // Try to convert a string into a number
   QString const newFpQt { "27.0" };
   bdldfp::Decimal64 newfp;
-  bdldfp::DecimalUtil::parseDecimal64(&newfp, qPrintable(newFpQt));
+  bdldfp::DecimalUtil::parseDecimal64( &newfp, qPrintable( newFpQt ) );
 
-  assert(newfp == fp);
+  assert( newfp == fp );
 }

@@ -26,11 +26,11 @@ static void testGetters()
     transactionId, otherPartyId, transactionAmount, timeStamp, notes
   };
 
-  assert(transaction.transactionId() == transactionId);
-  assert(transaction.otherPartyId() == otherPartyId);
-  assert(transaction.amount() == transactionAmount);
-  assert(transaction.timeStamp() == timeStamp);
-  assert(transaction.notes() == notes);
+  assert( transaction.transactionId() == transactionId );
+  assert( transaction.otherPartyId() == otherPartyId );
+  assert( transaction.amount() == transactionAmount );
+  assert( transaction.timeStamp() == timeStamp );
+  assert( transaction.notes() == notes );
 }
 } // namespace
 

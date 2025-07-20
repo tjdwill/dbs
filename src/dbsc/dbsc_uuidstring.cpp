@@ -12,13 +12,13 @@
 namespace dbsc {
 
 DuplicateUuidException::DuplicateUuidException(
-  std::string const& errorMessage) noexcept
-  : mErrorMsg(std::move(errorMessage))
+  std::string const& errorMessage ) noexcept
+  : mErrorMsg( std::move( errorMessage ) )
 {
 }
 
 DuplicateUuidException::DuplicateUuidException() noexcept
-  : dbsc::DuplicateUuidException("An object with this UUID already exists.")
+  : dbsc::DuplicateUuidException( "An object with this UUID already exists." )
 {
 }
 
@@ -35,12 +35,12 @@ auto InvalidUuidException::what() const noexcept -> char const*
 }
 
 UuidString::UuidString()
-  : mData(uuids::to_string(uuids::uuid {}))
+  : mData( uuids::to_string( uuids::uuid {} ) )
 {
 }
 
-UuidString::UuidString(std::string str)
-  : mData(std::move(str))
+UuidString::UuidString( std::string str )
+  : mData( std::move( str ) )
 {
 }
 
@@ -54,14 +54,14 @@ auto UuidString::view() const noexcept -> std::string_view
   return mData;
 }
 
-auto UuidStringUtil::fromString(std::string candidate) -> UuidString
+auto UuidStringUtil::fromString( std::string candidate ) -> UuidString
 {
-  auto test = uuids::uuid::from_string(std::string_view(candidate));
+  auto test = uuids::uuid::from_string( std::string_view( candidate ) );
   if (not test.has_value()) {
     throw InvalidUuidException {};
   }
 
-  return UuidString(candidate);
+  return UuidString( candidate );
 }
 
 auto UuidStringUtil::generate() -> UuidString
@@ -72,23 +72,24 @@ auto UuidStringUtil::generate() -> UuidString
   if (not sGeneratorInitialized) {
     std::random_device rd {};
     auto seedData = std::array< int, std::mt19937::state_size > {};
-    std::generate(std::begin(seedData), std::end(seedData), std::ref(rd));
-    std::seed_seq seq(std::begin(seedData), std::end(seedData));
+    std::generate(
+      std::begin( seedData ), std::end( seedData ), std::ref( rd ) );
+    std::seed_seq seq( std::begin( seedData ), std::end( seedData ) );
     std::mt19937 generator { seq };
     sGeneratorInitialized = true;
   }
   static uuids::uuid_random_generator sUuidGenerator { sGenerator };
 
-  return UuidString(uuids::to_string(sUuidGenerator()));
+  return UuidString( uuids::to_string( sUuidGenerator() ) );
 }
 
-auto UuidStringUtil::isNil(UuidString const& uuid) -> bool
+auto UuidStringUtil::isNil( UuidString const& uuid ) -> bool
 {
-  return uuids::uuid::from_string(uuid.view()).value().is_nil();
+  return uuids::uuid::from_string( uuid.view() ).value().is_nil();
 }
 } // namespace dbsc
 
-auto dbsc::operator<<(std::ostream& os, dbsc::UuidString const& uuid)
+auto dbsc::operator<<( std::ostream& os, dbsc::UuidString const& uuid )
   -> std::ostream&
 {
   os << uuid.view();

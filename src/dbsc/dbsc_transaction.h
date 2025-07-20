@@ -33,11 +33,11 @@ using TimeStamp = std::chrono::time_point< std::chrono::system_clock >;
 class Transaction
 {
 public:
-  [[nodiscard]] explicit Transaction(UuidString const& transactionId,
-                                     UuidString const& otherPartyID,
-                                     BloombergLP::bdldfp::Decimal64 amount,
-                                     TimeStamp timeStamp,
-                                     std::string const& notes);
+  [[nodiscard]] explicit Transaction( UuidString const& transactionId,
+                                      UuidString const& otherPartyID,
+                                      BloombergLP::bdldfp::Decimal64 amount,
+                                      TimeStamp timeStamp,
+                                      std::string const& notes );
 
   [[nodiscard]] auto amount() const -> BloombergLP::bdldfp::Decimal64;
   [[nodiscard]] auto notes() const -> std::string const&;

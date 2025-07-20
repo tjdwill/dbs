@@ -9,14 +9,14 @@
 #include <format>
 
 namespace dbsc {
-
-Account::Account(std::string const& name, std::string const& description)
-  : mId(UuidStringUtil::generate())
-  , mName(name)
-  , mDescription(description)
+//
+Account::Account( std::string const& name, std::string const& description )
+  : mId( UuidStringUtil::generate() )
+  , mName( name )
+  , mDescription( description )
 {
   using namespace BloombergLP::bdldfp::DecimalLiterals;
-  assert(mBalance == "0.0"_d64);
+  assert( mBalance == "0.0"_d64 );
 }
 
 auto Account::balance() const -> BloombergLP::bdldfp::Decimal64
@@ -69,22 +69,22 @@ auto Account::cend() const noexcept -> const_iterator
   return mTransactions.cend();
 }
 
-auto Account::transaction(UuidString const& transactionId) const
+auto Account::transaction( UuidString const& transactionId ) const
   -> Transaction const&
 {
-  return mTransactions.at(transactionId);
+  return mTransactions.at( transactionId );
 }
 
-void Account::logTransaction(Transaction transaction)
+void Account::logTransaction( Transaction transaction )
 {
   UuidString const transactionId = transaction.transactionId();
 
-  if (mTransactions.contains(transactionId)) {
+  if (mTransactions.contains( transactionId )) {
     throw DuplicateUuidException(
-      std::format("Transaction {0} already exists.", transactionId.view()));
+      std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }
-  mTransactions.insert({ transactionId, std::move(transaction) });
-  mBalance += mTransactions.at(transactionId).amount();
+  mTransactions.insert( { transactionId, std::move( transaction ) } );
+  mBalance += mTransactions.at( transactionId ).amount();
 }
 } // namespace dbsc
 

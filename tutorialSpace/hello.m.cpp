@@ -10,7 +10,7 @@ using namespace std::string_view_literals;
 int main()
 {
   auto name        = "tjdwill"sv;
-  toml::table test = toml::parse(std::format(R"(
+  toml::table test = toml::parse( std::format( R"(
 multi_string = """
 
 This is a raw string that is
@@ -20,7 +20,7 @@ intended to represent a TOML value.
 
 name = "{}"  # This means we can actually substitute variables into TOML data via C++ code.
   )"sv,
-                                             name));
+                                               name ) );
   std::cout << test["multi_string"sv] << "\n";
   std::cout << test << "\n";
 }

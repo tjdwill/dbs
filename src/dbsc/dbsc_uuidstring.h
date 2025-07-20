@@ -44,7 +44,7 @@ namespace dbsc {
 class DuplicateUuidException : std::exception
 {
 public:
-  DuplicateUuidException(std::string const& errorMsg) noexcept;
+  DuplicateUuidException( std::string const& errorMsg ) noexcept;
   DuplicateUuidException() noexcept;
 
   auto what() const noexcept -> char const* override;
@@ -76,8 +76,8 @@ public:
   /// Returns the nil UUID "00000000-0000-0000-0000-000000000000"
   UuidString();
 
-  [[nodiscard]] auto operator<=>(UuidString const& other) const = default;
-  [[nodiscard]] auto operator==(UuidString const& other) const
+  [[nodiscard]] auto operator<=>( UuidString const& other ) const = default;
+  [[nodiscard]] auto operator==( UuidString const& other ) const
     -> bool = default;
   [[nodiscard]] auto toStdString() const -> std::string;
   [[nodiscard]] auto view() const noexcept -> std::string_view;
@@ -87,22 +87,22 @@ private:
   /// Construct a UuidString from an external string source.
   /// Private since this constructor assumes validation is performed before it's
   /// called.
-  UuidString(std::string str);
+  UuidString( std::string str );
   std::string mData {};
 };
 
-auto operator<<(std::ostream& oss, UuidString const& str) -> std::ostream&;
+auto operator<<( std::ostream& oss, UuidString const& str ) -> std::ostream&;
 
 /// Interface for generating Uuids.
 struct UuidStringUtil
 {
   /// Attempt to construct a UuidString from an external source. Throws
   /// `dbsc::InvalidUuidException` if input is non-conformant.
-  [[nodiscard]] static auto fromString(std::string candidate) -> UuidString;
+  [[nodiscard]] static auto fromString( std::string candidate ) -> UuidString;
   /// Generate a UUIDv4 (i.e. randomly-generated) string
   [[nodiscard]] static auto generate() -> UuidString;
   /// Queries if the uuid is the "00000000-0000-0000-0000-000000000000" string.
-  [[nodiscard]] static auto isNil(UuidString const& uuid) -> bool;
+  [[nodiscard]] static auto isNil( UuidString const& uuid ) -> bool;
 };
 } // namespace dbsc
 

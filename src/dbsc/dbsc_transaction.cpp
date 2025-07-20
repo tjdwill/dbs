@@ -3,16 +3,16 @@
 
 namespace dbsc {
 
-Transaction::Transaction(UuidString const& transactionId,
-                         UuidString const& otherPartyID,
-                         BloombergLP::bdldfp::Decimal64 amount,
-                         TimeStamp timeStamp,
-                         std::string const& notes)
-  : mTransactionId(transactionId)
-  , mOtherPartyId(otherPartyID)
-  , mAmount(amount)
-  , mTimeStamp(timeStamp)
-  , mNotes(notes)
+Transaction::Transaction( UuidString const& transactionId,
+                          UuidString const& otherPartyID,
+                          BloombergLP::bdldfp::Decimal64 amount,
+                          TimeStamp timeStamp,
+                          std::string const& notes )
+  : mTransactionId( transactionId )
+  , mOtherPartyId( otherPartyID )
+  , mAmount( amount )
+  , mTimeStamp( timeStamp )
+  , mNotes( notes )
 {
 }
 
