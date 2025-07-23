@@ -39,6 +39,11 @@ auto Account::name() const -> std::string const&
   return mName;
 }
 
+auto Account::transactionCount() const -> int
+{
+  return static_cast< int >( mTransactions.size() );
+}
+
 auto Account::begin() -> iterator
 {
   return mTransactions.begin();

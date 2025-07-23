@@ -36,6 +36,7 @@ public:
   [[nodiscard]] auto description() const -> std::string const&;
   [[nodiscard]] auto id() const -> UuidString const&;
   [[nodiscard]] auto name() const -> std::string const&;
+  [[nodiscard]] auto transactionCount() const -> int;
   auto begin() -> iterator;
   auto begin() const -> const_iterator;
   auto cbegin() const noexcept -> const_iterator;
@@ -44,7 +45,7 @@ public:
   auto cend() const noexcept -> const_iterator;
 
   /// Retrieve the transaction data associated with the input transactionID.
-  /// Propagates the `std::out_of_range` error if the transaction doesn't exists
+  /// Propagates the `std::out_of_range` error if the transaction doesn't exist
   /// for the account.
   [[nodiscard]] auto transaction( UuidString const& transactionId ) const
     -> Transaction const&;

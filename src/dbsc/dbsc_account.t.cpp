@@ -1,27 +1,39 @@
+// dbsc_account.t.cpp
 #include <dbsc/dbsc_account.h>
 #include <dbsc/dbsc_transaction.h>
 #include <dbsc/dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 
-#include <cassert>     // for testing
+#include <cassert>
+#include <chrono>      // for testing
 #include <string>      // for testing
 #include <string_view> // for testing
 #include <type_traits> // for testing
 
 using namespace BloombergLP;
 using namespace bdldfp::DecimalLiterals;
+using namespace std::string_literals;
 
 namespace {
-constexpr std::string_view kName { "Test Account" };
-constexpr std::string_view kDescription {
+constexpr std::string_view kAccountName { "Test Account" };
+constexpr std::string_view kAccountDescription {
   "This is an account intended to test dbsc::Account."
 };
 
+bdldfp::Decimal64 const kTransactionAmount { "1000.27"_d64 };
+std::string const kTransactionDescription { "Test Transaction"s };
+
+dbsc::Transaction const kExampleTransaction { dbsc::UuidStringUtil::generate(),
+                                              dbsc::UuidStringUtil::generate(),
+                                              kTransactionAmount,
+                                              std::chrono::system_clock::now(),
+                                              kTransactionDescription };
+
 static auto sampleAccountMut() -> dbsc::Account&
 {
-  static dbsc::Account sTestAccount { std::string( kName ),
-                                      std::string( kDescription ) };
+  static dbsc::Account sTestAccount { std::string( kAccountName ),
+                                      std::string( kAccountDescription ) };
 
   return sTestAccount;
 }
@@ -39,14 +51,26 @@ static void testAccountAccessors()
   assert( &sampleAccount() == &sampleAccountMut() );
 
   assert( not dbsc::UuidStringUtil::isNil( sampleAccount().id() ) );
-  assert( sampleAccount().name() == std::string( kName ) );
-  assert( sampleAccount().description() == std::string( kDescription ) );
+  assert( sampleAccount().name() == std::string( kAccountName ) );
+  assert( sampleAccount().description() == std::string( kAccountDescription ) );
   assert( sampleAccount().balance() == "0.0"_d64 );
 }
 
 int main()
 {
   testAccountAccessors();
+
+  // Test transaction retrieval
+  sampleAccountMut().logTransaction( kExampleTransaction );
+  dbsc::UuidString transactionId;
+  for (auto const& [id, _] : sampleAccount()) {
+    assert( sampleAccount().transactionCount() == 1 );
+    transactionId = id;
+  }
+  dbsc::Transaction const& transaction =
+    sampleAccount().transaction( transactionId );
+  assert( transaction.amount() == kTransactionAmount );
+  assert( transaction.notes() == kTransactionDescription );
 }
 
 // -----------------------------------------------------------------------------
