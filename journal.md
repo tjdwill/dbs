@@ -1,5 +1,78 @@
 # DBS Journal
 
+## 23 July 2025
+
+I completed an initial implementation of dbsc::Account. Now, I need to create an
+AccountBook that stores all accounts for a user.
+
+### Serialization
+
+After thinking about the serialization process, I've come to the conclusion that
+transactions need to store both Uuids for the two parties.
+
+Here is an example format. The entire table serves as the AccountBook:
+
+```toml
+owner = "Who owns this account?"
+
+[<Account 1 UUID>]
+name = "Account name"
+description = "Some description of the account."
+
+[[<Account 1 UUID>.transactions]]
+otherPartyID = "Other Party UUID"
+timeStamp = YYYY-MM-DD HH:MM:SS.s
+amount = "1000.00"
+notes = """Multi-line notes"""
+
+```
+
+For example, here is an example of TOML and its analogous JSON:
+
+```toml
+owner = "tjdwill"
+
+[testAccount]
+name = "foo"
+description = ""
+
+[[testAccount.transactions]]
+otherParty = "1234"
+timeStamp = 2025-07-23 18:11:56.5Z
+amount = "1234.00"
+notes = """"""
+
+[[testAccount.transactions]]
+otherParty = "2468"
+timeStamp = 2025-07-23 18:12:56.5Z
+amount = "1234.00"
+notes = """"""
+```
+
+```json
+{
+  "owner": "tjdwill",
+  "testAccount": {
+    "name": "foo",
+    "description": "",
+    "transactions": [
+      {
+        "otherParty": "1234",
+        "timeStamp": "2025-07-23T18:11:56.500Z",
+        "amount": "1234.00",
+        "notes": ""
+      },
+      {
+        "otherParty": "2468",
+        "timeStamp": "2025-07-23T18:12:56.500Z",
+        "amount": "1234.00",
+        "notes": ""
+      }
+    ]
+  }
+}
+```
+
 ## 9 July 2025
 
 - Finished initial draft of the serialization interface.
