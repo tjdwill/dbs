@@ -29,24 +29,31 @@ using TimeStamp = std::chrono::time_point< std::chrono::system_clock >;
 /// account to which this object belongs had a withdrawl. A positive amount
 /// indicates a deposit. If the otherPartyID is nil (see UuidString), the
 /// otherParty is some unspecified external source (ex. payment from a source of
-/// income.).
+/// income.). Generally, dbsc::Transactions are intended to be made in pairs.
+/// The two pairs will have swapped party IDs and transaction amounts of
+/// opposing signs.
 class Transaction
 {
 public:
   [[nodiscard]] explicit Transaction( UuidString const& transactionId,
-                                      UuidString const& otherPartyID,
+                                      UuidString const& owningPartyId,
+                                      UuidString const& otherPartyId,
                                       BloombergLP::bdldfp::Decimal64 amount,
                                       TimeStamp timeStamp,
                                       std::string const& notes );
 
   [[nodiscard]] auto amount() const -> BloombergLP::bdldfp::Decimal64;
   [[nodiscard]] auto notes() const -> std::string const&;
+  [[nodiscard]] auto owningPartyId() const -> UuidString const&;
   [[nodiscard]] auto otherPartyId() const -> UuidString const&;
   [[nodiscard]] auto timeStamp() const -> TimeStamp;
   [[nodiscard]] auto transactionId() const -> UuidString const&;
 
 private:
   UuidString mTransactionId;
+  /// The account that owns this transaction object.
+  UuidString mOwningPartyId;
+  /// The other entity involved in the transaction.
   UuidString mOtherPartyId;
   BloombergLP::bdldfp::Decimal64 mAmount;
   TimeStamp mTimeStamp;

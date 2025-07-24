@@ -24,11 +24,11 @@ constexpr std::string_view kAccountDescription {
 bdldfp::Decimal64 const kTransactionAmount { "1000.27"_d64 };
 std::string const kTransactionDescription { "Test Transaction"s };
 
-dbsc::Transaction const kExampleTransaction { dbsc::UuidStringUtil::generate(),
-                                              dbsc::UuidStringUtil::generate(),
-                                              kTransactionAmount,
-                                              std::chrono::system_clock::now(),
-                                              kTransactionDescription };
+dbsc::Transaction const kExampleTransaction {
+  dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
+  dbsc::UuidStringUtil::generate(), kTransactionAmount,
+  std::chrono::system_clock::now(), kTransactionDescription
+};
 
 static auto sampleAccountMut() -> dbsc::Account&
 {

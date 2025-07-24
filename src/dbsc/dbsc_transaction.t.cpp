@@ -19,14 +19,15 @@ static void testGetters()
 {
   auto transactionAmount = "100.00"_d64;
   auto transactionId     = UuidStringUtil::generate();
+  auto owningPartyId     = UuidStringUtil::generate();
   auto otherPartyId      = UuidStringUtil::generate();
   auto timeStamp         = std::chrono::system_clock::now();
   std::string notes { ""s };
-  Transaction transaction {
-    transactionId, otherPartyId, transactionAmount, timeStamp, notes
-  };
+  Transaction transaction { transactionId,     owningPartyId, otherPartyId,
+                            transactionAmount, timeStamp,     notes };
 
   assert( transaction.transactionId() == transactionId );
+  assert( transaction.owningPartyId() == owningPartyId );
   assert( transaction.otherPartyId() == otherPartyId );
   assert( transaction.amount() == transactionAmount );
   assert( transaction.timeStamp() == timeStamp );

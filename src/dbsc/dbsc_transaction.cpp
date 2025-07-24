@@ -1,14 +1,18 @@
 // dbsc_transaction.cpp
 #include "dbsc_transaction.h"
 
+#include "dbsc_uuidstring.h"
+
 namespace dbsc {
 
 Transaction::Transaction( UuidString const& transactionId,
+                          UuidString const& owningPartyId,
                           UuidString const& otherPartyID,
                           BloombergLP::bdldfp::Decimal64 amount,
                           TimeStamp timeStamp,
                           std::string const& notes )
   : mTransactionId( transactionId )
+  , mOwningPartyId( owningPartyId )
   , mOtherPartyId( otherPartyID )
   , mAmount( amount )
   , mTimeStamp( timeStamp )
@@ -24,6 +28,11 @@ auto Transaction::amount() const -> BloombergLP::bdldfp::Decimal64
 auto Transaction::notes() const -> std::string const&
 {
   return mNotes;
+}
+
+auto Transaction::owningPartyId() const -> UuidString const&
+{
+  return mOwningPartyId;
 }
 
 auto Transaction::otherPartyId() const -> UuidString const&
