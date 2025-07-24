@@ -17,14 +17,16 @@ using namespace std::string_literals;
 
 static void testGetters()
 {
-  auto transactionAmount = "100.00"_d64;
-  auto transactionId     = UuidStringUtil::generate();
-  auto owningPartyId     = UuidStringUtil::generate();
-  auto otherPartyId      = UuidStringUtil::generate();
-  auto timeStamp         = std::chrono::system_clock::now();
-  std::string notes { ""s };
-  Transaction transaction { transactionId,     owningPartyId, otherPartyId,
-                            transactionAmount, timeStamp,     notes };
+  auto const transactionAmount = "100.00"_d64;
+  auto const transactionId     = UuidStringUtil::generate();
+  auto const owningPartyId     = UuidStringUtil::generate();
+  auto const otherPartyId      = UuidStringUtil::generate();
+  auto const timeStamp         = std::chrono::system_clock::now();
+  std::string const notes { ""s };
+
+  Transaction const transaction { transactionId, owningPartyId,
+                                  otherPartyId,  transactionAmount,
+                                  timeStamp,     notes };
 
   assert( transaction.transactionId() == transactionId );
   assert( transaction.owningPartyId() == owningPartyId );
