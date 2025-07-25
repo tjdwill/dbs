@@ -1,5 +1,13 @@
 # DBS Journal
 
+## 24 July 2025
+
+I realized that, should a user want to close an account, we need a way to prevent
+additional transactions from being added to the account without actually deleting the data.
+This will allow one to view "archived" accounts and even re-open accounts that have been
+closed. As a result, the account status is to be serialized along with the account name and
+description (should the key be`isOpen`)?
+
 ## 23 July 2025
 
 I completed an initial implementation of dbsc::Account. Now, I need to create an

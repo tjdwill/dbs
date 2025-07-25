@@ -21,15 +21,6 @@ constexpr std::string_view kAccountDescription {
   "This is an account intended to test dbsc::Account."
 };
 
-bdldfp::Decimal64 const kTransactionAmount { "1000.27"_d64 };
-std::string const kTransactionDescription { "Test Transaction"s };
-
-dbsc::Transaction const kExampleTransaction {
-  dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
-  dbsc::UuidStringUtil::generate(), kTransactionAmount,
-  std::chrono::system_clock::now(), kTransactionDescription
-};
-
 static auto sampleAccountMut() -> dbsc::Account&
 {
   static dbsc::Account sTestAccount { std::string( kAccountName ),
@@ -42,6 +33,16 @@ static auto sampleAccount() -> dbsc::Account const&
 {
   return sampleAccountMut();
 }
+
+bdldfp::Decimal64 const kTransactionAmount { "1000.27"_d64 };
+std::string const kTransactionDescription { "Test Transaction"s };
+
+dbsc::Transaction const kExampleTransaction {
+  dbsc::UuidStringUtil::generate(), sampleAccount().id(),
+  dbsc::UuidStringUtil::generate(), kTransactionAmount,
+  std::chrono::system_clock::now(), kTransactionDescription
+};
+
 } // namespace
 
 static void testAccountAccessors()
@@ -71,6 +72,28 @@ int main()
     sampleAccount().transaction( transactionId );
   assert( transaction.amount() == kTransactionAmount );
   assert( transaction.notes() == kTransactionDescription );
+
+  // Attempt to add a duplicate transaction.
+  try {
+    sampleAccountMut().logTransaction( kExampleTransaction );
+  } catch (dbsc::DuplicateUuidException const&) {
+  }
+
+  // Attempt to add a transaction to a closed account
+  try {
+    dbsc::Transaction const newTransaction {
+      dbsc::UuidStringUtil::generate(), sampleAccount().id(),
+      dbsc::UuidStringUtil::generate(), "2000.00"_d64,
+      std::chrono::system_clock::now(), ""
+    };
+
+    sampleAccountMut().closeAccount();
+    sampleAccountMut().logTransaction( newTransaction );
+  } catch (dbsc::ClosedAccountException const&) {
+  }
+  // Re-open the account
+  sampleAccountMut().openAccount();
+  assert( sampleAccount().isOpen() );
 }
 
 // -----------------------------------------------------------------------------

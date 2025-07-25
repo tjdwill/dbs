@@ -2,24 +2,46 @@
 #ifndef INCLUDED_DBSC_ACCOUNT
 #define INCLUDED_DBSC_ACCOUNT
 
-// The representation of accounts for the application. Accounts have the
-// following pieces of data:
-//     - Account ID (uuid)
-//     - Account Name
-//     - Account Description
-//     - Balance
-//     - Transaction Record
+//@PURPOSE: Provide a means of tracking transactions for a given purpose.
+//
+//@CLASSES:
+//  dbsc::Account: an entity that tracks a monetary balance over multiple
+//    transactions.
+//  dbsc::ClosedAccountException: an error that signals an illegal transaction.
+//
+//@DESCRIPTION: This component defines the Account, which is essentially the
+//  backbone of the budgeting system. Accounts store Transactions, keeps track
+//  of balance, and stores user-defined metadata such as the account name and
+//  description.
 
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
 
+#include <exception>
 #include <map>
 #include <string>
 
 namespace dbsc {
 
+/// Signals that a caller attempted to add a Transaction to a closed Account.
+class ClosedAccountException : public std::exception
+{
+public:
+  ClosedAccountException( std::string const& errorMessage ) noexcept;
+  ClosedAccountException() noexcept;
+  auto what() const noexcept -> char const* override;
+
+private:
+  std::string mErrorMsg {};
+};
+
+/// The basis of the application, this class stores multiple transactions,
+/// allowing one to track the balance of money at a given moment. Accounts have
+/// two states, "open" and "closed," which is the way this program disables
+/// modifying the Account further without actually deleting the data (someone
+/// may wish to re-open at a future date).
 class Account
 {
 public:
@@ -50,11 +72,24 @@ public:
   [[nodiscard]] auto transaction( UuidString const& transactionId ) const
     -> Transaction const&;
 
+  /// Queries if the account is open for making new transactions.
+  [[nodiscard]] auto isOpen() const -> bool;
+
   // Manipulators
 
   /// Store the provided transaction into the account's store.
-  /// Throws `dbsc::DuplicateUuid` if the transaction is a duplicate.
-  void logTransaction( Transaction transaction );
+  /// Throws `dbsc::DuplicateUuidException` if the transaction is a duplicate.
+  /// Throws `dbsc::ClosedAccountException` if the account is closed at the time
+  /// this function is called.
+  void logTransaction( Transaction const& transaction );
+
+  /// Sets this account's status to "read-only". No further transactions can be
+  /// added.
+  void closeAccount();
+
+  /// Sets this account's status to "writeable", meaning it can store new
+  /// transactions.
+  void openAccount();
 
 private:
   UuidString mId;
@@ -62,6 +97,7 @@ private:
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
   std::map< UuidString, Transaction > mTransactions {};
+  bool mIsOpen { true };
 };
 
 } // namespace dbsc

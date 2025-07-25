@@ -10,6 +10,22 @@
 
 namespace dbsc {
 
+ClosedAccountException::ClosedAccountException(
+  std::string const& errorMessage ) noexcept
+  : mErrorMsg( errorMessage )
+{
+}
+
+ClosedAccountException::ClosedAccountException() noexcept
+  : ClosedAccountException( "Attempted to modify a closed account." )
+{
+}
+
+auto ClosedAccountException::what() const noexcept -> char const*
+{
+  return mErrorMsg.c_str();
+}
+
 Account::Account( std::string const& name, std::string const& description )
   : mId( UuidStringUtil::generate() )
   , mName( name )
@@ -42,6 +58,11 @@ auto Account::name() const -> std::string const&
 auto Account::transactionCount() const -> int
 {
   return static_cast< int >( mTransactions.size() );
+}
+
+auto Account::isOpen() const -> bool
+{
+  return mIsOpen;
 }
 
 auto Account::begin() -> iterator
@@ -80,17 +101,32 @@ auto Account::transaction( UuidString const& transactionId ) const
   return mTransactions.at( transactionId );
 }
 
-void Account::logTransaction( Transaction transaction )
+void Account::logTransaction( Transaction const& transaction )
 {
+  if (not isOpen()) {
+    throw ClosedAccountException();
+  }
+
   UuidString const transactionId = transaction.transactionId();
 
   if (mTransactions.contains( transactionId )) {
     throw DuplicateUuidException(
       std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }
-  mTransactions.insert( { transactionId, std::move( transaction ) } );
+  mTransactions.insert( { transactionId, transaction } );
   mBalance += mTransactions.at( transactionId ).amount();
 }
+
+void Account::closeAccount()
+{
+  mIsOpen = false;
+}
+
+void Account::openAccount()
+{
+  mIsOpen = true;
+}
+
 } // namespace dbsc
 
 // -----------------------------------------------------------------------------
