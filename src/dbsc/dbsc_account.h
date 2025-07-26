@@ -91,6 +91,9 @@ public:
   /// transactions.
   void openAccount();
 
+  friend auto operator==( Account const& a, Account const& b )
+    -> bool = default;
+
 private:
   UuidString mId;
   std::string mName {};

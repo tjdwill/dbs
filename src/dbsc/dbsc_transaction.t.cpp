@@ -38,21 +38,22 @@ static void testGetters()
 
 static void testEquality()
 {
-  Transaction const t1 {
-    dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
-    dbsc::UuidStringUtil::generate(), "2000"_d64,
-    std::chrono::system_clock::now(), ""
-  };
-  Transaction const t2 {
-    dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
-    dbsc::UuidStringUtil::generate(), "2222.12"_d64,
-    std::chrono::system_clock::now(), ""
-  };
+  UuidString const transactionId     = dbsc::UuidStringUtil::generate();
+  UuidString const accountIdA        = dbsc::UuidStringUtil::generate();
+  UuidString const accountIdB        = dbsc::UuidStringUtil::generate();
+  auto const timeStamp               = std::chrono::system_clock::now();
+  auto const transactionAmount       = "2000"_d64;
+  std::string const transactionNotes = "";
+  Transaction const t1 { transactionId,     accountIdA, accountIdB,
+                         transactionAmount, timeStamp,  transactionNotes };
+  Transaction const t2 { transactionId,      accountIdB, accountIdA,
+                         -transactionAmount, timeStamp,  transactionNotes };
 
   assert( t1 != t2 );
   assert( t2 != t1 );
   assert( t1 == t1 );
   assert( t2 == t2 );
+  assert( Transaction::isPair( t1, t2 ) );
 }
 } // namespace
 

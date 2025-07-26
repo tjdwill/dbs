@@ -32,3 +32,14 @@ target_link_libraries(dbscAccount PUBLIC
 add_executable(testDbscAccount dbsc_account.t.cpp)
 target_link_libraries(testDbscAccount PRIVATE dbscAccount)
 add_test(NAME dbscAccount.t COMMAND testDbscAccount)
+
+# dbsc_accountbook
+add_library(dbscAccountBook dbsc_accountbook.cpp)
+target_link_libraries(dbscAccountBook PUBLIC
+  dbscAccount
+  dbscUuidString
+)
+add_executable(testDbscAccountBook dbsc_accountbook.t.cpp)
+target_link_libraries(testDbscAccountBook PRIVATE dbscAccountBook dbscAccount
+dbscUuidString)
+add_test(NAME dbscAccountBook.t COMMAND testDbscAccountBook)

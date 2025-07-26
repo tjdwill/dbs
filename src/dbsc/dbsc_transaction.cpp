@@ -50,6 +50,15 @@ auto Transaction::timeStamp() const -> TimeStamp
   return mTimeStamp;
 }
 
+auto Transaction::isPair( Transaction const& a, Transaction const& b ) -> bool
+{
+  return ( a.amount() == -b.amount() && a.notes() == b.notes()
+           && a.otherPartyId() == b.owningPartyId()
+           && a.owningPartyId() == b.otherPartyId()
+           && a.transactionId() == b.transactionId()
+           && a.timeStamp() == b.timeStamp() );
+}
+
 } // namespace dbsc
 
 // -----------------------------------------------------------------------------

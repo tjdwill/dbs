@@ -35,12 +35,12 @@ using TimeStamp = std::chrono::time_point< std::chrono::system_clock >;
 class Transaction
 {
 public:
-  [[nodiscard]] explicit Transaction( UuidString const& transactionId,
-                                      UuidString const& owningPartyId,
-                                      UuidString const& otherPartyId,
-                                      BloombergLP::bdldfp::Decimal64 amount,
-                                      TimeStamp timeStamp,
-                                      std::string const& notes );
+  [[nodiscard]] Transaction( UuidString const& transactionId,
+                             UuidString const& owningPartyId,
+                             UuidString const& otherPartyId,
+                             BloombergLP::bdldfp::Decimal64 amount,
+                             TimeStamp timeStamp,
+                             std::string const& notes );
 
   [[nodiscard]] auto amount() const -> BloombergLP::bdldfp::Decimal64;
   [[nodiscard]] auto notes() const -> std::string const&;
@@ -53,6 +53,10 @@ public:
   friend auto operator==( dbsc::Transaction const& t1,
                           dbsc::Transaction const& t2 ) -> bool = default;
 
+  /// Determine if two Transaction objects represent opposing perspectives of a
+  /// single transaction.
+  static auto isPair( Transaction const& a, Transaction const& b ) -> bool;
+
 private:
   UuidString mTransactionId;
   /// The account that owns this transaction object.
@@ -63,6 +67,7 @@ private:
   TimeStamp mTimeStamp;
   std::string mNotes {};
 };
+
 } // namespace dbsc
 #endif // include guard
 
