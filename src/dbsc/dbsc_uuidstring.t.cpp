@@ -3,15 +3,15 @@
 #include <dbsc/dbsc_uuidstring.h>
 
 #include <cassert>
-#include <iostream>
-#include <ranges>
+#include <iostream> // for testing
+#include <ranges>   // for testing
 
 namespace {
 static void testException()
 {
   try {
     auto const failedUuid = dbsc::UuidStringUtil::fromString( "Invalid UUID" );
-  } catch (dbsc::InvalidUuidException const& e) {
+  } catch ( dbsc::InvalidUuidException const& e ) {
   }
 }
 
@@ -23,7 +23,7 @@ static void testGeneration()
   // Test the generation functions as well as the conversions to and from
   // std::strings.
   auto base = dbsc::UuidStringUtil::generate();
-  for (auto _ : std::views::iota( 0, 1000 )) {
+  for ( auto _ : std::views::iota( 0, 1000 ) ) {
     auto generated = dbsc::UuidStringUtil::generate();
     std::cout << generated << "\n";
     assert( base != generated );

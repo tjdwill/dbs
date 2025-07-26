@@ -35,11 +35,33 @@ static void testGetters()
   assert( transaction.timeStamp() == timeStamp );
   assert( transaction.notes() == notes );
 }
+
+static void testEquality()
+{
+  Transaction const t1 {
+    dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
+    dbsc::UuidStringUtil::generate(), "2000"_d64,
+    std::chrono::system_clock::now(), ""
+  };
+  Transaction const t2 {
+    dbsc::UuidStringUtil::generate(), dbsc::UuidStringUtil::generate(),
+    dbsc::UuidStringUtil::generate(), "2222.12"_d64,
+    std::chrono::system_clock::now(), ""
+  };
+
+  assert( t1 != t2 );
+  assert( t2 != t1 );
+  assert( t1 == t1 );
+  assert( t2 == t2 );
+}
 } // namespace
 
 int main()
 {
   testGetters();
+  testEquality();
+
+  return 0;
 }
 
 // -----------------------------------------------------------------------------

@@ -18,7 +18,7 @@ int main()
   uuids::uuid_random_generator uuidGenerator { generator };
 
   using namespace uuids;
-  for (auto _ : std::views::iota( 0, 10 )) {
+  for ( auto _ : std::views::iota( 0, 10 ) ) {
     uuid currentUuid = uuidGenerator();
     std::cout << currentUuid << "\n";
     uuid const testUuid =

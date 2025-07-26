@@ -57,7 +57,7 @@ auto UuidString::view() const noexcept -> std::string_view
 auto UuidStringUtil::fromString( std::string candidate ) -> UuidString
 {
   auto test = uuids::uuid::from_string( std::string_view( candidate ) );
-  if (not test.has_value()) {
+  if ( not test.has_value() ) {
     throw InvalidUuidException {};
   }
 
@@ -69,7 +69,7 @@ auto UuidStringUtil::generate() -> UuidString
   static bool sGeneratorInitialized { false };
   static std::mt19937 sGenerator;
 
-  if (not sGeneratorInitialized) {
+  if ( not sGeneratorInitialized ) {
     std::random_device rd {};
     auto seedData = std::array< int, std::mt19937::state_size > {};
     std::generate(

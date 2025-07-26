@@ -49,6 +49,10 @@ public:
   [[nodiscard]] auto timeStamp() const -> TimeStamp;
   [[nodiscard]] auto transactionId() const -> UuidString const&;
 
+  /// This comparison is needed for comparign
+  friend auto operator==( dbsc::Transaction const& t1,
+                          dbsc::Transaction const& t2 ) -> bool = default;
+
 private:
   UuidString mTransactionId;
   /// The account that owns this transaction object.

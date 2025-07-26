@@ -103,13 +103,13 @@ auto Account::transaction( UuidString const& transactionId ) const
 
 void Account::logTransaction( Transaction const& transaction )
 {
-  if (not isOpen()) {
+  if ( not isOpen() ) {
     throw ClosedAccountException();
   }
 
   UuidString const transactionId = transaction.transactionId();
 
-  if (mTransactions.contains( transactionId )) {
+  if ( mTransactions.contains( transactionId ) ) {
     throw DuplicateUuidException(
       std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }

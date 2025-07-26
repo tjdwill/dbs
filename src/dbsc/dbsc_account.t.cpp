@@ -64,7 +64,7 @@ int main()
   // Test transaction retrieval
   sampleAccountMut().logTransaction( kExampleTransaction );
   dbsc::UuidString transactionId;
-  for (auto const& [id, _] : sampleAccount()) {
+  for ( auto const& [id, _] : sampleAccount() ) {
     assert( sampleAccount().transactionCount() == 1 );
     transactionId = id;
   }
@@ -76,7 +76,7 @@ int main()
   // Attempt to add a duplicate transaction.
   try {
     sampleAccountMut().logTransaction( kExampleTransaction );
-  } catch (dbsc::DuplicateUuidException const&) {
+  } catch ( dbsc::DuplicateUuidException const& ) {
   }
 
   // Attempt to add a transaction to a closed account
@@ -89,7 +89,7 @@ int main()
 
     sampleAccountMut().closeAccount();
     sampleAccountMut().logTransaction( newTransaction );
-  } catch (dbsc::ClosedAccountException const&) {
+  } catch ( dbsc::ClosedAccountException const& ) {
   }
   // Re-open the account
   sampleAccountMut().openAccount();
