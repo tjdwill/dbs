@@ -5,7 +5,7 @@
 
 #include <bdldfp_decimal.h>
 
-#include <cassert>
+#include <cassert>  // for testing
 #include <chrono>
 #include <string>
 
