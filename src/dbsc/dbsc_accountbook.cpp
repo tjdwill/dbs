@@ -1,6 +1,8 @@
 // dbsc_accountbook.cpp
 #include "dbsc_accountbook.h"
 
+#include "dbsc_uuidstring.h"
+
 #include <dbsc/dbsc_transaction.h>
 
 #include <bdldfp_decimal.h>
@@ -120,7 +122,24 @@ auto AccountBook::makeTransaction(
   std::optional< std::reference_wrapper< UuidString const > > otherPartyId )
   -> UuidString
 {
-  UuidString const transactionId = dbsc::UuidStringUtil::generate();
+
+  auto loopGenerateId = [&accountId, &otherPartyId, this]() {
+    bool idGenerated { false };
+    UuidString generatedId;
+    while ( not idGenerated ) {
+      generatedId = UuidStringUtil::generate();
+      if ( account( accountId ).contains( generatedId )
+           || ( otherPartyId.has_value()
+                && account( *otherPartyId ).contains( generatedId ) ) ) {
+      } else {
+        idGenerated = true;
+      }
+    }
+
+    return generatedId;
+  };
+
+  UuidString const transactionId = loopGenerateId();
   TimeStamp const timeStamp      = std::chrono::system_clock::now();
   UuidString const secondPartyId = otherPartyId ? *otherPartyId : UuidString();
 

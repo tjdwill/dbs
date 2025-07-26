@@ -94,6 +94,7 @@ int main()
   // Re-open the account
   sampleAccountMut().openAccount();
   assert( sampleAccount().isOpen() );
+  assert( sampleAccount().contains( transactionId ) );
 
   assert( sampleAccount() == sampleAccount() );
 }

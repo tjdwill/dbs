@@ -95,6 +95,11 @@ auto Account::cend() const noexcept -> const_iterator
   return mTransactions.cend();
 }
 
+auto Account::contains( UuidString const& transactionId ) const -> bool
+{
+  return mTransactions.contains( transactionId );
+}
+
 auto Account::transaction( UuidString const& transactionId ) const
   -> Transaction const&
 {
@@ -109,7 +114,7 @@ void Account::logTransaction( Transaction const& transaction )
 
   UuidString const transactionId = transaction.transactionId();
 
-  if ( mTransactions.contains( transactionId ) ) {
+  if ( contains( transactionId ) ) {
     throw DuplicateUuidException(
       std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }

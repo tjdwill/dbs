@@ -66,6 +66,9 @@ public:
   auto end() const -> const_iterator;
   auto cend() const noexcept -> const_iterator;
 
+  /// Query if this account has a transaction with the provided Id.
+  auto contains( UuidString const& transactionId ) const -> bool;
+
   /// Retrieve the transaction data associated with the input transactionID.
   /// Propagates the `std::out_of_range` error if the transaction doesn't exist
   /// for the account.
