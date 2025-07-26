@@ -77,14 +77,14 @@ public:
 
   /// Record the transaction for the provided accountId and amounts. Returns the
   /// transaction Id.
-  /// The @a otherPartyId parameter is optional to allow transactions from
+  /// The @p otherPartyId parameter is optional to allow transactions from
   /// external sources without needing to check for the nil UUID. As a result,
-  /// it is assumed that @a accountId and @a otherPartyId are both valid Ids
+  /// it is assumed that @p accountId and @p otherPartyId are both valid Ids
   /// that currently exist in the account book. If this is not the case,
   /// dbsc::NonExistentAccount is thrown.
   ///
-  /// To represent a deposit into @a accountId, @amount should be positive.
-  /// Negative values represent withdrawls. If @otherPartyId is provided, both
+  /// To represent a deposit into @p accountId, @p amount should be positive.
+  /// Negative values represent withdrawls. If @p otherPartyId is provided, both
   /// accounts will share the same TimeStamp and transaction Id for their
   /// respective copies.
   auto makeTransaction(
