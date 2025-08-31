@@ -76,9 +76,8 @@ public:
   /// Returns the nil UUID "00000000-0000-0000-0000-000000000000"
   UuidString();
 
-  [[nodiscard]] auto operator<=>( UuidString const& other ) const = default;
-  [[nodiscard]] auto operator==( UuidString const& other ) const
-    -> bool = default;
+  [[nodiscard]] auto operator<=>( UuidString const& other ) const        = default;
+  [[nodiscard]] auto operator==( UuidString const& other ) const -> bool = default;
   [[nodiscard]] auto toStdString() const -> std::string;
   [[nodiscard]] auto view() const noexcept -> std::string_view;
 

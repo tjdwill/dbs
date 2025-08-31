@@ -5,7 +5,7 @@
 
 #include <bdldfp_decimal.h>
 
-#include <cassert>  // for testing
+#include <cassert> // for testing
 #include <chrono>
 #include <string>
 
@@ -24,9 +24,7 @@ static void testGetters()
   auto const timeStamp         = std::chrono::system_clock::now();
   std::string const notes { ""s };
 
-  Transaction const transaction { transactionId, owningPartyId,
-                                  otherPartyId,  transactionAmount,
-                                  timeStamp,     notes };
+  Transaction const transaction { transactionId, owningPartyId, otherPartyId, transactionAmount, timeStamp, notes };
 
   assert( transaction.transactionId() == transactionId );
   assert( transaction.owningPartyId() == owningPartyId );
@@ -44,10 +42,8 @@ static void testEquality()
   auto const timeStamp               = std::chrono::system_clock::now();
   auto const transactionAmount       = "2000"_d64;
   std::string const transactionNotes = "";
-  Transaction const t1 { transactionId,     accountIdA, accountIdB,
-                         transactionAmount, timeStamp,  transactionNotes };
-  Transaction const t2 { transactionId,      accountIdB, accountIdA,
-                         -transactionAmount, timeStamp,  transactionNotes };
+  Transaction const t1 { transactionId, accountIdA, accountIdB, transactionAmount, timeStamp, transactionNotes };
+  Transaction const t2 { transactionId, accountIdB, accountIdA, -transactionAmount, timeStamp, transactionNotes };
 
   assert( t1 != t2 );
   assert( t2 != t1 );

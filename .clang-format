@@ -16,7 +16,7 @@ AllowShortEnumsOnASingleLine: true
 BreakAfterReturnType: Automatic
 BreakBeforeBinaryOperators: NonAssignment
 #BreakBeforeTernaryOperators: true
-ColumnLimit: 80
+ColumnLimit: 120
 #Cpp11BracedListStyle: false
 FixNamespaceComments: true
 IncludeBlocks: Regroup

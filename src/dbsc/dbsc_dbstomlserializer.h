@@ -32,15 +32,14 @@ public:
   using InputType  = toml::table;
   using OutputType = InputType;
 
+  [[nodiscard]] static auto readAccountBook( std::filesystem::path const& filePath ) -> AccountBook;
+  static auto writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath );
+
+private:
   [[nodiscard]] static auto readTransaction( InputType& io ) -> Transaction;
   [[nodiscard]] static auto readAccount( InputType& io ) -> Account;
-  [[nodiscard]] static auto readAccountBook(
-    std::filesystem::path const& filePath ) -> AccountBook;
-  static auto writeTransaction( OutputType& io,
-                                Transaction const& transaction );
   static auto writeAccount( OutputType& io, Account const& account );
-  static auto writeAccountBook( AccountBook const& accountBook,
-                                std::filesystem::path const& filePath );
+  static auto writeTransaction( OutputType& io, Transaction const& transaction );
 };
 } // namespace dbsc
 

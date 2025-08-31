@@ -11,8 +11,7 @@
 
 namespace dbsc {
 
-DuplicateUuidException::DuplicateUuidException(
-  std::string const& errorMessage ) noexcept
+DuplicateUuidException::DuplicateUuidException( std::string const& errorMessage ) noexcept
   : mErrorMsg( std::move( errorMessage ) )
 {
 }
@@ -72,8 +71,7 @@ auto UuidStringUtil::generate() -> UuidString
   if ( not sGeneratorInitialized ) {
     std::random_device rd {};
     auto seedData = std::array< int, std::mt19937::state_size > {};
-    std::generate(
-      std::begin( seedData ), std::end( seedData ), std::ref( rd ) );
+    std::generate( std::begin( seedData ), std::end( seedData ), std::ref( rd ) );
     std::seed_seq seq( std::begin( seedData ), std::end( seedData ) );
     std::mt19937 generator { seq };
     sGeneratorInitialized = true;
@@ -89,8 +87,7 @@ auto UuidStringUtil::isNil( UuidString const& uuid ) -> bool
 }
 } // namespace dbsc
 
-auto dbsc::operator<<( std::ostream& os, dbsc::UuidString const& uuid )
-  -> std::ostream&
+auto dbsc::operator<<( std::ostream& os, dbsc::UuidString const& uuid ) -> std::ostream&
 {
   os << uuid.view();
   return os;

@@ -58,8 +58,7 @@ public:
   /// Return the account referred to by the identifier string.
   /// If the account does not exist, this function throws the
   /// dbsc::NonExistentAccount error.
-  [[nodiscard]] auto account( UuidString const& accountId ) const
-    -> Account const&;
+  [[nodiscard]] auto account( UuidString const& accountId ) const -> Account const&;
   [[nodiscard]] auto owner() const -> std::string const&;
 
   [[nodiscard]] auto begin() const -> const_iterator;
@@ -72,8 +71,7 @@ public:
 
   /// Create a new account based on the provided information, returning the
   /// account's Id.
-  auto createAccount( std::string const& accountName,
-                      std::string const& description ) -> UuidString;
+  auto createAccount( std::string const& accountName, std::string const& description ) -> UuidString;
 
   /// Record the transaction for the provided accountId and amounts. Returns the
   /// transaction Id.
@@ -87,12 +85,11 @@ public:
   /// Negative values represent withdrawls. If @p otherPartyId is provided, both
   /// accounts will share the same TimeStamp and transaction Id for their
   /// respective copies.
-  auto makeTransaction(
-    BloombergLP::bdldfp::Decimal64 amount,
-    std::string const& transactionNotes,
-    UuidString const& accountId,
-    std::optional< std::reference_wrapper< UuidString const > > otherPartyId =
-      std::nullopt ) -> UuidString;
+  auto makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
+                        std::string const& transactionNotes,
+                        UuidString const& accountId,
+                        std::optional< std::reference_wrapper< UuidString const > > otherPartyId = std::nullopt )
+    -> UuidString;
 
   /// Modify the writability of a given account.
   /// Throws dbsc::NonExistentAccount if account does not exist.

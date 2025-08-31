@@ -49,8 +49,7 @@ public:
   [[nodiscard]] auto timeStamp() const -> TimeStamp;
   [[nodiscard]] auto transactionId() const -> UuidString const&;
 
-  friend auto operator==( dbsc::Transaction const& t1,
-                          dbsc::Transaction const& t2 ) -> bool = default;
+  friend auto operator==( dbsc::Transaction const& t1, dbsc::Transaction const& t2 ) -> bool = default;
 
   /// Determine if two Transaction objects represent opposing perspectives of a
   /// single transaction.

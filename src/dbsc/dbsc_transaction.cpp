@@ -52,10 +52,8 @@ auto Transaction::timeStamp() const -> TimeStamp
 
 auto Transaction::isPair( Transaction const& a, Transaction const& b ) -> bool
 {
-  return ( a.amount() == -b.amount() && a.notes() == b.notes()
-           && a.otherPartyId() == b.owningPartyId()
-           && a.owningPartyId() == b.otherPartyId()
-           && a.transactionId() == b.transactionId()
+  return ( a.amount() == -b.amount() && a.notes() == b.notes() && a.otherPartyId() == b.owningPartyId()
+           && a.owningPartyId() == b.otherPartyId() && a.transactionId() == b.transactionId()
            && a.timeStamp() == b.timeStamp() );
 }
 

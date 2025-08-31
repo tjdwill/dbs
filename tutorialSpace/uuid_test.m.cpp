@@ -21,8 +21,7 @@ int main()
   for ( auto _ : std::views::iota( 0, 10 ) ) {
     uuid currentUuid = uuidGenerator();
     std::cout << currentUuid << "\n";
-    uuid const testUuid =
-      uuid::from_string( uuids::to_string( currentUuid ) ).value();
+    uuid const testUuid = uuid::from_string( uuids::to_string( currentUuid ) ).value();
     assert( currentUuid == testUuid );
   }
 }

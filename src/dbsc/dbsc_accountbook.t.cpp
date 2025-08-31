@@ -24,8 +24,7 @@ int main()
 
   dbsc::AccountBook accountBook { std::string { kOwnerName } };
   assert( accountBook.accountCount() == 0 );
-  auto const accountId =
-    accountBook.createAccount( "TestAccount", "Some Description" );
+  auto const accountId = accountBook.createAccount( "TestAccount", "Some Description" );
   assert( accountBook.accountCount() == 1 );
 
   try {
@@ -34,8 +33,7 @@ int main()
   }
 
   assert( accountBook.owner() == kOwnerName );
-  assert( accountBook.account( accountId )
-          == accountBook.account( accountId ) );
+  assert( accountBook.account( accountId ) == accountBook.account( accountId ) );
   assert( accountBook.cbegin() != accountBook.cend() );
   assert( accountBook.account( accountId ).isOpen() );
 
@@ -47,25 +45,17 @@ int main()
 
   /// External withdrawal
   auto const kTransactionAmount = "100.00"_d64;
-  accountBook.makeTransaction(
-    kTransactionAmount, "transactionNotes", accountId );
+  accountBook.makeTransaction( kTransactionAmount, "transactionNotes", accountId );
   assert( accountBook.account( accountId ).balance() == kTransactionAmount );
 
-  auto const secondAccountId =
-    accountBook.createAccount( "SecondAccount", "Second Description" );
+  auto const secondAccountId = accountBook.createAccount( "SecondAccount", "Second Description" );
 
   auto const transactionId =
-    accountBook.makeTransaction( kTransactionAmount,
-                                 "Internal account transactions",
-                                 secondAccountId,
-                                 accountId );
-  assert( accountBook.account( accountId ).balance()
-          == BloombergLP::bdldfp::Decimal64 {} );
-  assert( accountBook.account( secondAccountId ).balance()
-          == kTransactionAmount );
-  assert( dbsc::Transaction::isPair(
-    accountBook.account( secondAccountId ).transaction( transactionId ),
-    accountBook.account( accountId ).transaction( transactionId ) ) );
+    accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", secondAccountId, accountId );
+  assert( accountBook.account( accountId ).balance() == BloombergLP::bdldfp::Decimal64 {} );
+  assert( accountBook.account( secondAccountId ).balance() == kTransactionAmount );
+  assert( dbsc::Transaction::isPair( accountBook.account( secondAccountId ).transaction( transactionId ),
+                                     accountBook.account( accountId ).transaction( transactionId ) ) );
 }
 
 // -----------------------------------------------------------------------------

@@ -13,8 +13,7 @@
 
 namespace dbsc {
 
-NonExistentAccountException::NonExistentAccountException(
-  std::string const& errorMessage ) noexcept
+NonExistentAccountException::NonExistentAccountException( std::string const& errorMessage ) noexcept
   : mErrorMsg( errorMessage )
 {
 }
@@ -37,8 +36,7 @@ auto AccountBook::account( UuidString const& accountId ) const -> Account const&
   try {
     return mAccounts.at( accountId );
   } catch ( std::out_of_range const& ) {
-    throw NonExistentAccountException(
-      std::format( "Account with id {} does not exist.", accountId.view() ) );
+    throw NonExistentAccountException( std::format( "Account with id {} does not exist.", accountId.view() ) );
   }
 }
 
@@ -47,8 +45,7 @@ auto AccountBook::accountMut( UuidString const& accountId ) -> Account&
   try {
     return mAccounts.at( accountId );
   } catch ( std::out_of_range const& ) {
-    throw NonExistentAccountException(
-      std::format( "Account with id {} does not exist.", accountId.view() ) );
+    throw NonExistentAccountException( std::format( "Account with id {} does not exist.", accountId.view() ) );
   }
 }
 
@@ -92,9 +89,7 @@ auto AccountBook::accountCount() const -> int
   return static_cast< int >( mAccounts.size() );
 }
 
-auto AccountBook::createAccount( std::string const& accountName,
-                                 std::string const& accountDescription )
-  -> UuidString
+auto AccountBook::createAccount( std::string const& accountName, std::string const& accountDescription ) -> UuidString
 {
   // This function shouldn't fail, so attempt to add a new account
   // in the extremely unlikely event of duplicate id.
@@ -115,11 +110,10 @@ auto AccountBook::createAccount( std::string const& accountName,
   return accountId;
 }
 
-auto AccountBook::makeTransaction(
-  BloombergLP::bdldfp::Decimal64 amount,
-  std::string const& notes,
-  UuidString const& accountId,
-  std::optional< std::reference_wrapper< UuidString const > > otherPartyId )
+auto AccountBook::makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
+                                   std::string const& notes,
+                                   UuidString const& accountId,
+                                   std::optional< std::reference_wrapper< UuidString const > > otherPartyId )
   -> UuidString
 {
 
@@ -129,8 +123,7 @@ auto AccountBook::makeTransaction(
     while ( not idGenerated ) {
       generatedId = UuidStringUtil::generate();
       if ( account( accountId ).contains( generatedId )
-           || ( otherPartyId.has_value()
-                && account( *otherPartyId ).contains( generatedId ) ) ) {
+           || ( otherPartyId.has_value() && account( *otherPartyId ).contains( generatedId ) ) ) {
       } else {
         idGenerated = true;
       }
@@ -143,17 +136,10 @@ auto AccountBook::makeTransaction(
   TimeStamp const timeStamp      = std::chrono::system_clock::now();
   UuidString const secondPartyId = otherPartyId ? *otherPartyId : UuidString();
 
-  accountMut( accountId )
-    .logTransaction(
-      { transactionId, accountId, secondPartyId, amount, timeStamp, notes } );
+  accountMut( accountId ).logTransaction( { transactionId, accountId, secondPartyId, amount, timeStamp, notes } );
   if ( otherPartyId ) {
     accountMut( *otherPartyId )
-      .logTransaction( { transactionId,
-                         *otherPartyId,
-                         accountId,
-                         -amount,
-                         timeStamp,
-                         notes } );
+      .logTransaction( { transactionId, *otherPartyId, accountId, -amount, timeStamp, notes } );
   }
   return transactionId;
 }

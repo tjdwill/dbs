@@ -17,14 +17,11 @@ using namespace std::string_literals;
 
 namespace {
 constexpr std::string_view kAccountName { "Test Account" };
-constexpr std::string_view kAccountDescription {
-  "This is an account intended to test dbsc::Account."
-};
+constexpr std::string_view kAccountDescription { "This is an account intended to test dbsc::Account." };
 
 static auto sampleAccountMut() -> dbsc::Account&
 {
-  static dbsc::Account sTestAccount { std::string( kAccountName ),
-                                      std::string( kAccountDescription ) };
+  static dbsc::Account sTestAccount { std::string( kAccountName ), std::string( kAccountDescription ) };
 
   return sTestAccount;
 }
@@ -37,18 +34,15 @@ static auto sampleAccount() -> dbsc::Account const&
 bdldfp::Decimal64 const kTransactionAmount { "1000.27"_d64 };
 std::string const kTransactionDescription { "Test Transaction"s };
 
-dbsc::Transaction const kExampleTransaction {
-  dbsc::UuidStringUtil::generate(), sampleAccount().id(),
-  dbsc::UuidStringUtil::generate(), kTransactionAmount,
-  std::chrono::system_clock::now(), kTransactionDescription
-};
+dbsc::Transaction const kExampleTransaction { dbsc::UuidStringUtil::generate(), sampleAccount().id(),
+                                              dbsc::UuidStringUtil::generate(), kTransactionAmount,
+                                              std::chrono::system_clock::now(), kTransactionDescription };
 
 } // namespace
 
 static void testAccountAccessors()
 {
-  static_assert(
-    std::is_same_v< decltype( sampleAccount() ), dbsc::Account const& > );
+  static_assert( std::is_same_v< decltype( sampleAccount() ), dbsc::Account const& > );
   assert( &sampleAccount() == &sampleAccountMut() );
 
   assert( not dbsc::UuidStringUtil::isNil( sampleAccount().id() ) );
@@ -68,8 +62,7 @@ int main()
     assert( sampleAccount().transactionCount() == 1 );
     transactionId = id;
   }
-  dbsc::Transaction const& transaction =
-    sampleAccount().transaction( transactionId );
+  dbsc::Transaction const& transaction = sampleAccount().transaction( transactionId );
   assert( transaction.amount() == kTransactionAmount );
   assert( transaction.notes() == kTransactionDescription );
 
@@ -81,11 +74,9 @@ int main()
 
   // Attempt to add a transaction to a closed account
   try {
-    dbsc::Transaction const newTransaction {
-      dbsc::UuidStringUtil::generate(), sampleAccount().id(),
-      dbsc::UuidStringUtil::generate(), "2000.00"_d64,
-      std::chrono::system_clock::now(), ""
-    };
+    dbsc::Transaction const newTransaction { dbsc::UuidStringUtil::generate(), sampleAccount().id(),
+                                             dbsc::UuidStringUtil::generate(), "2000.00"_d64,
+                                             std::chrono::system_clock::now(), "" };
 
     sampleAccountMut().closeAccount();
     sampleAccountMut().logTransaction( newTransaction );

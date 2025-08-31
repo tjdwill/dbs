@@ -49,8 +49,7 @@ public:
     std::map< UuidString, Transaction >::const_iterator;          // NOLINT
   using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
 
-  [[nodiscard]] explicit Account( std::string const& name,
-                                  std::string const& description );
+  [[nodiscard]] explicit Account( std::string const& name, std::string const& description );
 
   // Accessors
 
@@ -72,8 +71,7 @@ public:
   /// Retrieve the transaction data associated with the input transactionID.
   /// Propagates the `std::out_of_range` error if the transaction doesn't exist
   /// for the account.
-  [[nodiscard]] auto transaction( UuidString const& transactionId ) const
-    -> Transaction const&;
+  [[nodiscard]] auto transaction( UuidString const& transactionId ) const -> Transaction const&;
 
   /// Queries if the account is open for making new transactions.
   [[nodiscard]] auto isOpen() const -> bool;
@@ -94,8 +92,7 @@ public:
   /// transactions.
   void openAccount();
 
-  friend auto operator==( Account const& a, Account const& b )
-    -> bool = default;
+  friend auto operator==( Account const& a, Account const& b ) -> bool = default;
 
 private:
   UuidString mId;

@@ -10,8 +10,7 @@
 
 namespace dbsc {
 
-ClosedAccountException::ClosedAccountException(
-  std::string const& errorMessage ) noexcept
+ClosedAccountException::ClosedAccountException( std::string const& errorMessage ) noexcept
   : mErrorMsg( errorMessage )
 {
 }
@@ -100,8 +99,7 @@ auto Account::contains( UuidString const& transactionId ) const -> bool
   return mTransactions.contains( transactionId );
 }
 
-auto Account::transaction( UuidString const& transactionId ) const
-  -> Transaction const&
+auto Account::transaction( UuidString const& transactionId ) const -> Transaction const&
 {
   return mTransactions.at( transactionId );
 }
@@ -115,8 +113,7 @@ void Account::logTransaction( Transaction const& transaction )
   UuidString const transactionId = transaction.transactionId();
 
   if ( contains( transactionId ) ) {
-    throw DuplicateUuidException(
-      std::format( "Transaction {0} already exists.", transactionId.view() ) );
+    throw DuplicateUuidException( std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }
   mTransactions.insert( { transactionId, transaction } );
   mBalance += mTransactions.at( transactionId ).amount();

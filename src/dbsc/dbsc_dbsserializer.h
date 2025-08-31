@@ -30,8 +30,7 @@ class AccountBook;
 /// `Serializer::InputType` refers to the source from which the dbsc classes are
 /// parsed.
 template< typename Serializer >
-concept DbsReader = requires( typename Serializer::InputType& io,
-                              std::filesystem::path const& filePath ) {
+concept DbsReader = requires( typename Serializer::InputType& io, std::filesystem::path const& filePath ) {
   Serializer::readTransaction( io )->Transaction;
   Serializer::readAccount( io )->Account;
   /// Parse the accountBook from file.
