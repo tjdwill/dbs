@@ -33,10 +33,13 @@
 /// ```
 ///
 
+#include <stduuid/uuid.h>
+
 #include <exception>
 #include <iosfwd>
 #include <string>
 #include <string_view>
+#include <type_traits>
 
 namespace dbsc {
 
@@ -97,7 +100,19 @@ struct UuidStringUtil
 {
   /// Attempt to construct a UuidString from an external source. Throws
   /// `dbsc::InvalidUuidException` if input is non-conformant.
-  [[nodiscard]] static auto fromString( std::string candidate ) -> UuidString;
+  template< typename StringViewable >
+    requires std::is_convertible_v< StringViewable, std::string_view >
+  [[nodiscard]] static auto fromString( StringViewable candidate ) -> UuidString
+  {
+    std::string_view const candidateView = std::string_view( candidate );
+    auto test                            = uuids::uuid::from_string( candidateView );
+    if ( not test.has_value() ) {
+      throw InvalidUuidException {};
+    }
+
+    return UuidString( std::string( candidateView ) );
+  }
+
   /// Generate a UUIDv4 (i.e. randomly-generated) string
   [[nodiscard]] static auto generate() -> UuidString;
   /// Queries if the uuid is the "00000000-0000-0000-0000-000000000000" string.

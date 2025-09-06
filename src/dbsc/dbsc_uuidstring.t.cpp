@@ -10,7 +10,7 @@ namespace {
 static void testException()
 {
   try {
-    auto const failedUuid = dbsc::UuidStringUtil::fromString( "Invalid UUID" );
+    auto const failedUuid = dbsc::UuidStringUtil::fromString<>( "Invalid UUID" );
   } catch ( dbsc::InvalidUuidException const& e ) {
   }
 }
@@ -28,8 +28,8 @@ static void testGeneration()
     std::cout << generated << "\n";
     assert( base != generated );
     assert( nilUuid != generated );
-    assert( generated == dbsc::UuidStringUtil::fromString( std::string( generated.view() ) ) );
-    assert( generated == dbsc::UuidStringUtil::fromString( generated.toStdString() ) );
+    assert( generated == dbsc::UuidStringUtil::fromString< std::string_view >( generated.view() ) );
+    assert( generated == dbsc::UuidStringUtil::fromString< std::string >( generated.toStdString() ) );
   }
 }
 } // namespace

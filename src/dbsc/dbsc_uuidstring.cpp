@@ -1,8 +1,6 @@
 // dbsc_uuid_string.cpp
 #include "dbsc_uuidstring.h"
 
-#include <stduuid/uuid.h>
-
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -51,16 +49,6 @@ auto UuidString::toStdString() const -> std::string
 auto UuidString::view() const noexcept -> std::string_view
 {
   return mData;
-}
-
-auto UuidStringUtil::fromString( std::string candidate ) -> UuidString
-{
-  auto test = uuids::uuid::from_string( std::string_view( candidate ) );
-  if ( not test.has_value() ) {
-    throw InvalidUuidException {};
-  }
-
-  return UuidString( candidate );
 }
 
 auto UuidStringUtil::generate() -> UuidString

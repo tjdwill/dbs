@@ -5,7 +5,7 @@ set(debugOptions -Wall -Werror -Wextra -Wpedantic)
 # dbsc_uuid_string
 add_library(dbscUuidString dbsc_uuidstring.cpp)
 target_compile_options(dbscUuidString PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
-target_include_directories(dbscUuidString PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty)
+target_include_directories(dbscUuidString PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty)
 add_executable(testDbscUuidString dbsc_uuidstring.t.cpp)
 target_link_libraries(testDbscUuidString PRIVATE
   dbscUuidString
