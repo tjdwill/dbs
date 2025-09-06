@@ -21,6 +21,7 @@ namespace dbsc {
 class Transaction;
 class Account;
 class AccountBook;
+class UuidString;
 
 /// These concepts is a protocol that specifies the interface for serialization
 /// operations concerning DBS classes. Implementers are responsible for
@@ -29,13 +30,16 @@ class AccountBook;
 
 /// `Serializer::InputType` refers to the source from which the dbsc classes are
 /// parsed.
+/// TODO: Figure out how to handle temporary data/intermediary data. What happens during
+/// crashes?
 template< typename Serializer >
-concept DbsReader = requires( typename Serializer::InputType& io, std::filesystem::path const& filePath ) {
-  Serializer::readTransaction( io )->Transaction;
-  Serializer::readAccount( io )->Account;
-  /// Parse the accountBook from file.
-  Serializer::readAccountBook( filePath )->AccountBook;
-};
+concept DbsReader =
+  requires( typename Serializer::InputType& io, std::filesystem::path const& filePath, UuidString const& idString ) {
+    Serializer::readTransaction( io, idString )->Transaction;
+    Serializer::readAccount( io, idString )->Account;
+    /// Parse the accountBook from file.
+    Serializer::readAccountBook( filePath )->AccountBook;
+  };
 /// `Serializer::OutputType` refers to the source to which the dbsc classes are
 /// written.
 template< typename Serializer >

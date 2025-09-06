@@ -13,6 +13,8 @@
 //@DESCRIPTION: This component defines a specific implementation for
 //  dbsc::DbsSerializer.
 
+#include "dbsc_uuidstring.h"
+
 #include <dbsc/dbsc_dbsserializer.h>
 
 #include <tomlplusplus/toml.hpp>
@@ -33,11 +35,9 @@ public:
   using OutputType = InputType;
 
   [[nodiscard]] static auto readAccountBook( std::filesystem::path const& filePath ) -> AccountBook;
+  [[nodiscard]] static auto readAccount( InputType& io, UuidString const& accountId ) -> Account;
+  [[nodiscard]] static auto readTransaction( InputType& io, UuidString const& owningPartyId ) -> Transaction;
   static auto writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath );
-
-private:
-  [[nodiscard]] static auto readTransaction( InputType& io ) -> Transaction;
-  [[nodiscard]] static auto readAccount( InputType& io ) -> Account;
   static auto writeAccount( OutputType& io, Account const& account );
   static auto writeTransaction( OutputType& io, Transaction const& transaction );
 };
