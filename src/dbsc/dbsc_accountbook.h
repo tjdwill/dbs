@@ -96,6 +96,10 @@ public:
   void closeAccount( UuidString const& accountId );
   void openAccount( UuidString const& accountId );
 
+  /// Insert the account into the collection. This function is intended for
+  /// de-serialization purposes.
+  void addParsedAccount( Account account );
+
 private:
   auto accountMut( UuidString const& accountId ) -> Account&;
   auto begin() -> iterator;

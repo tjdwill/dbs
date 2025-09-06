@@ -15,18 +15,21 @@ using namespace BloombergLP::bdldfp::DecimalLiterals;
 using namespace std::string_view_literals;
 std::string_view constexpr kOwnerName { "tjdwill"sv };
 
-dbsc::UuidString const kTransaction { dbsc::UuidStringUtil::generate() };
-
 } // namespace
 
 int main()
 {
 
   dbsc::AccountBook accountBook { std::string { kOwnerName } };
+
+  // Test: adding accounts
   assert( accountBook.accountCount() == 0 );
   auto const accountId = accountBook.createAccount( "TestAccount", "Some Description" );
   assert( accountBook.accountCount() == 1 );
+  accountBook.addParsedAccount( dbsc::Account( "SomeOwner", "" ) );
+  assert( accountBook.accountCount() == 2 );
 
+  // Test accessors
   try {
     auto const badAccountAccess = accountBook.account( {} );
   } catch ( dbsc::NonExistentAccountException const& ) {

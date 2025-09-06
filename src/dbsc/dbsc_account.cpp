@@ -25,13 +25,18 @@ auto ClosedAccountException::what() const noexcept -> char const*
   return mErrorMsg.c_str();
 }
 
-Account::Account( std::string const& name, std::string const& description )
-  : mId( UuidStringUtil::generate() )
+Account::Account( UuidString const& accountId, std::string const& name, std::string const& description )
+  : mId( accountId )
   , mName( name )
   , mDescription( description )
 {
   using namespace BloombergLP::bdldfp::DecimalLiterals;
   assert( mBalance == "0.0"_d64 );
+}
+
+Account::Account( std::string const& name, std::string const& description )
+  : Account( UuidStringUtil::generate(), name, description )
+{
 }
 
 auto Account::balance() const -> BloombergLP::bdldfp::Decimal64
@@ -112,10 +117,11 @@ void Account::logTransaction( Transaction const& transaction )
 
   UuidString const transactionId = transaction.transactionId();
 
-  if ( contains( transactionId ) ) {
+  try {
+    mTransactions.insert( { transactionId, transaction } );
+  } catch ( std::out_of_range& /*error*/ ) {
     throw DuplicateUuidException( std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }
-  mTransactions.insert( { transactionId, transaction } );
   mBalance += mTransactions.at( transactionId ).amount();
 }
 

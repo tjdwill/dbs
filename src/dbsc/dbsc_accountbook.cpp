@@ -153,6 +153,18 @@ void AccountBook::openAccount( UuidString const& accountId )
 {
   accountMut( accountId ).openAccount();
 }
+
+void AccountBook::addParsedAccount( Account account )
+{
+  auto const accountId = account.id();
+  try {
+    mAccounts.insert( { accountId, std::move( account ) } );
+  } catch ( std::out_of_range const& ) {
+    throw DuplicateUuidException( std::format(
+      "Account with id {} already exists with name '{}'.", accountId.view(), this->account( accountId ).name() ) );
+  }
+}
+
 } // namespace dbsc
 
 // -----------------------------------------------------------------------------

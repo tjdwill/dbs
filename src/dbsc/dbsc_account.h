@@ -49,6 +49,9 @@ public:
     std::map< UuidString, Transaction >::const_iterator;          // NOLINT
   using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
 
+  [[nodiscard]] explicit Account( UuidString const& accountId,
+                                  std::string const& name,
+                                  std::string const& description );
   [[nodiscard]] explicit Account( std::string const& name, std::string const& description );
 
   // Accessors
