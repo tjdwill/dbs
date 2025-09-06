@@ -52,3 +52,6 @@ target_link_libraries(dbscToml PUBLIC
   dbscUuidString
   bdl
   bsl)
+add_executable(testDbscToml dbsc_dbstomlserializer.t.cpp)
+target_link_libraries(testDbscToml PRIVATE dbscToml dbscAccountBook dbscTransaction dbscAccount)
+add_test(NAME dbscToml.t COMMAND testDbscToml)

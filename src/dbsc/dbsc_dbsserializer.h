@@ -14,7 +14,7 @@
 //
 //@DESCRIPTION: This component defines an abstract interface that specifies
 // serialization and deserialization operations for DBS classes.
-
+#include <concepts>
 #include <filesystem>
 
 namespace dbsc {
@@ -35,10 +35,10 @@ class UuidString;
 template< typename Serializer >
 concept DbsReader =
   requires( typename Serializer::InputType& io, std::filesystem::path const& filePath, UuidString const& idString ) {
-    Serializer::readTransaction( io, idString )->Transaction;
-    Serializer::readAccount( io, idString )->Account;
+    { Serializer::readTransaction( io, idString ) } -> std::same_as< Transaction >;
+    { Serializer::readAccount( io, idString ) } -> std::same_as< Account >;
     /// Parse the accountBook from file.
-    Serializer::readAccountBook( filePath )->AccountBook;
+    { Serializer::readAccountBook( filePath ) } -> std::same_as< AccountBook >;
   };
 /// `Serializer::OutputType` refers to the source to which the dbsc classes are
 /// written.
