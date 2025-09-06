@@ -1,8 +1,6 @@
 // dbsc_transaction.cpp
 #include "dbsc_transaction.h"
 
-#include "dbsc_uuidstring.h"
-
 namespace dbsc {
 
 Transaction::Transaction( UuidString const& transactionId,

@@ -6,9 +6,6 @@
 //
 //@CLASSES:
 //  dbsc::DbsTomlSerializer: Serializer for the DBS classes in a TOML interface.
-//  dbsc::DbsTomlSerializerImpl: A conceptually-private implementation to allow
-//    dbsc::DbsTomlSerializer to be constrained with the dbsc::DbsSerializer
-//    concept.
 //
 //@DESCRIPTION: This component defines a specific implementation for
 //  dbsc::DbsSerializer.

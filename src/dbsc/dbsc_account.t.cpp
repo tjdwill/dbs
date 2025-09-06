@@ -72,21 +72,9 @@ int main()
   } catch ( dbsc::DuplicateUuidException const& ) {
   }
 
-  // Attempt to add a transaction to a closed account
-  try {
-    dbsc::Transaction const newTransaction { dbsc::UuidStringUtil::generate(), sampleAccount().id(),
-                                             dbsc::UuidStringUtil::generate(), "2000.00"_d64,
-                                             std::chrono::system_clock::now(), "" };
-
-    sampleAccountMut().closeAccount();
-    sampleAccountMut().logTransaction( newTransaction );
-  } catch ( dbsc::ClosedAccountException const& ) {
-  }
-  // Re-open the account
-  sampleAccountMut().openAccount();
-  assert( sampleAccount().isOpen() );
+  sampleAccountMut().closeAccount();
+  assert( not sampleAccount().isOpen() );
   assert( sampleAccount().contains( transactionId ) );
-
   assert( sampleAccount() == sampleAccount() );
 }
 

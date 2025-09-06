@@ -1,8 +1,6 @@
 // dbsc_accountbook.cpp
 #include "dbsc_accountbook.h"
 
-#include "dbsc_uuidstring.h"
-
 #include <dbsc/dbsc_transaction.h>
 
 #include <bdldfp_decimal.h>
@@ -116,6 +114,10 @@ auto AccountBook::makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
                                    std::optional< std::reference_wrapper< UuidString const > > otherPartyId )
   -> UuidString
 {
+
+  if ( !account( accountId ).isOpen() || ( otherPartyId && !account( *otherPartyId ).isOpen() ) ) {
+    throw ClosedAccountException( "Attempted to make a transaction on a closed account." );
+  }
 
   auto loopGenerateId = [&accountId, &otherPartyId, this]() {
     bool idGenerated { false };

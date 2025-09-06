@@ -6,6 +6,7 @@
 #include <bdldfp_decimal.h>
 
 #include <cassert> // for testing
+#include <functional>
 #include <string>
 #include <string_view> // for testing
 
@@ -51,6 +52,7 @@ int main()
   accountBook.makeTransaction( kTransactionAmount, "transactionNotes", accountId );
   assert( accountBook.account( accountId ).balance() == kTransactionAmount );
 
+  /// Inter-acccount Transaction
   auto const secondAccountId = accountBook.createAccount( "SecondAccount", "Second Description" );
 
   auto const transactionId =
@@ -59,6 +61,21 @@ int main()
   assert( accountBook.account( secondAccountId ).balance() == kTransactionAmount );
   assert( dbsc::Transaction::isPair( accountBook.account( secondAccountId ).transaction( transactionId ),
                                      accountBook.account( accountId ).transaction( transactionId ) ) );
+
+  /// Transaction on closed account
+  auto tryMakeTransaction = [&accountBook, kTransactionAmount](
+                              dbsc::UuidString const& accountId,
+                              std::optional< std::reference_wrapper< dbsc::UuidString const > > otherPartyId ) {
+    accountBook.closeAccount( accountId );
+    try {
+      accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", accountId, otherPartyId );
+    } catch ( dbsc::ClosedAccountException const& ) {
+    }
+    accountBook.openAccount( accountId );
+  };
+  tryMakeTransaction( secondAccountId, std::nullopt );
+  tryMakeTransaction( accountId, std::nullopt );
+  tryMakeTransaction( accountId, secondAccountId );
 }
 
 // -----------------------------------------------------------------------------

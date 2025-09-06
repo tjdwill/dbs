@@ -109,12 +109,8 @@ auto Account::transaction( UuidString const& transactionId ) const -> Transactio
   return mTransactions.at( transactionId );
 }
 
-void Account::logTransaction( Transaction const& transaction, UuidString const& transactionId )
+void Account::logTransaction( Transaction const& transaction )
 {
-  if ( not isOpen() ) {
-    throw ClosedAccountException();
-  }
-
   UuidString const transactionId = transaction.transactionId();
 
   try {

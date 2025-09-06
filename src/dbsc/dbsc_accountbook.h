@@ -75,14 +75,15 @@ public:
 
   /// Record the transaction for the provided accountId and amounts. Returns the
   /// transaction Id.
-  /// The @p otherPartyId parameter is optional to allow transactions from
-  /// external sources without needing to check for the nil UUID. As a result,
-  /// it is assumed that @p accountId and @p otherPartyId are both valid Ids
-  /// that currently exist in the account book. If this is not the case,
-  /// dbsc::NonExistentAccount is thrown.
+  /// The @param otherPartyId parameter is optional to allow transactions from
+  /// external sources. As a result,
+  /// it is assumed that if @param accountId and @param otherPartyId are valid Ids, they
+  /// correspond to accounts that currently exist in the account book. If this is not the case,
+  /// dbsc::NonExistentAccount is thrown. If either account is closed,
+  /// dbsc::ClosedAccountException is thrown
   ///
-  /// To represent a deposit into @p accountId, @p amount should be positive.
-  /// Negative values represent withdrawls. If @p otherPartyId is provided, both
+  /// To represent a deposit into @param accountId, @param amount should be positive.
+  /// Negative values represent withdrawls. If @param otherPartyId is provided, both
   /// accounts will share the same TimeStamp and transaction Id for their
   /// respective copies.
   auto makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
