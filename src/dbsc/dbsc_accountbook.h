@@ -57,7 +57,7 @@ public:
 
   /// Return the account referred to by the identifier string.
   /// If the account does not exist, this function throws the
-  /// dbsc::NonExistentAccount error.
+  /// @c dbsc::NonExistentAccount error.
   [[nodiscard]] auto account( UuidString const& accountId ) const -> Account const&;
   [[nodiscard]] auto owner() const -> std::string const&;
 
@@ -79,8 +79,8 @@ public:
   /// external sources. As a result,
   /// it is assumed that if @param accountId and @param otherPartyId are valid Ids, they
   /// correspond to accounts that currently exist in the account book. If this is not the case,
-  /// dbsc::NonExistentAccount is thrown. If either account is closed,
-  /// dbsc::ClosedAccountException is thrown
+  /// @c dbsc::NonExistentAccountException is thrown. If either account is closed,
+  /// @c dbsc::ClosedAccountException is thrown
   ///
   /// To represent a deposit into @param accountId, @param amount should be positive.
   /// Negative values represent withdrawls. If @param otherPartyId is provided, both
@@ -93,7 +93,7 @@ public:
     -> UuidString;
 
   /// Modify the writability of a given account.
-  /// Throws dbsc::NonExistentAccount if account does not exist.
+  /// @throws @c dbsc::NonExistentAccount if account does not exist.
   void closeAccount( UuidString const& accountId );
   void openAccount( UuidString const& accountId );
 

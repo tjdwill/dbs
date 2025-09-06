@@ -8,8 +8,14 @@
 
 #include <bdldfp_decimal.h>
 #include <bdldfp_decimalutil.h>
+#include <bslstl_iosfwd.h>
+#include <bslstl_ostringstream.h>
+#include <bslstl_string.h>
 
+#include <cassert>
 #include <chrono>
+#include <format>
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <string_view>
@@ -62,8 +68,9 @@ auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath )
     if ( tomlValue.is_table() ) {
       auto accountId = UuidStringUtil::fromString<>( key.str() );
 
-      auto valueTable = tomlValue.value< toml::table >().value();
-      accountBook.addParsedAccount( readAccount( valueTable, accountId ) );
+      auto* valueTable = tomlValue.as_table();
+      assert( valueTable );
+      accountBook.addParsedAccount( readAccount( *valueTable, accountId ) );
     }
   }
 
@@ -77,13 +84,12 @@ auto DbsTomlSerializer::readAccount( InputType& accountTomlTable, UuidString con
   Account account { accountId, accountName, accountDescription };
   account.openAccount(); // Ensure we can add the previous transactions.
 
-  auto const transactionArrayOfTables = accountTomlTable[kAccountTransactionsKey].value< toml::array >().value();
-  assert( transactionArrayOfTables.is_array_of_tables() );
-
-  for ( auto const& transactionTableNode : transactionArrayOfTables ) {
+  auto* const transactionArrayOfTables = accountTomlTable[kAccountTransactionsKey].as_array();
+  assert( transactionArrayOfTables->is_array_of_tables() );
+  for ( auto& transactionTableNode : *transactionArrayOfTables ) {
     assert( transactionTableNode.is_table() );
-    auto transactionTable = transactionTableNode.value< toml::table >().value();
-    account.logTransaction( DbsTomlSerializer::readTransaction( transactionTable, accountId ) );
+    auto* transactionTable = transactionTableNode.as_table();
+    account.logTransaction( DbsTomlSerializer::readTransaction( *transactionTable, accountId ) );
   }
 
   auto const accountIsOpen = accountTomlTable[kAccountOpenStatusKey].value< bool >().value();
@@ -113,6 +119,62 @@ auto DbsTomlSerializer::readTransaction( InputType& transactionTable, UuidString
 
   return Transaction( transactionId, owningPartyId, otherPartyId, transactionAmount, timeStamp, transactionNotes );
 }
+
+void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath )
+{
+  toml::table topLevelTable;
+  toml::value< std::string > accountOwner { accountBook.owner() };
+  topLevelTable.insert( kAccountBookOwnerKey, accountOwner );
+
+  for ( auto const& [accountId, account] : accountBook ) {
+    toml::table accountTable;
+    DbsTomlSerializer::writeAccount( accountTable, account );
+    topLevelTable.insert( accountId.view(), std::move( accountTable ) );
+  }
+
+  std::ofstream ofs { filePath };
+  if ( !ofs ) {
+    throw std::runtime_error( std::format( "Could not write to file '{}'.", filePath.c_str() ) );
+  }
+  ofs << topLevelTable << "\n";
+}
+
+void DbsTomlSerializer::writeAccount( OutputType& accountTable, Account const& account )
+{
+  toml::value< std::string > const accountName { account.name() };
+  toml::value< std::string > const accountDescription { account.description() };
+  toml::value< bool > accountIsOpen { account.isOpen() };
+  accountTable.insert( kAccountNameKey, accountName );
+  accountTable.insert( kAccountDescriptionKey, accountDescription );
+  accountTable.insert( kAccountOpenStatusKey, accountIsOpen );
+
+  toml::array transactionArray {};
+  for ( auto const& [_, transaction] : account ) {
+    toml::table transactionTable;
+    DbsTomlSerializer::writeTransaction( transactionTable, transaction );
+    transactionArray.push_back( std::move( transactionTable ) );
+  }
+  assert( transactionArray.is_array_of_tables() );
+  accountTable.insert( kAccountTransactionsKey, std::move( transactionArray ) );
+}
+
+void DbsTomlSerializer::writeTransaction( OutputType& transactionTable, Transaction const& transaction )
+{
+  toml::value< std::string > const transactionId { transaction.transactionId().view() };
+  toml::value< std::string > const otherPartyId { transaction.otherPartyId().view() };
+  bsl::ostringstream oss;
+  oss << transaction.amount();
+  toml::value< TomlCurrencyType > const transactionAmount { oss.str() };
+  toml::value< TomlDateTimeType > const dateTime { std::format( "{0:%F} {0:%T}", transaction.timeStamp() ) };
+  toml::value< std::string > const notes { transaction.notes() };
+
+  transactionTable.insert( kTransactionIdKey, std::move( transactionId ) );
+  transactionTable.insert( kTransactionOtherPartyIdKey, std::move( otherPartyId ) );
+  transactionTable.insert( kTransactionAmountKey, std::move( transactionAmount ) );
+  transactionTable.insert( kTransactionTimeStampKey, std::move( dateTime ) );
+  transactionTable.insert( kTransactionNotesKey, std::move( notes ) );
+}
+
 } // namespace dbsc
 
 // -----------------------------------------------------------------------------
