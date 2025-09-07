@@ -44,29 +44,15 @@ auto accountBook() -> dbsc::AccountBook const&
 
   return kAccountBook;
 }
-
-template< typename Serializer >
-  requires dbsc::DbsSerializer< Serializer >
-auto saveAccountBook( dbsc::AccountBook const& accountRecord, std::filesystem::path const& filePath )
-{
-  Serializer::writeAccountBook( accountRecord, filePath );
-}
-
-template< typename Serializer >
-  requires dbsc::DbsSerializer< Serializer >
-auto loadAccountBook( std::filesystem::path const& filePath ) -> dbsc::AccountBook
-{
-  return Serializer::readAccountBook( filePath );
-}
 } // namespace
 
 int main()
 {
   using namespace std::string_view_literals;
   std::filesystem::path const saveFile { "testAccountBook.toml"sv };
-  saveAccountBook< dbsc::DbsTomlSerializer >( accountBook(), saveFile );
+  dbsc::saveAccountBook< dbsc::DbsTomlSerializer >( accountBook(), saveFile );
 
-  auto const parsedAccountBook = loadAccountBook< dbsc::DbsTomlSerializer >( saveFile );
+  auto const parsedAccountBook = dbsc::loadAccountBook< dbsc::DbsTomlSerializer >( saveFile );
   assert( parsedAccountBook.owner() == accountBook().owner() );
   for ( auto const& [parsed, groundTruth] : std::views::zip( parsedAccountBook, accountBook() ) ) {
     assert( parsed == groundTruth );

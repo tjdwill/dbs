@@ -14,6 +14,8 @@
 //
 //@DESCRIPTION: This component defines an abstract interface that specifies
 // serialization and deserialization operations for DBS classes.
+#include <dbsc/dbsc_accountbook.h>
+
 #include <concepts>
 #include <filesystem>
 
@@ -56,6 +58,20 @@ concept DbsWriter = requires( typename Serializer::OutputType& io,
 
 template< typename Serializer >
 concept DbsSerializer = DbsReader< Serializer > && DbsWriter< Serializer >;
+
+template< typename Serializer >
+  requires dbsc::DbsSerializer< Serializer >
+auto saveAccountBook( dbsc::AccountBook const& accountRecord, std::filesystem::path const& filePath )
+{
+  Serializer::writeAccountBook( accountRecord, filePath );
+}
+
+template< typename Serializer >
+  requires dbsc::DbsSerializer< Serializer >
+auto loadAccountBook( std::filesystem::path const& filePath ) -> dbsc::AccountBook
+{
+  return Serializer::readAccountBook( filePath );
+}
 
 } // namespace dbsc
 
