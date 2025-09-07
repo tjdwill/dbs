@@ -1,5 +1,12 @@
 # DBS Journal
 
+## 6 September 2025
+
+It's been a while since I've made an entry, but I have been working on this from time to
+time. I've implemented working serialization (PY), and learned a bit about templates and
+concepts along the way. I consider this a great success. At this point, I think it may be
+time to consider the GUI design and front-end/back-end interface more concretely.
+
 ## 24 July 2025
 
 I realized that, should a user want to close an account, we need a way to prevent
