@@ -46,8 +46,7 @@ namespace {
 auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath ) -> AccountBook
 {
 
-  // Assume a valid
-  // TOML file.
+  // Assume a valid TOML file.
   if ( filePath.extension() != kTomlExtension ) {
     throw std::invalid_argument( std::format( "Invalid file extension. Expected {}. Got {}",
                                               filePath.filename().replace_extension( kTomlExtension ).c_str(),
