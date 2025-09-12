@@ -1,8 +1,6 @@
 // dbsc_dbstomlserializer.cpp
 #include "dbsc_dbstomlserializer.h"
 
-#include "dbsc_dbsserializer.h"
-
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
@@ -19,7 +17,6 @@
 #include <format>
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include <string_view>
 
 namespace dbsc {
@@ -43,8 +40,6 @@ namespace {
   using TomlCurrencyType = std::string;
 } // namespace
 
-/// @throws TODO: Create a macro for generating exception types. Use macro to create a
-/// DbsSerialization error.
 auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath ) -> AccountBook
 {
 
