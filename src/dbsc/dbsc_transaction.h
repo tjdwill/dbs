@@ -15,7 +15,7 @@
 //  - DateTime
 //  - Extra Notes
 
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 

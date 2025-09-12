@@ -11,9 +11,9 @@
 //@DESCRIPTION: This component defines a collection of accounts. The primary
 //  purpose is to allow iteration over a single user's accounts.
 
-#include <dbsc/dbsc_account.h>
-#include <dbsc/dbsc_registerexception.h>
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_account.h>
+#include <dbsc_registerexception.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
 

@@ -14,9 +14,9 @@
 //  of balance, and stores user-defined metadata such as the account name and
 //  description.
 
-#include <dbsc/dbsc_registerexception.h>
-#include <dbsc/dbsc_transaction.h>
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_registerexception.h>
+#include <dbsc_transaction.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
 

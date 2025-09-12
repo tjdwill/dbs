@@ -10,7 +10,7 @@
 //@DESCRIPTION: This component defines a specific implementation for
 //  dbsc::DbsSerializer.
 
-#include <dbsc/dbsc_dbsserializer.h>
+#include <dbsc_dbsserializer.h>
 
 #include <tomlplusplus/toml.hpp>
 

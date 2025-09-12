@@ -1,7 +1,7 @@
 // dbsc_accountbook.t.cpp
-#include <dbsc/dbsc_account.h>
-#include <dbsc/dbsc_accountbook.h>
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_account.h>
+#include <dbsc_accountbook.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 

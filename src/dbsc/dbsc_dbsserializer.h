@@ -17,8 +17,8 @@
 //
 //@DESCRIPTION: This component defines an abstract interface that specifies
 // serialization and deserialization operations for DBS classes.
-#include <dbsc/dbsc_accountbook.h>
-#include <dbsc/dbsc_registerexception.h>
+#include <dbsc_accountbook.h>
+#include <dbsc_registerexception.h>
 
 #include <concepts>
 #include <filesystem>

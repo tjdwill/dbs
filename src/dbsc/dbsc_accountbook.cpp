@@ -1,7 +1,7 @@
 // dbsc_accountbook.cpp
 #include "dbsc_accountbook.h"
 
-#include <dbsc/dbsc_transaction.h>
+#include <dbsc_transaction.h>
 
 #include <bdldfp_decimal.h>
 

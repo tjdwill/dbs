@@ -1,10 +1,10 @@
 // dbsc_dbstomlserializer.cpp
 #include "dbsc_dbstomlserializer.h"
 
-#include <dbsc/dbsc_account.h>
-#include <dbsc/dbsc_accountbook.h>
-#include <dbsc/dbsc_transaction.h>
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_account.h>
+#include <dbsc_accountbook.h>
+#include <dbsc_transaction.h>
+#include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 #include <bdldfp_decimalutil.h>

@@ -1,6 +1,6 @@
 // dbsc_uuid_string.t.cpp
 // Test Driver for UuidString and its factory
-#include <dbsc/dbsc_uuidstring.h>
+#include <dbsc_uuidstring.h>
 
 #include <cassert>
 #include <iostream> // for testing

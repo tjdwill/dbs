@@ -13,7 +13,7 @@ add_test(NAME dbscUuidString.t COMMAND testDbscUuidString)
 
 # dbsc_transaction
 add_library(dbscTransaction dbsc_transaction.cpp)
-target_link_libraries(dbscTransaction PUBLIC 
+target_link_libraries(dbscTransaction 
   dbscUuidString
   bdl)
 add_executable(testDbscTransaction dbsc_transaction.t.cpp)
@@ -42,16 +42,22 @@ target_link_libraries(testDbscAccountBook PRIVATE
   dbscUuidString)
 add_test(NAME dbscAccountBook.t COMMAND testDbscAccountBook)
 
+# dbsc_dbsserializer
+## Ensure the header compiles in isolation.
+add_library(dbscSerializer dbsc_dbsserializer.cpp)
+target_link_libraries(dbscSerializer PUBLIC
+  dbscAccountBook)
 
 # dbsc_dbstomlserializer
-add_library(dbscToml dbsc_dbstomlserializer.cpp)
-target_link_libraries(dbscToml PUBLIC
+add_library(dbscTomlSerializer dbsc_dbstomlserializer.cpp)
+target_link_libraries(dbscTomlSerializer PUBLIC
   dbscAccountBook
   dbscAccount
+  dbscSerializer
   dbscTransaction
   dbscUuidString
   bdl
   bsl)
-add_executable(testDbscToml dbsc_dbstomlserializer.t.cpp)
-target_link_libraries(testDbscToml PRIVATE dbscToml dbscAccountBook dbscTransaction dbscAccount)
-add_test(NAME dbscToml.t COMMAND testDbscToml)
+add_executable(testDbscTomlSerializer dbsc_dbstomlserializer.t.cpp)
+target_link_libraries(testDbscTomlSerializer PRIVATE dbscTomlSerializer dbscAccountBook dbscTransaction dbscAccount)
+add_test(NAME dbscTomlSerializer.t COMMAND testDbscTomlSerializer)

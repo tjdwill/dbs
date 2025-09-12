@@ -1,9 +1,9 @@
 // dbsc_dbstomlserializer.t.cpp
-#include <dbsc/dbsc_account.h>
-#include <dbsc/dbsc_accountbook.h>
-#include <dbsc/dbsc_dbsserializer.h>
-#include <dbsc/dbsc_dbstomlserializer.h>
-#include <dbsc/dbsc_transaction.h>
+#include <dbsc_account.h>
+#include <dbsc_accountbook.h>
+#include <dbsc_dbsserializer.h>
+#include <dbsc_dbstomlserializer.h>
+#include <dbsc_transaction.h>
 
 #include <bdldfp_decimal.fwd.h>
 #include <bdldfp_decimal.h>
