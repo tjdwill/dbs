@@ -31,11 +31,11 @@ public:
   using OutputType = InputType;
 
   [[nodiscard]] static auto readAccountBook( std::filesystem::path const& filePath ) -> AccountBook;
-  [[nodiscard]] static auto readAccount( InputType& io, UuidString const& accountId ) -> Account;
-  [[nodiscard]] static auto readTransaction( InputType& io, UuidString const& owningPartyId ) -> Transaction;
+  [[nodiscard]] static auto readAccountInternal( InputType& io, UuidString const& accountId ) -> Account;
+  [[nodiscard]] static auto readTransactionInternal( InputType& io, UuidString const& owningPartyId ) -> Transaction;
   static void writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath );
-  static void writeAccount( OutputType& io, Account const& account );
-  static void writeTransaction( OutputType& io, Transaction const& transaction );
+  static void writeAccountInternal( OutputType& io, Account const& account );
+  static void writeTransactionInternal( OutputType& io, Transaction const& transaction );
 };
 } // namespace dbsc
 

@@ -10,21 +10,6 @@
 
 namespace dbsc {
 
-ClosedAccountException::ClosedAccountException( std::string const& errorMessage ) noexcept
-  : mErrorMsg( errorMessage )
-{
-}
-
-ClosedAccountException::ClosedAccountException() noexcept
-  : ClosedAccountException( "Attempted to modify a closed account." )
-{
-}
-
-auto ClosedAccountException::what() const noexcept -> char const*
-{
-  return mErrorMsg.c_str();
-}
-
 Account::Account( UuidString const& accountId, std::string const& name, std::string const& description )
   : mId( accountId )
   , mName( name )

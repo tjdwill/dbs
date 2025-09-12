@@ -9,28 +9,6 @@
 
 namespace dbsc {
 
-DuplicateUuidException::DuplicateUuidException( std::string const& errorMessage ) noexcept
-  : mErrorMsg( std::move( errorMessage ) )
-{
-}
-
-DuplicateUuidException::DuplicateUuidException() noexcept
-  : dbsc::DuplicateUuidException( "An object with this UUID already exists." )
-{
-}
-
-auto DuplicateUuidException::what() const noexcept -> char const*
-{
-  return mErrorMsg.c_str();
-}
-
-InvalidUuidException::InvalidUuidException() noexcept {};
-
-auto InvalidUuidException::what() const noexcept -> char const*
-{
-  return "Input is not a UUID-conformant string.";
-}
-
 UuidString::UuidString()
   : mData( uuids::to_string( uuids::uuid {} ) )
 {

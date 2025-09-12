@@ -11,19 +11,6 @@
 
 namespace dbsc {
 
-NonExistentAccountException::NonExistentAccountException( std::string const& errorMessage ) noexcept
-  : mErrorMsg( errorMessage )
-{
-}
-
-NonExistentAccountException::NonExistentAccountException() noexcept
-  : NonExistentAccountException( "" ) {};
-
-auto NonExistentAccountException::what() const noexcept -> char const*
-{
-  return mErrorMsg.c_str();
-}
-
 AccountBook::AccountBook( std::string const& ownerName )
   : mOwner( ownerName )
 {

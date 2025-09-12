@@ -4,6 +4,9 @@
 
 //@PURPOSE: Provide an abstract interface for DBS serialization.
 //
+//@CLASSES:
+//  dbsc::DbsSerializationException: Thrown when an error occurs in (de)serialization..
+//
 //@CONCEPTS:
 // dbsc::DbsReader:  A concept that illustrates the
 //   de-serialization interface.
@@ -15,6 +18,7 @@
 //@DESCRIPTION: This component defines an abstract interface that specifies
 // serialization and deserialization operations for DBS classes.
 #include <dbsc/dbsc_accountbook.h>
+#include <dbsc/dbsc_registerexception.h>
 
 #include <concepts>
 #include <filesystem>
@@ -25,22 +29,25 @@ class Account;
 class AccountBook;
 class UuidString;
 
+DBSC_REGISTER_EXCEPTION( DbsSerializationException, "An error occurred during (de)serialization." );
+
 /// These concepts is a protocol that specifies the interface for serialization
 /// operations concerning DBS classes. Implementers are responsible for
 /// determining how the classes are serialized; the interface is only concerned
 /// that the serialization and deserialization are done by the same entity.
+/// @note Any of the read/write functions can @throw @c DbsSerializationException.
 
 /// `Serializer::InputType` refers to the source from which the dbsc classes are
 /// parsed.
-/// TODO: Figure out how to handle temporary data/intermediary data. What happens during
-/// crashes?
 template< typename Serializer >
 concept DbsReader =
   requires( typename Serializer::InputType& io, std::filesystem::path const& filePath, UuidString const& idString ) {
-    { Serializer::readTransaction( io, idString ) } -> std::same_as< Transaction >;
-    { Serializer::readAccount( io, idString ) } -> std::same_as< Account >;
     /// Parse the accountBook from file.
     { Serializer::readAccountBook( filePath ) } -> std::same_as< AccountBook >;
+    // These functions are internal since each implementing type could have different
+    // InputTypes.
+    { Serializer::readAccountInternal( io, idString ) } -> std::same_as< Account >;
+    { Serializer::readTransactionInternal( io, idString ) } -> std::same_as< Transaction >;
   };
 /// `Serializer::OutputType` refers to the source to which the dbsc classes are
 /// written.
@@ -50,10 +57,12 @@ concept DbsWriter = requires( typename Serializer::OutputType& io,
                               Account const& account,
                               AccountBook const& accountBook,
                               std::filesystem::path const& filePath ) {
-  Serializer::writeTransaction( io, transaction );
-  Serializer::writeAccount( io, account );
   /// Write the entire account book to file.
   Serializer::writeAccountBook( accountBook, filePath );
+  // These functions are internal since each implementing type could have different
+  // OutputTypes.
+  Serializer::writeAccountInternal( io, account );
+  Serializer::writeTransactionInternal( io, transaction );
 };
 
 template< typename Serializer >

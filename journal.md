@@ -1,5 +1,43 @@
 # DBS Journal
 
+## 11 September 2025
+
+Let's begin designing the graphical user interface for this application. 
+
+For icons, I'm strongly considering Icons8. They are free, and their attribution requirement
+consists of: 
+- Linking to the main website (icons8.com)
+- Linking to every icon used. 
+  - I thought this meant I needed to include a link exactly *where* the icon is used, but [this
+    link](https://community.icons8.com/t/free-license-attribution-requirements/1708) proves that it
+    is sufficient to simply link to a source that contains all of the icons used and their links.
+    Note that the user, elena_icons8, is the same person who wrote [this
+    article](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-license-agreement-for-icons8)
+    about the website's licensing.
+
+Teal color: #20C997
+- U.S. Dollar Sign: https://icons8.com/icon/7172/us-dollar-circled
+- Ledger: https://icons8.com/icon/65613/ledger
+- Summary List: https://icons8.com/icon/48622/summary-list
+- Transaction: https://icons8.com/icon/61743/exchange
+
+I propose a main window design that has a tree widget pane, enabling the selection of various app
+pages. There are a number of pages needed for the app's function:
+
+1. Summary
+  - Lists the accounts in the book as well as their balances. 
+  - Displays recent transactions sorted by time(?)
+0. Account View
+  - Allows a deep-dive into a specific account.
+  - View transaction details
+  - (?) Make transactions
+  - Change Account name and description
+0. Open/Close Account  
+  - Create new accounts
+  - Change Account status (open vs. closed)
+0. Make Transaction(s)
+
+
 ## 6 September 2025
 
 It's been a while since I've made an entry, but I have been working on this from time to

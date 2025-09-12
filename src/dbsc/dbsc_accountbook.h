@@ -12,14 +12,13 @@
 //  purpose is to allow iteration over a single user's accounts.
 
 #include <dbsc/dbsc_account.h>
+#include <dbsc/dbsc_registerexception.h>
 #include <dbsc/dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
 
-#include <exception>
 #include <functional>
 #include <map>
-#include <optional>
 #include <string>
 
 namespace dbsc {
@@ -27,17 +26,7 @@ namespace dbsc {
 class UuidString;
 class Account;
 
-class NonExistentAccountException : public std::exception
-{
-public:
-  NonExistentAccountException( std::string const& errorMessage ) noexcept;
-  NonExistentAccountException() noexcept;
-
-  auto what() const noexcept -> char const* override;
-
-private:
-  std::string mErrorMsg {};
-};
+DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 
 /// A collection of Accounts for a given user. This class allows for iteration
 /// over its Accounts by way of key-value pairs [AccountId, Account]. It is
@@ -55,10 +44,10 @@ public:
 
   // Accessors
 
-  /// Return the account referred to by the identifier string.
-  /// If the account does not exist, this function throws the
-  /// @c dbsc::NonExistentAccount error.
+  /// @return the account referred to by the identifier string.
+  /// @throw @c dbsc::NonExistentAccount if the account does not exist.
   [[nodiscard]] auto account( UuidString const& accountId ) const -> Account const&;
+
   [[nodiscard]] auto owner() const -> std::string const&;
 
   [[nodiscard]] auto begin() const -> const_iterator;
@@ -93,7 +82,7 @@ public:
     -> UuidString;
 
   /// Modify the writability of a given account.
-  /// @throws @c dbsc::NonExistentAccount if account does not exist.
+  /// @throw @c dbsc::NonExistentAccount if account does not exist.
   void closeAccount( UuidString const& accountId );
   void openAccount( UuidString const& accountId );
 

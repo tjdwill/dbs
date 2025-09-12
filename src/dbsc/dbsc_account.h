@@ -14,28 +14,19 @@
 //  of balance, and stores user-defined metadata such as the account name and
 //  description.
 
-#include <dbsc_transaction.h>
-#include <dbsc_uuidstring.h>
+#include <dbsc/dbsc_registerexception.h>
+#include <dbsc/dbsc_transaction.h>
+#include <dbsc/dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
 
-#include <exception>
 #include <map>
 #include <string>
 
 namespace dbsc {
 
 /// Signals that a caller attempted to add a Transaction to a closed Account.
-class ClosedAccountException : public std::exception
-{
-public:
-  ClosedAccountException( std::string const& errorMessage ) noexcept;
-  ClosedAccountException() noexcept;
-  auto what() const noexcept -> char const* override;
-
-private:
-  std::string mErrorMsg {};
-};
+DBSC_REGISTER_EXCEPTION( ClosedAccountException, "Attempted to modify a closed account." );
 
 /// The basis of the application, this class stores multiple transactions,
 /// allowing one to track the balance of money at a given moment. Accounts have

@@ -69,14 +69,14 @@ auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath )
 
       auto* valueTable = tomlValue.as_table();
       assert( valueTable );
-      accountBook.addParsedAccount( readAccount( *valueTable, accountId ) );
+      accountBook.addParsedAccount( readAccountInternal( *valueTable, accountId ) );
     }
   }
 
   return accountBook;
 }
 
-auto DbsTomlSerializer::readAccount( InputType& accountTomlTable, UuidString const& accountId ) -> Account
+auto DbsTomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidString const& accountId ) -> Account
 {
   auto const accountName        = accountTomlTable[kAccountNameKey].value< std::string >().value();
   auto const accountDescription = accountTomlTable[kAccountDescriptionKey].value< std::string >().value();
@@ -88,7 +88,7 @@ auto DbsTomlSerializer::readAccount( InputType& accountTomlTable, UuidString con
   for ( auto& transactionTableNode : *transactionArrayOfTables ) {
     assert( transactionTableNode.is_table() );
     auto* transactionTable = transactionTableNode.as_table();
-    account.logTransaction( DbsTomlSerializer::readTransaction( *transactionTable, accountId ) );
+    account.logTransaction( DbsTomlSerializer::readTransactionInternal( *transactionTable, accountId ) );
   }
 
   auto const accountIsOpen = accountTomlTable[kAccountOpenStatusKey].value< bool >().value();
@@ -99,7 +99,8 @@ auto DbsTomlSerializer::readAccount( InputType& accountTomlTable, UuidString con
   return account;
 }
 
-auto DbsTomlSerializer::readTransaction( InputType& transactionTable, UuidString const& owningPartyId ) -> Transaction
+auto DbsTomlSerializer::readTransactionInternal( InputType& transactionTable, UuidString const& owningPartyId )
+  -> Transaction
 {
   auto const transactionId =
     UuidStringUtil::fromString<>( transactionTable[kTransactionIdKey].value< std::string_view >().value() );
@@ -127,7 +128,7 @@ void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::f
 
   for ( auto const& [accountId, account] : accountBook ) {
     toml::table accountTable;
-    DbsTomlSerializer::writeAccount( accountTable, account );
+    DbsTomlSerializer::writeAccountInternal( accountTable, account );
     topLevelTable.insert( accountId.view(), std::move( accountTable ) );
   }
 
@@ -138,7 +139,7 @@ void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::f
   ofs << topLevelTable << "\n";
 }
 
-void DbsTomlSerializer::writeAccount( OutputType& accountTable, Account const& account )
+void DbsTomlSerializer::writeAccountInternal( OutputType& accountTable, Account const& account )
 {
   toml::value< std::string > const accountName { account.name() };
   toml::value< std::string > const accountDescription { account.description() };
@@ -150,14 +151,14 @@ void DbsTomlSerializer::writeAccount( OutputType& accountTable, Account const& a
   toml::array transactionArray {};
   for ( auto const& [_, transaction] : account ) {
     toml::table transactionTable;
-    DbsTomlSerializer::writeTransaction( transactionTable, transaction );
+    DbsTomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );
   }
   assert( transactionArray.is_array_of_tables() );
   accountTable.insert( kAccountTransactionsKey, std::move( transactionArray ) );
 }
 
-void DbsTomlSerializer::writeTransaction( OutputType& transactionTable, Transaction const& transaction )
+void DbsTomlSerializer::writeTransactionInternal( OutputType& transactionTable, Transaction const& transaction )
 {
   toml::value< std::string > const transactionId { transaction.transactionId().view() };
   toml::value< std::string > const otherPartyId { transaction.otherPartyId().view() };

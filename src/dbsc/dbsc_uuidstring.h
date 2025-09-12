@@ -33,9 +33,10 @@
 /// ```
 ///
 
+#include <dbsc_registerexception.h>
+
 #include <stduuid/uuid.h>
 
-#include <exception>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -44,26 +45,10 @@
 namespace dbsc {
 
 /// Communicate that an entity with a specific Uuid already exists.
-class DuplicateUuidException : std::exception
-{
-public:
-  DuplicateUuidException( std::string const& errorMsg ) noexcept;
-  DuplicateUuidException() noexcept;
-
-  auto what() const noexcept -> char const* override;
-
-private:
-  std::string mErrorMsg {};
-};
+DBSC_REGISTER_EXCEPTION( DuplicateUuidException, "An object with this UUID already exists." );
 
 /// Represents a Uuid construction error due to invalid formatting.
-class InvalidUuidException : std::exception
-{
-public:
-  InvalidUuidException() noexcept;
-
-  auto what() const noexcept -> char const* override;
-};
+DBSC_REGISTER_EXCEPTION( InvalidUuidException, "Input is not a UUID-conformant string." );
 
 /// This class provides a read-only UUID-compliant string. Note that this class
 /// only guarantees UUID compliance in terms of RFC4122; this class makes no
