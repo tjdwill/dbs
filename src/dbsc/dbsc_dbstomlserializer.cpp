@@ -1,6 +1,8 @@
 // dbsc_dbstomlserializer.cpp
 #include "dbsc_dbstomlserializer.h"
 
+#include "dbsc_dbsserializer.h"
+
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
@@ -48,15 +50,15 @@ auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath )
 
   // Assume a valid TOML file.
   if ( filePath.extension() != kTomlExtension ) {
-    throw std::invalid_argument( std::format( "Invalid file extension. Expected {}. Got {}",
-                                              filePath.filename().replace_extension( kTomlExtension ).c_str(),
-                                              filePath.filename().c_str() ) );
+    throw DbsSerializationException( std::format( "Invalid file extension. Expected {}. Got {}",
+                                                  filePath.filename().replace_extension( kTomlExtension ).c_str(),
+                                                  filePath.filename().c_str() ) );
   }
   InputType parsedFile  = toml::parse_file( filePath.c_str() );
   auto accountBookOwner = parsedFile.at( kAccountBookOwnerKey ).value< std::string >();
   {
     if ( !accountBookOwner.has_value() ) {
-      throw std::runtime_error( std::format( "Incorrect type for key '{}'", kAccountBookOwnerKey ) );
+      throw DbsSerializationException( std::format( "Incorrect type for key '{}'", kAccountBookOwnerKey ) );
     }
     /// Remove the account owner key so it can be ignored during iteration.
     parsedFile.erase( kAccountBookOwnerKey );
@@ -134,7 +136,7 @@ void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::f
 
   std::ofstream ofs { filePath };
   if ( !ofs ) {
-    throw std::runtime_error( std::format( "Could not write to file '{}'.", filePath.c_str() ) );
+    throw DbsSerializationException( std::format( "Could not write to file '{}'.", filePath.c_str() ) );
   }
   ofs << topLevelTable << "\n";
 }
