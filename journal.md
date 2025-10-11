@@ -1,5 +1,75 @@
 # DBS Journal
 
+## 10 October 2025
+
+It's been a month, but I haven't been particularly motivated to work. I'm back though.
+
+I discovered a potential issue with Qt and BDE. Whenever a Qt component is included before
+a BDE component, compilation fails (perhaps due to the `emit` keyword vs. its use in BDE as
+a function?). The consequence of this behavior is that the Qt component essentially can't
+include dbsc headers (dbsc_uuidstring is fine, but it would be better to simply prohibit
+any direct dependency on that package).
+
+I'm thinking that the Qt code will need to describe an iterface to represent the dbsc data
+rather than take it directly. The upper-level code that depends on both dbsqt and dbsc will
+be responsible for conversions. This also means that the only time both packages can be
+used in a single component is in the final controller implementation. It *also* means that
+all dbsc components must be included before any dbsqt component is included. Fortunately,
+this will be the case by nature of alphabetic sorting. 
+
+For posterity's sake (esp. if I decide to ask about this online at some point), here is the
+output for the failed compilation:
+
+```
+FAILED: src/dbsqt/CMakeFiles/dbsqtAccountModel.dir/dbsqt_accountmodel.cpp.o 
+/usr/bin/clang++-20 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT -I/home/dev/programming/cpp/dbs/build_Debug/src/dbsqt/dbsqtAccountModel_autogen/include -I/home/dev/programming/cpp/dbs/src/. -I/home/dev/programming/cpp/dbs/src/dbsqt -I/home/dev/programming/cpp/dbs/dbsc -I/home/dev/programming/cpp/dbs/src/dbsc -I/home/dev/programming/cpp/dbs/3rdparty -isystem /home/dev/programming/cpp/dbs/3rdparty/bde/include -isystem /home/dev/programming/cpp/dbs/3rdparty/Qt/6.9.1/gcc_64/include/QtCore -isystem /home/dev/programming/cpp/dbs/3rdparty/Qt/6.9.1/gcc_64/include -isystem /home/dev/programming/cpp/dbs/3rdparty/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -isystem /home/dev/programming/cpp/dbs/3rdparty/Qt/6.9.1/gcc_64/include/QtGui -isystem /home/dev/programming/cpp/dbs/3rdparty/Qt/6.9.1/gcc_64/include/QtWidgets -g -std=gnu++23 -Wall -Wextra -Wpedantic -pthread -fPIC -MD -MT src/dbsqt/CMakeFiles/dbsqtAccountModel.dir/dbsqt_accountmodel.cpp.o -MF src/dbsqt/CMakeFiles/dbsqtAccountModel.dir/dbsqt_accountmodel.cpp.o.d -o src/dbsqt/CMakeFiles/dbsqtAccountModel.dir/dbsqt_accountmodel.cpp.o -c /home/dev/programming/cpp/dbs/src/dbsqt/dbsqt_accountmodel.cpp
+In file included from /home/dev/programming/cpp/dbs/src/dbsqt/dbsqt_accountmodel.cpp:4:
+In file included from /home/dev/programming/cpp/dbs/src/./dbsc/dbsc_account.h:18:
+In file included from /home/dev/programming/cpp/dbs/src/dbsc/dbsc_transaction.h:20:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bdldfp_decimal.h:606:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bdldfp_decimalimputil.h:147:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bsl_iostream.h:18:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bsl_ostream.h:17:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_ostream.h:18:
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:99:34: error: expected ')'
+   99 |     static bool emit(SyncBufBase *syncBuf);
+      |                                  ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:99:21: note: to match this '('
+   99 |     static bool emit(SyncBufBase *syncBuf);
+      |                     ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:107:31: error: must use 'class' tag to refer to type 'SyncBufBase' in this scope
+  107 |     static void setEmitOnSync(SyncBufBase *syncBuf, bool value);
+      |                               ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:99:22: note: class 'SyncBufBase' is hidden by a non-type declaration of 'SyncBufBase' here
+   99 |     static bool emit(SyncBufBase *syncBuf);
+      |                      ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:117:23: error: expected unqualified-id
+  117 | bool SyncBufBaseUtil::emit(SyncBufBase *syncBuf)
+      |                       ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:124:23: error: variable has incomplete type 'void'
+  124 | void SyncBufBaseUtil::setEmitOnSync(SyncBufBase *syncBuf, bool value)
+      |                       ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:124:64: error: expected '(' for function-style cast or type construction
+  124 | void SyncBufBaseUtil::setEmitOnSync(SyncBufBase *syncBuf, bool value)
+      |                                                           ~~~~ ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:124:50: error: use of undeclared identifier 'syncBuf'
+  124 | void SyncBufBaseUtil::setEmitOnSync(SyncBufBase *syncBuf, bool value)
+      |                                                  ^
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_syncbufbase.h:124:70: error: expected ';' after top level declarator
+  124 | void SyncBufBaseUtil::setEmitOnSync(SyncBufBase *syncBuf, bool value)
+      |                                                                      ^
+In file included from /home/dev/programming/cpp/dbs/src/dbsqt/dbsqt_accountmodel.cpp:4:
+In file included from /home/dev/programming/cpp/dbs/src/./dbsc/dbsc_account.h:18:
+In file included from /home/dev/programming/cpp/dbs/src/dbsc/dbsc_transaction.h:20:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bdldfp_decimal.h:606:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bdldfp_decimalimputil.h:147:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bsl_iostream.h:18:
+In file included from /home/dev/programming/cpp/dbs/3rdparty/bde/include/bsl_ostream.h:17:
+/home/dev/programming/cpp/dbs/3rdparty/bde/include/bslstl_ostream.h:126:60: error: expected unqualified-id
+  126 |             if (!BloombergLP::bslstl::SyncBufBaseUtil::emit(p)) {
+
+```
+
 ## 11 September 2025
 
 Let's begin designing the graphical user interface for this application. 
