@@ -1,11 +1,9 @@
-include_directories(.)
-
 set(debugOptions -Wall -Werror -Wextra -Wpedantic)
 
 # dbsc_uuid_string
 add_library(dbscUuidString dbsc_uuidstring.cpp)
 target_compile_options(dbscUuidString PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
-target_include_directories(dbscUuidString PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty)
+target_include_directories(dbscUuidString PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/3rdparty)
 add_executable(testDbscUuidString dbsc_uuidstring.t.cpp)
 target_link_libraries(testDbscUuidString PRIVATE
   dbscUuidString)
@@ -13,7 +11,8 @@ add_test(NAME dbscUuidString.t COMMAND testDbscUuidString)
 
 # dbsc_transaction
 add_library(dbscTransaction dbsc_transaction.cpp)
-target_link_libraries(dbscTransaction 
+target_include_directories(dbscTransaction PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(dbscTransaction PUBLIC
   dbscUuidString
   bdl)
 add_executable(testDbscTransaction dbsc_transaction.t.cpp)
@@ -22,6 +21,7 @@ add_test(NAME dbscTransaction.t COMMAND testDbscTransaction)
 
 # dbsc_account
 add_library(dbscAccount dbsc_account.cpp)
+target_include_directories(dbscAccount PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(dbscAccount PUBLIC 
     dbscTransaction
     dbscUuidString
@@ -32,6 +32,7 @@ add_test(NAME dbscAccount.t COMMAND testDbscAccount)
 
 # dbsc_accountbook
 add_library(dbscAccountBook dbsc_accountbook.cpp)
+target_include_directories(dbscAccountBook PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(dbscAccountBook PUBLIC
   dbscAccount
   dbscUuidString)
@@ -45,11 +46,13 @@ add_test(NAME dbscAccountBook.t COMMAND testDbscAccountBook)
 # dbsc_dbsserializer
 ## Ensure the header compiles in isolation.
 add_library(dbscSerializer dbsc_dbsserializer.cpp)
+target_include_directories(dbscSerializer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(dbscSerializer PUBLIC
   dbscAccountBook)
 
 # dbsc_dbstomlserializer
 add_library(dbscTomlSerializer dbsc_dbstomlserializer.cpp)
+target_include_directories(dbscTomlSerializer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(dbscTomlSerializer PUBLIC
   dbscAccountBook
   dbscAccount
