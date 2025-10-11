@@ -6,6 +6,7 @@
 //
 //@CLASSES:
 //  dbsc::Transaction: in-memory representation of an account transaction.
+//  dbsc::TransactionUtil: Prooovide conversion utils to strings
 //
 //@DESCRIPTION: This component defines the representation of a transaction in
 // DBS. Required data are:
@@ -21,6 +22,7 @@
 
 #include <chrono>
 #include <string>
+#include <string_view>
 
 namespace dbsc {
 using TimeStamp = std::chrono::time_point< std::chrono::system_clock >;
@@ -64,6 +66,15 @@ private:
   BloombergLP::bdldfp::Decimal64 mAmount;
   TimeStamp mTimeStamp;
   std::string mNotes {};
+};
+
+struct TransactionUtil
+{
+  [[nodiscard]] static auto currencyAsString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
+  [[nodiscard]] static auto currencyFromString( std::string_view borrowedStr ) -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] static auto timestampAsString( TimeStamp const& timestamp ) -> std::string;
+  [[nodiscard]] static auto timestampFromString( std::string_view borrowedStr ) -> TimeStamp;
+  [[nodiscard]] static constexpr auto timestampConversionFormat() -> std::string_view;
 };
 
 } // namespace dbsc

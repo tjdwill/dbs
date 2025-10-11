@@ -1,7 +1,19 @@
 // dbsc_transaction.cpp
 #include "dbsc_transaction.h"
 
+#include <bdldfp_decimalutil.h>
+#include <bslstl_ostringstream.h>
+
+#include <format>
+#include <sstream>
+#include <string_view>
+
 namespace dbsc {
+
+namespace {
+  using namespace std::string_view_literals;
+  constexpr std::string_view kTimeStampConversionFormat { "%F %T%Z"sv };
+} // namespace
 
 Transaction::Transaction( UuidString const& transactionId,
                           UuidString const& owningPartyId,
@@ -55,6 +67,44 @@ auto Transaction::isPair( Transaction const& a, Transaction const& b ) -> bool
            && a.timeStamp() == b.timeStamp() );
 }
 
+auto TransactionUtil::currencyAsString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string
+{
+  bsl::ostringstream oss {};
+  oss << amount;
+  return std::string( oss.str().data() );
+}
+
+auto TransactionUtil::currencyFromString( std::string_view str ) -> BloombergLP::bdldfp::Decimal64
+{
+  BloombergLP::bdldfp::Decimal64 amount;
+  BloombergLP::bdldfp::DecimalUtil::parseDecimal64( &amount, str.data() );
+  return amount;
+}
+
+auto constexpr TransactionUtil::timestampConversionFormat() -> std::string_view
+{
+  return kTimeStampConversionFormat;
+}
+
+auto TransactionUtil::timestampAsString( TimeStamp const& timestamp ) -> std::string
+{
+  std::ostringstream oss {};
+  oss << std::format( "{0:%F} {0:%T%Z}", timestamp );
+  return oss.str();
+}
+
+auto TransactionUtil::timestampFromString( std::string_view borrowedStr ) -> TimeStamp
+{
+  std::istringstream iss { borrowedStr.data() };
+  TimeStamp parsedTimeStamp;
+  std::chrono::from_stream( iss, kTimeStampConversionFormat.data(), parsedTimeStamp );
+
+  if ( not( iss || iss.eof() ) ) {
+    throw std::invalid_argument( std::format(
+      "Input string '{0}' did not adhere to the time format '{1}'", borrowedStr, kTimeStampConversionFormat ) );
+  }
+  return parsedTimeStamp;
+}
 } // namespace dbsc
 
 // -----------------------------------------------------------------------------

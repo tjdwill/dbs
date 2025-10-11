@@ -7,23 +7,16 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
-#include <bdldfp_decimalutil.h>
-#include <bslstl_iosfwd.h>
-#include <bslstl_ostringstream.h>
-#include <bslstl_string.h>
 
 #include <cassert>
-#include <chrono>
 #include <format>
 #include <fstream>
-#include <sstream>
 #include <string_view>
 
 namespace dbsc {
 
 namespace {
   using namespace std::string_view_literals;
-  constexpr auto kDateTimeParsingFormat = "%F %T"sv; // Date and Time
   std::filesystem::path const kTomlExtension { ".toml" };
   constexpr auto kAccountBookOwnerKey { "owner"sv };
   constexpr auto kAccountNameKey { "name"sv };
@@ -105,12 +98,10 @@ auto DbsTomlSerializer::readTransactionInternal( InputType& transactionTable, Uu
     UuidStringUtil::fromString<>( transactionTable[kTransactionOtherPartyIdKey].value< std::string_view >().value() );
 
   auto const amountString = transactionTable[kTransactionAmountKey].value< TomlCurrencyType >().value();
-  BloombergLP::bdldfp::Decimal64 transactionAmount;
-  BloombergLP::bdldfp::DecimalUtil::parseDecimal64( &transactionAmount, amountString );
+  BloombergLP::bdldfp::Decimal64 transactionAmount = TransactionUtil::currencyFromString( amountString );
 
-  std::istringstream iss { transactionTable[kTransactionTimeStampKey].value< TomlDateTimeType >().value() };
-  std::chrono::time_point< std::chrono::system_clock > timeStamp;
-  std::chrono::from_stream( iss, kDateTimeParsingFormat.data(), timeStamp );
+  auto timeString     = transactionTable[kTransactionTimeStampKey].value< TomlDateTimeType >().value();
+  TimeStamp timeStamp = TransactionUtil::timestampFromString( timeString );
 
   auto const transactionNotes = transactionTable[kTransactionNotesKey].value< std::string >().value();
 
@@ -159,10 +150,8 @@ void DbsTomlSerializer::writeTransactionInternal( OutputType& transactionTable, 
 {
   toml::value< std::string > const transactionId { transaction.transactionId().view() };
   toml::value< std::string > const otherPartyId { transaction.otherPartyId().view() };
-  bsl::ostringstream oss;
-  oss << transaction.amount();
-  toml::value< TomlCurrencyType > const transactionAmount { oss.str() };
-  toml::value< TomlDateTimeType > const dateTime { std::format( "{0:%F} {0:%T}", transaction.timeStamp() ) };
+  toml::value< TomlCurrencyType > const transactionAmount { TransactionUtil::currencyAsString( transaction.amount() ) };
+  toml::value< TomlDateTimeType > const dateTime { TransactionUtil::timestampAsString( transaction.timeStamp() ) };
   toml::value< std::string > const notes { transaction.notes() };
 
   transactionTable.insert( kTransactionIdKey, std::move( transactionId ) );

@@ -1,5 +1,7 @@
 // dbsc_transaction.t.cpp
 // Test driver for the dbsc::Transaction class.
+#include "bde/include/bdldfp_decimal.fwd.h"
+
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
 
@@ -14,6 +16,27 @@ using namespace dbsc;
 using namespace BloombergLP;
 using namespace bdldfp::DecimalLiterals;
 using namespace std::string_literals;
+
+static void testDecimalConversion()
+{
+  BloombergLP::bdldfp::Decimal64 testAmount  = "12398570.234"_d64;
+  BloombergLP::bdldfp::Decimal64 testAmount2 = "-12398570.234"_d64;
+  auto roundTripAmount  = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount ) );
+  auto roundTripAmount2 = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount2 ) );
+
+  assert( testAmount == roundTripAmount );
+  assert( testAmount2 == roundTripAmount2 );
+  assert( roundTripAmount != testAmount2 );
+  assert( roundTripAmount2 != testAmount );
+}
+
+static void testTimeStampConversion()
+{
+  TimeStamp const time = std::chrono::system_clock::now();
+  auto parsedTime      = TransactionUtil::timestampFromString( TransactionUtil::timestampAsString( time ) );
+
+  assert( parsedTime == time );
+}
 
 static void testGetters()
 {
@@ -57,6 +80,8 @@ int main()
 {
   testGetters();
   testEquality();
+  testTimeStampConversion();
+  testDecimalConversion();
 
   return 0;
 }
