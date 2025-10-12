@@ -12,7 +12,7 @@ namespace dbsc {
 
 namespace {
   using namespace std::string_view_literals;
-  constexpr std::string_view kTimeStampConversionFormat { "%F %T%Z"sv };
+  constexpr std::string_view kTimeStampConversionFormat { "%F %T%z"sv };
 } // namespace
 
 Transaction::Transaction( UuidString const& transactionId,
@@ -89,7 +89,7 @@ auto constexpr TransactionUtil::timestampConversionFormat() -> std::string_view
 auto TransactionUtil::timestampAsString( TimeStamp const& timestamp ) -> std::string
 {
   std::ostringstream oss {};
-  oss << std::format( "{0:%F} {0:%T%Z}", timestamp );
+  oss << std::format( "{0:%F} {0:%T%z}", timestamp );
   return oss.str();
 }
 

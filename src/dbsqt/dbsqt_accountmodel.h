@@ -13,21 +13,51 @@
 //  the dbsc::Account class.
 
 #include <QAbstractTableModel>
+#include <QDateTime>
 #include <QModelIndex>
+#include <QString>
+#include <QUuid>
 #include <QVariant>
 
 #include <memory>
 #include <vector>
 
+class QUuid;
+class QDateTime;
+
 namespace dbsqt {
 
 /// TODO: Define this class's interface.
-class TransactionItem;
-
-enum class ItemSortOrder
+/// TODO: Implement sorting (this should be a later feature)
+/// Represents a row in the view. Its data is the data associated with a single
+/// transaction.
+class TransactionItem
 {
-  kAscending,  // Smallest to Largest (ex. 1, 2, 3)
-  kDescending, // Largest to Smallest (ex. 3, 2, 1)
+public:
+  /// @note @param transactionAmount is a QString due to its representation in dbsc
+  /// (bdlfp::Decimal64). A double is not a good representation.
+  TransactionItem( QUuid const& transactionId,
+                   QUuid const& otherPartyId,
+                   QString const& transactionAmount,
+                   QDateTime const& timeStamp,
+                   QString const& notes );
+
+  inline auto amount() const -> QString const& { return mTransactionAmount; }
+
+  inline auto notes() const -> QString const& { return mNotes; }
+
+  inline auto otherPartyId() const -> QUuid { return mOtherPartyId; }
+
+  inline auto timeStamp() const -> QDateTime const& { return mTimeStamp; }
+
+  inline auto transactionId() const -> QUuid { return mTransactionId; }
+
+private:
+  QDateTime mTimeStamp {};
+  QString mTransactionAmount {};
+  QString mNotes {};
+  QUuid mTransactionId {};
+  QUuid mOtherPartyId {};
 };
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
@@ -39,13 +69,14 @@ class AccountModel : public QAbstractTableModel
 
 public:
   /// @param accountToModel is internally sorted by date.
-  AccountModel( std::vector< std::unique_ptr< TransactionItem > > const& accountToModel );
+  AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems,
+                QUuid id,
+                QString const& name,
+                QString const& description,
+                QString const& balance,
+                bool isOpen     = true,
+                QObject* parent = nullptr );
   ~AccountModel() override;
-
-  AccountModel( AccountModel const& )                    = delete;
-  auto operator=( AccountModel const& ) -> AccountModel& = delete;
-  AccountModel( AccountModel&& )                         = delete;
-  auto operator=( AccountModel&& ) -> AccountModel&      = delete;
 
   auto rowCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
   auto columnCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
@@ -53,10 +84,15 @@ public:
   auto headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const -> QVariant final;
 
 public Q_SLOTS:
-  /// Implement sorting by a given column
-  void sortBy( int column, ItemSortOrder sortOrder = ItemSortOrder::kDescending );
+  //  /// Implement sorting by a given column
+  //  void sortBy( int column, Qt::SortOrder sortOrder = Qt::DescendingOrder );
 
 private:
+  AccountModel( AccountModel const& )                    = delete;
+  auto operator=( AccountModel const& ) -> AccountModel& = delete;
+  AccountModel( AccountModel&& )                         = delete;
+  auto operator=( AccountModel&& ) -> AccountModel&      = delete;
+
   class Private;
   std::unique_ptr< Private > mImp;
 };
