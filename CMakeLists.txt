@@ -3,10 +3,7 @@ project(dbs
   VERSION 0.0.1
   DESCRIPTION "An electronic budgeting system that emulates the envelope budgeting method."
   HOMEPAGE_URL "https://github.com/tjdwill/dbs"
-  LANGUAGES CXX
-)
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  LANGUAGES CXX)
 
 enable_testing()
 #===================Top-Config==========================
@@ -26,15 +23,14 @@ qt_standard_project_setup()
 find_package(Threads REQUIRED)
 #find_package(bal REQUIRED)
 find_package(bdl REQUIRED)
-#find_package(bsl REQUIRED)
+find_package(bsl REQUIRED)
 
 # Create a symbolic link to point to the correct compile_commands.json directory
 if (CMAKE_HOST_UNIX)
   execute_process(
-    COMMAND       rm ${CMAKE_SOURCE_DIR}/build
-    ERROR_FILE    /dev/null
-  )
-  execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/build)
+    COMMAND       rm ${PROJECT_SOURCE_DIR}/build
+    ERROR_FILE    /dev/null)
+  execute_process(COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build)
 endif ()
 #============Subdirectories====================
 add_subdirectory(tutorialSpace)
