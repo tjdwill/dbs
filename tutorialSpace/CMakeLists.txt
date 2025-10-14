@@ -1,4 +1,3 @@
-set(DBS_THIRDPARTY_BASE_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 add_executable(hello)
 target_sources(hello 
   PRIVATE

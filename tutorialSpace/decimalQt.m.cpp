@@ -4,8 +4,8 @@
 #include <bdldfp_decimal.h>
 #include <bdldfp_decimalutil.h>
 #include <bsl_iostream.h>
-#include <bslstl_ostringstream.h>
-#include <bslstl_string.h>
+#include <bsl_sstream.h>
+#include <bsl_string.h>
 
 #include <QString>
 

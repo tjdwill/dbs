@@ -33,5 +33,6 @@ if (CMAKE_HOST_UNIX)
   execute_process(COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build)
 endif ()
 #============Subdirectories====================
+set(DBS_THIRDPARTY_BASE_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
 add_subdirectory(tutorialSpace)
 add_subdirectory(src)

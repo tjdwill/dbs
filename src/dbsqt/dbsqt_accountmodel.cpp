@@ -1,9 +1,6 @@
 // dbsqt_accountmodel.cpp
 #include "dbsqt_accountmodel.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h"
-#include "Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h"
-
 namespace dbsqt {
 
 namespace {

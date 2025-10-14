@@ -1,9 +1,9 @@
 // hello.cpp
+#include <toml++/toml.hpp>
+
 #include <format>
 #include <iostream>
 #include <string_view>
-
-#include <toml++/toml.hpp>
 
 using namespace std::string_view_literals;
 

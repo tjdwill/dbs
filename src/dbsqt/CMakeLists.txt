@@ -1,8 +1,13 @@
 # dbsqt_accountmodel
 add_library(dbsqtAccountModel dbsqt_accountmodel.cpp)
-target_include_directories(dbsqtAccountModel PUBLIC 
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/dbsc)
+target_sources(dbsqtAccountModel 
+  PRIVATE
+    dbsqt_accountmodel.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbsqt_accountmodel.h
+)
 target_link_libraries(dbsqtAccountModel PUBLIC 
   dbscAccount
   dbscTransaction
@@ -10,21 +15,21 @@ target_link_libraries(dbsqtAccountModel PUBLIC
   Qt::Gui
   Qt::Widgets
 ) 
+
 add_executable(testDbsQtAccountModel dbsqt_accountmodel.t.cpp)
-target_compile_definitions(testDbsQtAccountModel PRIVATE
-  PROJECT_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
-target_include_directories(testDbsQtAccountModel PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/dbsc)
-target_link_libraries(testDbsQtAccountModel PRIVATE
-  dbsqtAccountModel
-  dbscAccount
-  dbscAccountBook
-  dbscTransaction
-  dbscTomlSerializer
-  bsl
-  bdl
-  Qt::Core
-  Qt::Gui
-  Qt::Widgets)
+target_sources(testDbsQtAccountModel PRIVATE dbsqt_accountmodel.t.cpp)
+target_compile_definitions(testDbsQtAccountModel PRIVATE PROJECT_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
+target_link_libraries(testDbsQtAccountModel 
+  PRIVATE
+    dbsqtAccountModel
+    dbscAccount
+    dbscAccountBook
+    dbscTransaction
+    dbscTomlSerializer
+    bsl
+    bdl
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+)
 

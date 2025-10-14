@@ -2,7 +2,7 @@
 #include "dbsc_transaction.h"
 
 #include <bdldfp_decimalutil.h>
-#include <bslstl_ostringstream.h>
+#include <bsl_sstream.h>
 
 #include <format>
 #include <sstream>
