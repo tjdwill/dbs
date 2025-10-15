@@ -1,3 +1,4 @@
+add_compile_definitions(QT_NO_KEYWORDS)
 # dbsqt_accountmodel
 add_library(dbsqtAccountModel dbsqt_accountmodel.cpp)
 target_sources(dbsqtAccountModel 

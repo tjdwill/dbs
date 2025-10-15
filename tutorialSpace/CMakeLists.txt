@@ -43,4 +43,4 @@ target_sources(bdlDecimalQt
     decimalQt.m.cpp
 )
 target_link_libraries(bdlDecimalQt PRIVATE bdl bsl Qt::Core)
-
+target_compile_definitions(bdlDecimalQt PUBLIC QT_NO_KEYWORDS)
