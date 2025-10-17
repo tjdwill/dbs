@@ -24,6 +24,8 @@ find_package(Threads REQUIRED)
 #find_package(bal REQUIRED)
 find_package(bdl REQUIRED)
 find_package(bsl REQUIRED)
+find_package(tomlplusplus REQUIRED)
+find_package(stduuid REQUIRED)
 
 # Create a symbolic link to point to the correct compile_commands.json directory
 if (CMAKE_HOST_UNIX)

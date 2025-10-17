@@ -35,7 +35,7 @@
 
 #include <dbsc_registerexception.h>
 
-#include <stduuid/uuid.h>
+#include <uuid.h>
 
 #include <iosfwd>
 #include <string>

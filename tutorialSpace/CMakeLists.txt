@@ -15,14 +15,8 @@ add_executable(uuidTest)
 target_sources(uuidTest 
   PRIVATE
     uuid_test.m.cpp
-  PRIVATE
-    FILE_SET uuidTestHdrs
-    TYPE HEADERS
-    BASE_DIRS
-      ${DBS_THIRDPARTY_BASE_DIR}
-    FILES
-      ${DBS_THIRDPARTY_BASE_DIR}/stduuid/uuid.h
 )
+target_link_libraries(uuidTest PRIVATE stduuid)
 
 add_executable(dateParseTest)
 target_sources(dateParseTest

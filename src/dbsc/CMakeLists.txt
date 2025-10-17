@@ -7,15 +7,12 @@ target_sources(dbscUuidString
     dbsc_uuidstring.cpp
   PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS
-      ${DBS_THIRDPARTY_BASE_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
       dbsc_uuidstring.h
       dbsc_registerexception.h
-      ${DBS_THIRDPARTY_BASE_DIR}/stduuid/uuid.h
 )
 target_compile_options(dbscUuidString PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
+target_link_libraries(dbscUuidString PUBLIC stduuid)
 
 add_executable(testDbscUuidString)
 target_sources(testDbscUuidString PRIVATE dbsc_uuidstring.t.cpp)
@@ -27,27 +24,16 @@ add_library(dbscTransaction dbsc_transaction.cpp)
 target_sources(dbscTransaction 
   PRIVATE
     dbsc_transaction.cpp
-  PRIVATE
-    FILE_SET privateHdrs
-    TYPE HEADERS
-    BASE_DIRS
-      ${DBS_THIRDPARTY_BASE_DIR}/bde/include
-    FILES
-      ${DBS_THIRDPARTY_BASE_DIR}/bde/include/bsl_sstream.h
-      ${DBS_THIRDPARTY_BASE_DIR}/bde/include/bdldfp_decimalutil.h
   PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS
-      ${DBS_THIRDPARTY_BASE_DIR}/bde/include
-      ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
       dbsc_transaction.h
-      ${DBS_THIRDPARTY_BASE_DIR}/bde/include/bdldfp_decimal.h
 )
 target_link_libraries(dbscTransaction 
   PUBLIC
     dbscUuidString
     bdl
+    bsl
 )
 
 add_executable(testDbscTransaction)
@@ -122,14 +108,9 @@ target_sources(dbscTomlSerializer
     dbsc_dbstomlserializer.cpp
   PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS
-      ${DBS_THIRDPARTY_BASE_DIR}/tomlplusplus/include
-      ${CMAKE_CURRENT_SOURCE_DIR}
     FILES
       dbsc_dbstomlserializer.h
-      ${DBS_THIRDPARTY_BASE_DIR}/tomlplusplus/include/toml++/toml.hpp
 )
-target_include_directories(dbscTomlSerializer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(dbscTomlSerializer PUBLIC
   dbscAccountBook
   dbscAccount
@@ -138,6 +119,7 @@ target_link_libraries(dbscTomlSerializer PUBLIC
   dbscUuidString
   bdl
   bsl
+  tomlplusplus::tomlplusplus
 )
 
 add_executable(testDbscTomlSerializer)

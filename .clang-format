@@ -31,7 +31,7 @@ IncludeCategories:
   Priority:       11
 - Regex:          '<(s_)?b[ads]l.*\.h>'   # Bloomberg BDE includes
   Priority:       101
-- Regex:          '<(stduuid|toml\+\+)/'  # Other Third-Party
+- Regex:          '<((uuid.h)|(toml\+\+)/)'  # Other Third-Party
   Priority:       201
 - Regex:          '<Q.+>'                 # Qt
   Priority:       301
