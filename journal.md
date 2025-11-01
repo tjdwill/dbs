@@ -1,5 +1,42 @@
 # DBS Journal
 
+## 16 October 2025
+
+### Qt/BDE Interaction
+
+I opened an issue on the BDE Github, and the Bloomberg devs were kind enough to provide a
+fix to the name collision (my hunch was correct; it was the clash with `emit`). They also
+recommended setting the `QT_NO_KEYWORDS` macro to preclude additional naming collisions
+that may appear. So, I can now mix dbsc code into dbsqt code if need be.
+
+### What Model/View Scheme Should I Employ?
+
+Currently, I've implemented dbsqt::AccountModel with the intent of using a QTableView.
+However, there are a few problems with the current implementation:
+
+0. Currently, the otherParty (I should think of a better name) is written as a UUID string, but I
+   don't think that's particularly readable for non-technical viewers. I would like a label of some
+   form like `${HumanReadableName} (${first X digits of UUID})`. However, the TransactionItem does
+   not store this account name,—nor should it—and it doesn't have ready access to the account book
+   to query the account name. 
+1. The AccountBook → Account → Transaction flow forms a clear hierarchy, meaning it can be modeled
+   by a tree. It would make sense to use a TreeView for this, allowing multiple accounts to be
+   displayed if need be.
+2. Again, there is no way to access upper-level information that would provide convenience
+   for both the developer and the user.
+
+Based on both the hierarchical nature of the account paradigm and the need to query
+information from an upper level, I think the data should be modeled as a tree. The next
+question to solve is: should I use the stock QTreeWidget and QTreeItem convenience classes
+or roll out a custom implementation for a more flexible Model-View implementation? In the
+spirit of learning, I want to try rolling out my own, but that may actually be an
+inefficient use of time if the goal is to actually develop a product. Because the primary
+programming goal of this project is to display what I've learned thus far, taking a detour
+to learn how to develop custom models seems out-of-scope. Therefore, I will first attempt
+to model the data via the convenience classes. If I determine that additional flexibility
+is needed, I will then take a detour to learn custom tree model implementation. Basically,
+I'm postponing the learning effort.
+
 ## 10 October 2025
 
 It's been a month, but I haven't been particularly motivated to work. I'm back though.
