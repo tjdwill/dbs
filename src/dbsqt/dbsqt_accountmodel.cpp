@@ -1,6 +1,10 @@
 // dbsqt_accountmodel.cpp
 #include "dbsqt_accountmodel.h"
 
+#include <dbsutl_helpers.h>
+
+#include <QTimeZone>
+
 namespace dbsqt {
 
 namespace {
@@ -9,83 +13,51 @@ namespace {
   {
     kDateTime,
     kAmount,
-    kTransactionId,
-    kOtherPartyId,
+    kOtherPartyIdentifier,
     kNotes,
+    kTransactionId,
     // PRIVATE
     kVariantCount,
   };
 
-  constexpr auto accountModelColumnIndex( AccountModelColumnType type ) -> int
-  {
-    return static_cast< int >( type );
-  }
 } // namespace
-
-TransactionItem::TransactionItem( QUuid const& transactionId,
-                                  QUuid const& otherPartyId,
-                                  QString const& transactionAmount,
-                                  QDateTime const& timeStamp,
-                                  QString const& notes )
-  : mTimeStamp( timeStamp )
-  , mTransactionAmount( transactionAmount )
-  , mNotes( notes )
-  , mTransactionId( transactionId )
-  , mOtherPartyId( otherPartyId )
-{
-}
 
 class AccountModel::Private
 {
 public:
-  Private( std::vector< std::unique_ptr< TransactionItem > > items,
-           QUuid id,
-           QString const& name,
-           QString const& description,
-           QString const& balance,
-           bool isOpen )
-    : mItems( std::move( items ) )
-    , mName( name )
-    , mDescription( description )
-    , mBalance( balance )
-    , mId( id )
-    , mIsOpen( isOpen )
+  Private( AccountModelData const& accountData, std::vector< std::unique_ptr< TransactionItem > > items )
+    : mData( accountData )
+    , mItems( std::move( items ) )
   {
   }
 
+  AccountModelData mData;
   std::vector< std::unique_ptr< TransactionItem > > mItems;
-  QString mName;
-  QString mDescription;
-  QString mBalance;
-  QUuid mId;
-  bool mIsOpen;
 };
 
-AccountModel::AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems,
-                            QUuid id,
-                            QString const& name,
-                            QString const& description,
-                            QString const& balance,
-                            bool isOpen,
-                            QObject* parent )
+} // namespace dbsqt
+
+dbsqt::AccountModel::AccountModel( AccountModelData const& accountData,
+                                   std::vector< std::unique_ptr< TransactionItem > > transactionItems,
+                                   QObject* parent )
   : QAbstractTableModel( parent )
-  , mImp( std::make_unique< Private >( std::move( transactionItems ), id, name, description, balance, isOpen ) )
+  , mImp( std::make_unique< Private >( accountData, std::move( transactionItems ) ) )
 {
 }
 
-AccountModel::~AccountModel() = default;
+dbsqt::AccountModel::~AccountModel() = default;
 
-auto AccountModel::rowCount( QModelIndex const& /* parent */ ) const -> int
+auto dbsqt::AccountModel::rowCount( QModelIndex const& /* parent */ ) const -> int
 {
   return static_cast< int >( mImp->mItems.size() );
 }
 
-auto AccountModel::columnCount( QModelIndex const& /* parent */ ) const -> int
+auto dbsqt::AccountModel::columnCount( QModelIndex const& /* parent */ ) const -> int
 {
-  return accountModelColumnIndex( AccountModelColumnType::kVariantCount );
+  return dbsutl::enumAsIntegral( AccountModelColumnType::kVariantCount );
 }
 
-auto AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
+auto dbsqt::AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
 {
   int const row    = index.row();
   int const column = index.column();
@@ -97,41 +69,54 @@ auto AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
   if ( role == Qt::DisplayRole ) {
     auto const& item = mImp->mItems.at( row );
     switch ( column ) {
-      case accountModelColumnIndex( AccountModelColumnType::kTransactionId ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kTransactionId ):
         return item->transactionId().toString( QUuid::WithoutBraces );
-      case accountModelColumnIndex( AccountModelColumnType::kAmount ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return item->amount();
-      case accountModelColumnIndex( AccountModelColumnType::kDateTime ):
-        return item->timeStamp().toString( Qt::ISODateWithMs );
-      case accountModelColumnIndex( AccountModelColumnType::kOtherPartyId ):
-        return item->otherPartyId().toString( QUuid::WithoutBraces );
-      case accountModelColumnIndex( AccountModelColumnType::kNotes ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
+        /// TODO: Link this logic and the header logic via a QSettings entry
+        return item->timeStamp().toLocalTime().toString( "yyyy-MM-dd hh:mm:ss.zzz" );
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
+        return item->otherPartyDisplayName();
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
         return item->notes();
     }
   }
   return QVariant();
 }
 
-auto AccountModel::headerData( int section, Qt::Orientation orientation, int role ) const -> QVariant
+auto dbsqt::AccountModel::headerData( int section, Qt::Orientation orientation, int role ) const -> QVariant
 {
   if ( orientation == Qt::Horizontal && role == Qt::DisplayRole && section >= 0 && section < columnCount() ) {
     switch ( section ) {
-      case accountModelColumnIndex( AccountModelColumnType::kTransactionId ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kTransactionId ):
         return "Transaction Id";
-      case accountModelColumnIndex( AccountModelColumnType::kAmount ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return "Amount ($)";
-      case accountModelColumnIndex( AccountModelColumnType::kDateTime ):
-        return "Time";
-      case accountModelColumnIndex( AccountModelColumnType::kOtherPartyId ):
-        return "Other Party Id";
-      case accountModelColumnIndex( AccountModelColumnType::kNotes ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
+        return QString( "Time (%1)" ).arg( QTimeZone::systemTimeZone().displayName( QDateTime::currentDateTime() ) );
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
+        return "Other Party";
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
         return "Notes";
     }
   }
   return QVariant();
 }
 
-} // namespace dbsqt
+dbsqt::TransactionItem::TransactionItem( dbsqt::TransactionItemData const& transactionData )
+  : mData( transactionData )
+{
+}
+
+auto dbsqt::TransactionItem::otherPartyDisplayName() const -> QString
+{
+  return mData.mOtherPartyId == QUuid()
+         ? "External"
+         : QString( "%1 (%2)" )
+             .arg( mData.mOtherPartyAccountName )
+             .arg( mData.mOtherPartyId.toString( QUuid::WithoutBraces ).split( '-' ).front() );
+}
 
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams

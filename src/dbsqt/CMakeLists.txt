@@ -12,6 +12,7 @@ target_sources(dbsqtAccountModel
 target_link_libraries(dbsqtAccountModel PUBLIC 
   dbscAccount
   dbscTransaction
+  dbsutl_helpers
   Qt::Core
   Qt::Gui
   Qt::Widgets

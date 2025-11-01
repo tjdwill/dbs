@@ -8,6 +8,8 @@
 //  dbsqt::AccountModel: Adheres to the Qt Model/View interface.
 //  dbsqt::TransactionItem: Represents data for a single transaction.
 //  dbsqt::ItemSortOrder: Determines how items are sorted.
+//  dbsqt::TransactionItemData: A struct that packs needed information for the transaction.
+//  dbsqt::AccountModelData: Information associated with the given account.
 //
 //@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
 //  the dbsc::Account class.
@@ -27,6 +29,16 @@ class QDateTime;
 
 namespace dbsqt {
 
+struct TransactionItemData
+{
+  QDateTime mTimeStamp {};
+  QString mTransactionAmount {};
+  QString mNotes {};
+  QString mOtherPartyAccountName {};
+  QUuid mTransactionId {};
+  QUuid mOtherPartyId {};
+};
+
 /// TODO: Define this class's interface.
 /// TODO: Implement sorting (this should be a later feature)
 /// Represents a row in the view. Its data is the data associated with a single
@@ -36,28 +48,33 @@ class TransactionItem
 public:
   /// @note @param transactionAmount is a QString due to its representation in dbsc
   /// (bdlfp::Decimal64). A double is not a good representation.
-  TransactionItem( QUuid const& transactionId,
-                   QUuid const& otherPartyId,
-                   QString const& transactionAmount,
-                   QDateTime const& timeStamp,
-                   QString const& notes );
+  TransactionItem( TransactionItemData const& transactionData );
 
-  inline auto amount() const -> QString const& { return mTransactionAmount; }
+  [[nodiscard]] inline auto amount() const -> QString const& { return mData.mTransactionAmount; }
 
-  inline auto notes() const -> QString const& { return mNotes; }
+  [[nodiscard]] inline auto notes() const -> QString const& { return mData.mNotes; }
 
-  inline auto otherPartyId() const -> QUuid { return mOtherPartyId; }
+  [[nodiscard]] inline auto otherPartyId() const -> QUuid { return mData.mOtherPartyId; }
 
-  inline auto timeStamp() const -> QDateTime const& { return mTimeStamp; }
+  [[nodiscard]] inline auto timeStamp() const -> QDateTime const& { return mData.mTimeStamp; }
 
-  inline auto transactionId() const -> QUuid { return mTransactionId; }
+  [[nodiscard]] inline auto transactionId() const -> QUuid { return mData.mTransactionId; }
+
+  /// @return the display name associated with the other party id
+  /// @note format: `${AccountName} (<stringified first byte sequence of Uuid>)`
+  [[nodiscard]] auto otherPartyDisplayName() const -> QString;
 
 private:
-  QDateTime mTimeStamp {};
-  QString mTransactionAmount {};
-  QString mNotes {};
-  QUuid mTransactionId {};
-  QUuid mOtherPartyId {};
+  TransactionItemData mData;
+};
+
+struct AccountModelData
+{
+  QString mName;
+  QString mDescription;
+  QString mBalance;
+  QUuid mId;
+  bool mIsOpen;
 };
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
@@ -69,12 +86,8 @@ class AccountModel : public QAbstractTableModel
 
 public:
   /// @param accountToModel is internally sorted by date.
-  AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems,
-                QUuid id,
-                QString const& name,
-                QString const& description,
-                QString const& balance,
-                bool isOpen     = true,
+  AccountModel( AccountModelData const& accountData,
+                std::vector< std::unique_ptr< TransactionItem > > transactionItems,
                 QObject* parent = nullptr );
   ~AccountModel() override;
 

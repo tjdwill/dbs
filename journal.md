@@ -1,5 +1,11 @@
 # DBS Journal
 
+## 1 November 2025
+
+- Reworked model value printing.
+- Added new utility function package.
+- Updated test to sort by descending transaction date.
+
 ## 16 October 2025
 
 ### Qt/BDE Interaction
