@@ -6,6 +6,27 @@
 - Added new utility function package.
 - Updated test to sort by descending transaction date.
 
+### Architecture Discussion
+
+When viewing discussions regarding GUI development online, the advice to separate your logic from
+the GUI is ubiquitous. However, as with so many discussions online, actionable advice on *how* to do that is
+scarce. Yes, Qt has a Model/View paradigm, but what does this mean in terms of architecture? Does
+the Qt-related code have a physical dependency on the core package, or do we introduce interface
+classes in terms of Qt types that a higher-level package then is responsible for performing
+conversions?
+
+Initially, I leaned toward the latter and architected the code thus far such that dbsqt wouldn't
+depend on dbsc. However, I realized that not only is that unreasonable and inefficient, it was never
+true in the first place! The test code for accountmodel, for example, includes dbsc code. It has to
+in order to ensure the two packages work together. Therefore, dbsqt already depends on dbsc. Also,
+thinking about how I've seen code structured elsewhere, it appears that a provable architecture is
+one that isolates the core logic to a package and has an analogous Qt-dependent package that
+directly uses the core code (types, functions, etc.). Basically, the Qt code needs to live on a level
+*above* the core code rather than attempting to keep them on the same level. 
+
+As a result, I've changed the name of `dbsqt` to `dbscqt`. This name change should imply that the qt
+code depends directly on the `dbsc` package.
+
 ## 16 October 2025
 
 ### Qt/BDE Interaction

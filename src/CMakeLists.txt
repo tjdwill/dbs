@@ -1,3 +1,3 @@
 add_subdirectory(dbsutl)
 add_subdirectory(dbsc)
-add_subdirectory(dbsqt)
+add_subdirectory(dbscqt)

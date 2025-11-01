@@ -1,15 +1,15 @@
-// dbsqt_accountmodel.h
-#ifndef INCLUDED_DBSQT_ACCOUNTMODEL
-#define INCLUDED_DBSQT_ACCOUNTMODEL
+// dbscqt_accountmodel.h
+#ifndef INCLUDED_DBSCQT_ACCOUNTMODEL
+#define INCLUDED_DBSCQT_ACCOUNTMODEL
 
 //@PURPOSE: Provide a Qt representation for dbsc::Account
 //
 //@CLASSES:
-//  dbsqt::AccountModel: Adheres to the Qt Model/View interface.
-//  dbsqt::TransactionItem: Represents data for a single transaction.
-//  dbsqt::ItemSortOrder: Determines how items are sorted.
-//  dbsqt::TransactionItemData: A struct that packs needed information for the transaction.
-//  dbsqt::AccountModelData: Information associated with the given account.
+//  dbscqt::AccountModel: Adheres to the Qt Model/View interface.
+//  dbscqt::TransactionItem: Represents data for a single transaction.
+//  dbscqt::ItemSortOrder: Determines how items are sorted.
+//  dbscqt::TransactionItemData: A struct that packs needed information for the transaction.
+//  dbscqt::AccountModelData: Information associated with the given account.
 //
 //@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
 //  the dbsc::Account class.
@@ -27,7 +27,7 @@
 class QUuid;
 class QDateTime;
 
-namespace dbsqt {
+namespace dbscqt {
 
 struct TransactionItemData
 {
@@ -109,7 +109,7 @@ private:
   class Private;
   std::unique_ptr< Private > mImp;
 };
-} // namespace dbsqt
+} // namespace dbscqt
 #endif // include guard
 
 // -----------------------------------------------------------------------------

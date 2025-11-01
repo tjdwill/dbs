@@ -1,11 +1,11 @@
-// dbsqt_accountmodel.cpp
-#include "dbsqt_accountmodel.h"
+// dbscqt_accountmodel.cpp
+#include "dbscqt_accountmodel.h"
 
 #include <dbsutl_helpers.h>
 
 #include <QTimeZone>
 
-namespace dbsqt {
+namespace dbscqt {
 
 namespace {
 
@@ -35,29 +35,29 @@ public:
   std::vector< std::unique_ptr< TransactionItem > > mItems;
 };
 
-} // namespace dbsqt
+} // namespace dbscqt
 
-dbsqt::AccountModel::AccountModel( AccountModelData const& accountData,
-                                   std::vector< std::unique_ptr< TransactionItem > > transactionItems,
-                                   QObject* parent )
+dbscqt::AccountModel::AccountModel( AccountModelData const& accountData,
+                                    std::vector< std::unique_ptr< TransactionItem > > transactionItems,
+                                    QObject* parent )
   : QAbstractTableModel( parent )
   , mImp( std::make_unique< Private >( accountData, std::move( transactionItems ) ) )
 {
 }
 
-dbsqt::AccountModel::~AccountModel() = default;
+dbscqt::AccountModel::~AccountModel() = default;
 
-auto dbsqt::AccountModel::rowCount( QModelIndex const& /* parent */ ) const -> int
+auto dbscqt::AccountModel::rowCount( QModelIndex const& /* parent */ ) const -> int
 {
   return static_cast< int >( mImp->mItems.size() );
 }
 
-auto dbsqt::AccountModel::columnCount( QModelIndex const& /* parent */ ) const -> int
+auto dbscqt::AccountModel::columnCount( QModelIndex const& /* parent */ ) const -> int
 {
   return dbsutl::enumAsIntegral( AccountModelColumnType::kVariantCount );
 }
 
-auto dbsqt::AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
+auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
 {
   int const row    = index.row();
   int const column = index.column();
@@ -85,7 +85,7 @@ auto dbsqt::AccountModel::data( QModelIndex const& index, int role ) const -> QV
   return QVariant();
 }
 
-auto dbsqt::AccountModel::headerData( int section, Qt::Orientation orientation, int role ) const -> QVariant
+auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation, int role ) const -> QVariant
 {
   if ( orientation == Qt::Horizontal && role == Qt::DisplayRole && section >= 0 && section < columnCount() ) {
     switch ( section ) {
@@ -104,12 +104,12 @@ auto dbsqt::AccountModel::headerData( int section, Qt::Orientation orientation, 
   return QVariant();
 }
 
-dbsqt::TransactionItem::TransactionItem( dbsqt::TransactionItemData const& transactionData )
+dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& transactionData )
   : mData( transactionData )
 {
 }
 
-auto dbsqt::TransactionItem::otherPartyDisplayName() const -> QString
+auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
 {
   return mData.mOtherPartyId == QUuid()
          ? "External"

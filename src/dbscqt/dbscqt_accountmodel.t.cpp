@@ -1,11 +1,9 @@
-// dbsqt_accountmodel.t.cpp
-#include "dbsc_dbsserializer.h"
-
+// dbscqt_accountmodel.t.cpp
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_dbstomlserializer.h>
 #include <dbsc_transaction.h>
-#include <dbsqt_accountmodel.h>
+#include <dbscqt_accountmodel.h>
 
 #include <QApplication>
 #include <QHeaderView>
@@ -23,7 +21,7 @@ namespace {
 std::filesystem::path const kAccountBookPath { std::filesystem::path( PROJECT_RESOURCES_DIR )
                                                / "testAccountBook.toml" };
 
-static auto createAccountModelData( dbsc::Account const& account ) -> dbsqt::AccountModelData
+static auto createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData
 {
   return {
     .mName        = QString::fromStdString( account.name() ),
@@ -35,7 +33,7 @@ static auto createAccountModelData( dbsc::Account const& account ) -> dbsqt::Acc
 }
 
 static auto createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
-  -> dbsqt::TransactionItemData
+  -> dbscqt::TransactionItemData
 {
 
   QDateTime const timestamp =
@@ -57,7 +55,7 @@ static auto createTransactionItemData( dbsc::Transaction const& transaction, dbs
 };
 
 static auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
-  -> std::vector< std::unique_ptr< dbsqt::TransactionItem > >
+  -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
 {
   auto transactionsSortedByDescendingDate =
     account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
@@ -67,12 +65,12 @@ static auto createTransactionItems( dbsc::Account const& account, dbsc::AccountB
     return transaction.timeStamp();
   } );
 
-  std::vector< std::unique_ptr< dbsqt::TransactionItem > > items;
+  std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
   items.reserve( account.transactionCount() );
   for ( auto const& item : transactionsSortedByDescendingDate ) {
     auto const& [id, transaction] = item.get();
     items.push_back(
-      std::make_unique< dbsqt::TransactionItem >( createTransactionItemData( transaction, accountBook ) ) );
+      std::make_unique< dbscqt::TransactionItem >( createTransactionItemData( transaction, accountBook ) ) );
   }
 
   return items;
@@ -93,7 +91,7 @@ int main( int argc, char* argv[] )
     mainWindow->setCentralWidget( centralWidget );
     auto* widgetLayout = new QVBoxLayout( centralWidget );
     auto* tableView    = new QTableView();
-    auto* tableModel   = new dbsqt::AccountModel(
+    auto* tableModel   = new dbscqt::AccountModel(
       createAccountModelData( kAccount ), createTransactionItems( kAccount, kAccountBook ), nullptr );
     tableView->setModel( tableModel );
     tableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
