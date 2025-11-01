@@ -1,4 +1,6 @@
 // dbsqt_accountmodel.t.cpp
+#include "dbsc_dbsserializer.h"
+
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_dbstomlserializer.h>
@@ -81,7 +83,7 @@ int main( int argc, char* argv[] )
 {
   QApplication app { argc, argv };
 
-  auto const kAccountBook = dbsc::DbsTomlSerializer::readAccountBook( kAccountBookPath );
+  auto const kAccountBook = dbsc::loadAccountBook< dbsc::DbsTomlSerializer >( kAccountBookPath );
   auto const& kAccount    = ( *kAccountBook.cbegin() ).second;
 
   // NOLINTBEGIN(cppcoreguidelines-owning-memory)

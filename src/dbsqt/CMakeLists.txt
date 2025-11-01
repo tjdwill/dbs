@@ -28,10 +28,7 @@ target_link_libraries(testDbsQtAccountModel
     dbscAccountBook
     dbscTransaction
     dbscTomlSerializer
-    bsl
-    bdl
     Qt::Core
-    Qt::Gui
     Qt::Widgets
 )
 
