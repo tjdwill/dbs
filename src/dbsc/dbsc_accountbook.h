@@ -50,8 +50,10 @@ public:
 
   [[nodiscard]] auto owner() const -> std::string const&;
 
+  [[nodiscard]] auto begin() -> iterator;
   [[nodiscard]] auto begin() const -> const_iterator;
   [[nodiscard]] auto cbegin() const noexcept -> const_iterator;
+  [[nodiscard]] auto end() -> iterator;
   [[nodiscard]] auto end() const -> const_iterator;
   [[nodiscard]] auto cend() const noexcept -> const_iterator;
 
@@ -92,8 +94,6 @@ public:
 
 private:
   auto accountMut( UuidString const& accountId ) -> Account&;
-  auto begin() -> iterator;
-  auto end() -> iterator;
 
   std::string mOwner {};
   std::map< UuidString, Account > mAccounts {};

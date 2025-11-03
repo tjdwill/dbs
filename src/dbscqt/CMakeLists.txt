@@ -32,3 +32,25 @@ target_link_libraries(testdbscqtAccountModel
     Qt::Widgets
 )
 
+
+# dbscqt_accountbookwidget
+add_library(dbscqt_accountbookwidget)
+target_sources(dbscqt_accountbookwidget
+  PRIVATE
+    dbscqt_accountbookwidget.cpp
+    dbscqt_accountbookwidget.ui
+  PUBLIC
+    FILE_SET HEADERS
+    #BASE_DIRS 
+    #  ${CMAKE_CURRENT_BINARY_DIR}
+    #  ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES 
+      dbscqt_accountbookwidget.h
+)
+target_link_libraries(dbscqt_accountbookwidget
+  PUBLIC
+    dbscAccountBook
+    dbscAccount
+    Qt::Widgets
+)
+

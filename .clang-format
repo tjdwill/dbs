@@ -33,7 +33,7 @@ IncludeCategories:
   Priority:       101
 - Regex:          '<((uuid.h)|(toml\+\+)/)'  # Other Third-Party
   Priority:       201
-- Regex:          '<Q.+>'                 # Qt
+- Regex:          '<(Q.+)|(ui_.+\.h)>'                 # Qt
   Priority:       301
   CaseSensitive:  true
 - Regex:          '<[a-z_]+>'             # STL includes

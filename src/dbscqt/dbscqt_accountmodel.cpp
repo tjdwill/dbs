@@ -20,6 +20,11 @@ namespace {
     kVariantCount,
   };
 
+  auto displayText( QUuid id, QString const& name )
+  {
+    return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );
+  }
+
 } // namespace
 
 class AccountModel::Private
@@ -104,6 +109,31 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
+auto dbscqt::AccountModel::accountDisplayText() const -> QString
+{
+  return dbscqt::displayText( mImp->mData.mId, mImp->mData.mName );
+}
+
+auto dbscqt::AccountModel::accountId() const -> QUuid
+{
+  return mImp->mData.mId;
+}
+
+auto dbscqt::AccountModel::balance() const -> QString const&
+{
+  return mImp->mData.mBalance;
+}
+
+auto dbscqt::AccountModel::description() const -> QString const&
+{
+  return mImp->mData.mDescription;
+}
+
+auto dbscqt::AccountModel::isOpen() const -> bool
+{
+  return mImp->mData.mIsOpen;
+}
+
 dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& transactionData )
   : mData( transactionData )
 {
@@ -111,11 +141,8 @@ dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& tra
 
 auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
 {
-  return mData.mOtherPartyId == QUuid()
-         ? "External"
-         : QString( "%1 (%2)" )
-             .arg( mData.mOtherPartyAccountName )
-             .arg( mData.mOtherPartyId.toString( QUuid::WithoutBraces ).split( '-' ).front() );
+  return mData.mOtherPartyId == QUuid() ? "External"
+                                        : dbscqt::displayText( mData.mOtherPartyId, mData.mOtherPartyAccountName );
 }
 
 // -----------------------------------------------------------------------------

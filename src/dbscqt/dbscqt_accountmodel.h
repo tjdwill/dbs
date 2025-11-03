@@ -96,6 +96,12 @@ public:
   auto data( QModelIndex const& index, int role = Qt::DisplayRole ) const -> QVariant final;
   auto headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const -> QVariant final;
 
+  auto accountDisplayText() const -> QString;
+  auto accountId() const -> QUuid;
+  auto balance() const -> QString const&;
+  auto description() const -> QString const&;
+  auto isOpen() const -> bool;
+
 public Q_SLOTS:
   //  /// Implement sorting by a given column
   //  void sortBy( int column, Qt::SortOrder sortOrder = Qt::DescendingOrder );
