@@ -1,8 +1,6 @@
 // dbscqt_accountbookwidget.cpp
 #include "dbscqt_accountbookwidget.h"
 
-#include "dbsc_accountbook.h"
-
 #include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
 
@@ -118,6 +116,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
   , mImp( std::make_unique< Private >( accountBook ) )
 {
   mImp->mUi.setupUi( this );
+  {
+    mImp->mUi.mAccountSelectionBox->setInsertPolicy( QComboBox::InsertAlphabetically );
+  }
 
   handleAccountBookChanged( accountBook );
 }
