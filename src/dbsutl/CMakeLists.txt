@@ -15,4 +15,4 @@ target_sources(dbsutl_helpers
 add_executable(dbsutl_helpers.t)
 target_sources(dbsutl_helpers.t PRIVATE dbsutl_helpers.t.cpp)
 target_link_libraries(dbsutl_helpers.t PRIVATE dbsutl_helpers)
-add_test(NAME Dbsutl_Helpers COMMAND dbsutl_helpers.t)
+add_test(NAME DbsutlHelpersTest COMMAND dbsutl_helpers.t)

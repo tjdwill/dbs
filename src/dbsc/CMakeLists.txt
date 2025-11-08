@@ -1,8 +1,8 @@
 set(debugOptions -Wall -Werror -Wextra -Wpedantic)
 
 # dbsc_uuidstring
-add_library(dbscUuidString dbsc_uuidstring.cpp)
-target_sources(dbscUuidString 
+add_library(dbsc_uuidstring dbsc_uuidstring.cpp)
+target_sources(dbsc_uuidstring 
   PRIVATE
     dbsc_uuidstring.cpp
   PUBLIC
@@ -11,17 +11,17 @@ target_sources(dbscUuidString
       dbsc_uuidstring.h
       dbsc_registerexception.h
 )
-target_compile_options(dbscUuidString PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
-target_link_libraries(dbscUuidString PUBLIC stduuid)
+target_compile_options(dbsc_uuidstring PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
+target_link_libraries(dbsc_uuidstring PUBLIC stduuid)
 
-add_executable(testDbscUuidString)
-target_sources(testDbscUuidString PRIVATE dbsc_uuidstring.t.cpp)
-target_link_libraries(testDbscUuidString PRIVATE dbscUuidString)
-add_test(NAME dbscUuidString.t COMMAND testDbscUuidString)
+add_executable(dbsc_uuidstring.t)
+target_sources(dbsc_uuidstring.t PRIVATE dbsc_uuidstring.t.cpp)
+target_link_libraries(dbsc_uuidstring.t PRIVATE dbsc_uuidstring)
+add_test(NAME DbscUuidStringTest COMMAND dbsc_uuidstring.t)
 
 # dbsc_transaction
-add_library(dbscTransaction dbsc_transaction.cpp)
-target_sources(dbscTransaction 
+add_library(dbsc_transaction dbsc_transaction.cpp)
+target_sources(dbsc_transaction 
   PRIVATE
     dbsc_transaction.cpp
   PUBLIC
@@ -29,21 +29,21 @@ target_sources(dbscTransaction
     FILES
       dbsc_transaction.h
 )
-target_link_libraries(dbscTransaction 
+target_link_libraries(dbsc_transaction 
   PUBLIC
-    dbscUuidString
+    dbsc_uuidstring
     bdl
     bsl
 )
 
-add_executable(testDbscTransaction)
-target_sources(testDbscTransaction PRIVATE dbsc_transaction.t.cpp)
-target_link_libraries(testDbscTransaction PRIVATE dbscTransaction bdl)
-add_test(NAME dbscTransaction.t COMMAND testDbscTransaction)
+add_executable(dbsc_transaction.t)
+target_sources(dbsc_transaction.t PRIVATE dbsc_transaction.t.cpp)
+target_link_libraries(dbsc_transaction.t PRIVATE dbsc_transaction bdl)
+add_test(NAME DbscTransactionTest COMMAND dbsc_transaction.t)
 
 # dbsc_account
-add_library(dbscAccount)
-target_sources(dbscAccount
+add_library(dbsc_account)
+target_sources(dbsc_account
   PRIVATE
     dbsc_account.cpp
   PUBLIC
@@ -51,20 +51,20 @@ target_sources(dbscAccount
     FILES
       dbsc_account.h
 )
-target_link_libraries(dbscAccount 
+target_link_libraries(dbsc_account 
   PUBLIC 
-    dbscTransaction
-    dbscUuidString
+    dbsc_transaction
+    dbsc_uuidstring
     bdl
 )
-add_executable(testDbscAccount)
-target_sources(testDbscAccount PRIVATE dbsc_account.t.cpp)
-target_link_libraries(testDbscAccount PRIVATE dbscAccount)
-add_test(NAME dbscAccount.t COMMAND testDbscAccount)
+add_executable(dbsc_account.t)
+target_sources(dbsc_account.t PRIVATE dbsc_account.t.cpp)
+target_link_libraries(dbsc_account.t PRIVATE dbsc_account)
+add_test(NAME DbscAccountTest COMMAND dbsc_account.t)
 
 # dbsc_accountbook
-add_library(dbscAccountBook)
-target_sources(dbscAccountBook 
+add_library(dbsc_accountbook)
+target_sources(dbsc_accountbook 
   PRIVATE
     dbsc_accountbook.cpp
   PUBLIC
@@ -72,26 +72,26 @@ target_sources(dbscAccountBook
     FILES
       dbsc_accountbook.h
 )
-target_include_directories(dbscAccountBook PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(dbscAccountBook 
+target_include_directories(dbsc_accountbook PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(dbsc_accountbook 
   PUBLIC
-    dbscAccount
-    dbscUuidString
+    dbsc_account
+    dbsc_uuidstring
 )
 
-add_executable(testDbscAccountBook)
-target_sources(testDbscAccountBook PRIVATE dbsc_accountbook.t.cpp)
-target_link_libraries(testDbscAccountBook PRIVATE
-  dbscAccountBook
-  dbscAccount
-  dbscUuidString
+add_executable(dbsc_accountbook.t)
+target_sources(dbsc_accountbook.t PRIVATE dbsc_accountbook.t.cpp)
+target_link_libraries(dbsc_accountbook.t PRIVATE
+  dbsc_accountbook
+  dbsc_account
+  dbsc_uuidstring
 )
-add_test(NAME dbscAccountBook.t COMMAND testDbscAccountBook)
+add_test(NAME DbscAccountBookTest COMMAND dbsc_accountbook.t)
 
 # dbsc_dbsserializer
 ## Ensure the header compiles in isolation.
-add_library(dbscSerializer)
-target_sources(dbscSerializer
+add_library(dbsc_serializer)
+target_sources(dbsc_serializer
   PRIVATE
     dbsc_dbsserializer.cpp
   PUBLIC
@@ -99,11 +99,11 @@ target_sources(dbscSerializer
     FILES
       dbsc_dbsserializer.h
 )
-target_link_libraries(dbscSerializer PUBLIC dbscAccountBook)
+target_link_libraries(dbsc_serializer PUBLIC dbsc_accountbook)
 
 # dbsc_dbstomlserializer
-add_library(dbscTomlSerializer) 
-target_sources(dbscTomlSerializer 
+add_library(dbsc_tomlserializer) 
+target_sources(dbsc_tomlserializer 
   PRIVATE 
     dbsc_dbstomlserializer.cpp
   PUBLIC
@@ -111,24 +111,24 @@ target_sources(dbscTomlSerializer
     FILES
       dbsc_dbstomlserializer.h
 )
-target_link_libraries(dbscTomlSerializer PUBLIC
-  dbscAccountBook
-  dbscAccount
-  dbscSerializer
-  dbscTransaction
-  dbscUuidString
+target_link_libraries(dbsc_tomlserializer PUBLIC
+  dbsc_accountbook
+  dbsc_account
+  dbsc_serializer
+  dbsc_transaction
+  dbsc_uuidstring
   bdl
   bsl
   tomlplusplus::tomlplusplus
 )
 
-add_executable(testDbscTomlSerializer)
-target_sources(testDbscTomlSerializer PRIVATE dbsc_dbstomlserializer.t.cpp)
-target_link_libraries(testDbscTomlSerializer 
+add_executable(dbsc_tomlserializer.t)
+target_sources(dbsc_tomlserializer.t PRIVATE dbsc_dbstomlserializer.t.cpp)
+target_link_libraries(dbsc_tomlserializer.t 
   PRIVATE 
-    dbscTomlSerializer
-    dbscAccountBook
-    dbscTransaction
-    dbscAccount
+    dbsc_tomlserializer
+    dbsc_accountbook
+    dbsc_transaction
+    dbsc_account
 )
-add_test(NAME dbscTomlSerializer.t COMMAND testDbscTomlSerializer)
+add_test(NAME DbscTomlSerializerTest COMMAND dbsc_tomlserializer.t)

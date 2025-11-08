@@ -18,7 +18,7 @@ target_link_libraries(dbscqt_qobjectdeleteutil
 
 add_executable(dbscqt_qobjectdeleteutil.t dbscqt_qobjectdeleteutil.t.cpp)
 target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil)
-add_test(NAME dbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
+add_test(NAME DbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
 
 # dbscqt_accountmodel
 add_library(dbscqt_accountmodel dbscqt_accountmodel.cpp)
@@ -31,8 +31,8 @@ target_sources(dbscqt_accountmodel
       dbscqt_accountmodel.h
 )
 target_link_libraries(dbscqt_accountmodel PUBLIC 
-  dbscAccount
-  dbscTransaction
+  dbsc_account
+  dbsc_transaction
   dbsutl_helpers
   Qt::Core
   Qt::Gui
@@ -45,10 +45,10 @@ target_compile_definitions(dbscqt_accountmodel.t PRIVATE PROJECT_RESOURCES_DIR="
 target_link_libraries(dbscqt_accountmodel.t 
   PRIVATE
     dbscqt_accountmodel
-    dbscAccount
-    dbscAccountBook
-    dbscTransaction
-    dbscTomlSerializer
+    dbsc_account
+    dbsc_accountbook
+    dbsc_transaction
+    dbsc_tomlserializer
     Qt::Core
     Qt::Widgets
 )
@@ -69,10 +69,10 @@ target_link_libraries(dbscqt_accountbookwidget
   PRIVATE
     dbscqt_qobjectdeleteutil
     dbscqt_accountmodel
-    dbscTransaction
+    dbsc_transaction
   PUBLIC
-    dbscAccountBook
-    dbscAccount
+    dbsc_accountbook
+    dbsc_account
     Qt::Widgets
 )
 
