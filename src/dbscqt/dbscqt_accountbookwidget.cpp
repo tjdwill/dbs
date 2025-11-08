@@ -3,6 +3,7 @@
 
 #include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
+#include <dbscqt_qobjectdeleteutil.h>
 
 #include <QPointer>
 #include <QTableView>
@@ -80,82 +81,66 @@ namespace {
     return QUuid::fromString( uuidString.view() );
   }
 
-  template< typename T >
-  void deleteOrphanedPointerObject( QPointer< T >& pointer )
-  {
-    if ( !pointer.isNull() && !pointer->parent() ) {
-      delete pointer.get();
-    };
-  }
-
-  template< typename T >
-  void deleteNonNullPointerObject( QPointer< T >& pointer )
-  {
-    if ( !pointer.isNull() ) {
-      delete pointer.get();
-    }
-  }
 } // namespace
 } // namespace dbscqt
 
 class dbscqt::AccountBookWidget::Private
 {
 public:
-  Private( std::shared_ptr< dbsc::AccountBook > const& accountBook )
-    : mAccountBookPtr( accountBook )
+  Private( std::shared_ptr< dbsc::AccountBook > const& accountBookHandle )
+    : mAccountBookHandle( accountBookHandle )
   {
   }
 
   ::Ui::AccountBookWidget mUi {};
-  std::shared_ptr< dbsc::AccountBook > mAccountBookPtr;
+  std::shared_ptr< dbsc::AccountBook > mAccountBookHandle;
   std::map< QUuid, dbscqt::StoredAccountDisplayData > mDisplayDataMap;
 };
 
-dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook > const& accountBook, QWidget* parent )
+dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook > const& accountBookHandle,
+                                              QWidget* parent )
   : QWidget( parent )
-  , mImp( std::make_unique< Private >( accountBook ) )
+  , mImp( std::make_unique< Private >( accountBookHandle ) )
 {
   mImp->mUi.setupUi( this );
   {
     mImp->mUi.mAccountSelectionBox->setInsertPolicy( QComboBox::InsertAlphabetically );
   }
 
-  handleAccountBookChanged( accountBook );
+  handleAccountBookChanged( accountBookHandle );
 }
 
 dbscqt::AccountBookWidget::~AccountBookWidget()
 {
   // Delete any orphaned AccountModels
   for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::deleteOrphanedPointerObject( storedDisplayData.mAccountModelPtr );
+    dbscqt::QObjectDeleteUtil::deleteOrphaned( storedDisplayData.mAccountModelPtr );
   }
 }
 
 void dbscqt::AccountBookWidget::deleteAccountModels()
 {
   for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::deleteNonNullPointerObject( storedDisplayData.mAccountModelPtr );
+    dbscqt::QObjectDeleteUtil::deleteUnchecked( storedDisplayData.mAccountModelPtr );
   }
 }
 
 void dbscqt::AccountBookWidget::handleAccountBookChanged( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
   deleteAccountModels();
-  mImp->mAccountBookPtr = accountBookPtr;
+  mImp->mAccountBookHandle = accountBookPtr;
 
   mImp->mDisplayDataMap.clear();
-  for ( auto const& [id, account] : *mImp->mAccountBookPtr ) {
+  for ( auto const& [id, account] : *mImp->mAccountBookHandle ) {
     QUuid const accountId = toQUuid( id );
 
-    mImp->mDisplayDataMap.insert( {
-      accountId,
-      dbscqt::StoredAccountDisplayData {
-                                        .mAccountModelData = createAccountModelData( account ),
-                                        .mAccountModelPtr =
-          new dbscqt::AccountModel( dbscqt::createAccountModelData( account ),
-                                        dbscqt::createTransactionItems( account, *mImp->mAccountBookPtr ), ),
-                                        },
-    } );
+    auto const accountDisplayData =
+      dbscqt::StoredAccountDisplayData { .mAccountModelData = createAccountModelData( account ),
+                                         .mAccountModelPtr  = new dbscqt::AccountModel(
+                                           dbscqt::createAccountModelData( account ),
+                                           dbscqt::createTransactionItems( account, *mImp->mAccountBookHandle ),
+                                           nullptr ) };
+    mImp->mDisplayDataMap.insert( { accountId, std::move( accountDisplayData ) } );
   }
 
   refreshAccountComboBox();
@@ -167,7 +152,7 @@ void dbscqt::AccountBookWidget::handleAccountBookChanged( std::shared_ptr< dbsc:
 void dbscqt::AccountBookWidget::refreshAccountComboBox()
 {
   mImp->mUi.mAccountSelectionBox->clear();
-  assert( mImp->mAccountBookPtr );
+  assert( mImp->mAccountBookHandle );
 
   for ( auto const& [accountId, displayData] : mImp->mDisplayDataMap ) {
     auto const accountModel = mImp->mDisplayDataMap[accountId].mAccountModelPtr;
