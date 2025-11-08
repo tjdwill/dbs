@@ -17,6 +17,11 @@ target_link_libraries(dbscqt_qobjectdeleteutil
 )
 
 add_executable(dbscqt_qobjectdeleteutil.t dbscqt_qobjectdeleteutil.t.cpp)
+set(isLinux "$<PLATFORM_ID:Linux>")
+set(usingClang "$<CXX_COMPILER_ID:Clang>")
+set(isAsanEligible "$<AND:${isLinux},${usingClang}>")
+target_compile_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsanitize=address;-fno-omit-frame-pointer>")
+target_link_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsanitize=address;-fno-omit-frame-pointer>")
 target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil)
 add_test(NAME DbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
 
