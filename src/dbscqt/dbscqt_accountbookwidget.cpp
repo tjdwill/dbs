@@ -6,6 +6,7 @@
 #include <dbscqt_qobjectdeleteutil.h>
 
 #include <QPointer>
+#include <QSignalBlocker>
 #include <QTableView>
 #include <ui_dbscqt_accountbookwidget.h>
 
@@ -73,7 +74,7 @@ namespace {
   struct StoredAccountDisplayData
   {
     dbscqt::AccountModelData mAccountModelData;
-    QPointer< dbscqt::AccountModel > mAccountModelPtr {};
+    QPointer< dbscqt::AccountModel > mAccountModelHandle {};
   };
 
   auto toQUuid( dbsc::UuidString const& uuidString ) -> QUuid
@@ -95,6 +96,7 @@ public:
   ::Ui::AccountBookWidget mUi {};
   std::shared_ptr< dbsc::AccountBook > mAccountBookHandle;
   std::map< QUuid, dbscqt::StoredAccountDisplayData > mDisplayDataMap;
+  QTableView* mAccountTableView {};
 };
 
 dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook > const& accountBookHandle,
@@ -105,6 +107,8 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
   mImp->mUi.setupUi( this );
   {
     mImp->mUi.mAccountSelectionBox->setInsertPolicy( QComboBox::InsertAlphabetically );
+    mImp->mAccountTableView = new QTableView();
+    mImp->mUi.mAccountTableViewContainer->layout()->addWidget( mImp->mAccountTableView );
   }
 
   handleAccountBookChanged( accountBookHandle );
@@ -114,36 +118,53 @@ dbscqt::AccountBookWidget::~AccountBookWidget()
 {
   // Delete any orphaned AccountModels
   for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::QObjectDeleteUtil::deleteOrphaned( storedDisplayData.mAccountModelPtr );
-  }
-}
-
-void dbscqt::AccountBookWidget::deleteAccountModels()
-{
-  for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::QObjectDeleteUtil::deleteUnchecked( storedDisplayData.mAccountModelPtr );
+    dbscqt::QObjectDeleteUtil::deleteOrphaned( storedDisplayData.mAccountModelHandle );
   }
 }
 
 void dbscqt::AccountBookWidget::handleAccountBookChanged( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
   deleteAccountModels();
-  mImp->mAccountBookHandle = accountBookPtr;
-
   mImp->mDisplayDataMap.clear();
+  mImp->mAccountBookHandle = std::move( accountBookPtr );
+
   for ( auto const& [id, account] : *mImp->mAccountBookHandle ) {
     QUuid const accountId = toQUuid( id );
 
-    auto const accountDisplayData =
-      dbscqt::StoredAccountDisplayData { .mAccountModelData = createAccountModelData( account ),
-                                         .mAccountModelPtr  = new dbscqt::AccountModel(
-                                           dbscqt::createAccountModelData( account ),
-                                           dbscqt::createTransactionItems( account, *mImp->mAccountBookHandle ),
-                                           nullptr ) };
+    auto const accountModelData   = dbscqt::createAccountModelData( account );
+    auto const accountDisplayData = dbscqt::StoredAccountDisplayData {
+      .mAccountModelData = accountModelData,
+      .mAccountModelHandle =
+        new dbscqt::AccountModel( dbscqt::createTransactionItems( account, *mImp->mAccountBookHandle ), nullptr )
+    };
     mImp->mDisplayDataMap.insert( { accountId, std::move( accountDisplayData ) } );
   }
 
   refreshAccountComboBox();
+}
+
+void dbscqt::AccountBookWidget::handleAccountSelected( QUuid accountId )
+{
+  auto const& displayData = mImp->mDisplayDataMap.at( accountId );
+  mImp->mUi.mBalanceDisplay->setText( displayData.mAccountModelData.mBalance );
+  mImp->mUi.mDescriptionDisplay->setText( displayData.mAccountModelData.mDescription );
+  mImp->mAccountTableView->setModel( displayData.mAccountModelHandle );
+}
+
+void dbscqt::AccountBookWidget::clearDisplay()
+{
+  QSignalBlocker sbAccountSelectionBox { mImp->mUi.mAccountSelectionBox };
+  mImp->mUi.mAccountSelectionBox->clear();
+  mImp->mAccountTableView->setModel( nullptr );
+  mImp->mUi.mBalanceDisplay->clear();
+  mImp->mUi.mDescriptionDisplay->clear();
+}
+
+void dbscqt::AccountBookWidget::deleteAccountModels()
+{
+  for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
+    dbscqt::QObjectDeleteUtil::deleteUnchecked( storedDisplayData.mAccountModelHandle );
+  }
 }
 
 /// Precondition(s):
@@ -154,10 +175,13 @@ void dbscqt::AccountBookWidget::refreshAccountComboBox()
   mImp->mUi.mAccountSelectionBox->clear();
   assert( mImp->mAccountBookHandle );
 
+  // Display open accounts.
   for ( auto const& [accountId, displayData] : mImp->mDisplayDataMap ) {
-    auto const accountModel = mImp->mDisplayDataMap[accountId].mAccountModelPtr;
-    mImp->mUi.mAccountSelectionBox->addItem( accountModel->accountDisplayText(),
-                                             QVariant( accountModel->accountId() ) );
+    auto const& accountModelData = mImp->mDisplayDataMap[accountId].mAccountModelData;
+    if ( accountModelData.mIsOpen ) {
+      mImp->mUi.mAccountSelectionBox->addItem(
+        dbscqt::createDisplayText( accountModelData.mId, accountModelData.mName ), QVariant( accountModelData.mId ) );
+    }
   }
 }
 

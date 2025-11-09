@@ -21,17 +21,6 @@ namespace {
 std::filesystem::path const kAccountBookPath { std::filesystem::path( PROJECT_RESOURCES_DIR )
                                                / "testAccountBook.toml" };
 
-static auto createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData
-{
-  return {
-    .mName        = QString::fromStdString( account.name() ),
-    .mDescription = QString::fromStdString( account.description() ),
-    .mBalance     = QString::fromStdString( dbsc::TransactionUtil::currencyAsString( account.balance() ) ),
-    .mId          = QUuid::fromString( account.id().view() ),
-    .mIsOpen      = account.isOpen(),
-  };
-}
-
 static auto createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
   -> dbscqt::TransactionItemData
 {
@@ -91,8 +80,7 @@ int main( int argc, char* argv[] )
     mainWindow->setCentralWidget( centralWidget );
     auto* widgetLayout = new QVBoxLayout( centralWidget );
     auto* tableView    = new QTableView();
-    auto* tableModel   = new dbscqt::AccountModel(
-      createAccountModelData( kAccount ), createTransactionItems( kAccount, kAccountBook ), nullptr );
+    auto* tableModel   = new dbscqt::AccountModel( createTransactionItems( kAccount, kAccountBook ), nullptr );
     tableView->setModel( tableModel );
     tableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
     widgetLayout->addWidget( tableView );

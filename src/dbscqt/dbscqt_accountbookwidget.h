@@ -29,19 +29,17 @@ public:
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
 public Q_SLOTS:
+  /// TODO: Ensure account balance is updated.
   void handleTransactionCreated( std::vector< TransactionItem > );
   void handleAccountBookChanged( std::shared_ptr< dbsc::AccountBook > );
-  void handleAccountClosed( QUuid accountId );
   void handleAccountCreated( AccountModelData accountData );
-  void handleAccountOpened( QUuid accountId );
-
-private Q_SLOTS:
-  void clearDisplay();
+  void handleAccountOpenStatusChanged( QUuid accountId, bool isOpen );
   void handleAccountSelected( QUuid accountId );
-  void refreshAccountComboBox();
 
 private:
+  void clearDisplay();
   void deleteAccountModels();
+  void refreshAccountComboBox();
 
   class Private;
   std::unique_ptr< Private > mImp;

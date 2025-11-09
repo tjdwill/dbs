@@ -20,33 +20,25 @@ namespace {
     kVariantCount,
   };
 
-  auto displayText( QUuid id, QString const& name )
-  {
-    return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );
-  }
-
 } // namespace
 
 class AccountModel::Private
 {
 public:
-  Private( AccountModelData const& accountData, std::vector< std::unique_ptr< TransactionItem > > items )
-    : mData( accountData )
-    , mItems( std::move( items ) )
+  Private( std::vector< std::unique_ptr< TransactionItem > > items )
+    : mItems( std::move( items ) )
   {
   }
 
-  AccountModelData mData;
   std::vector< std::unique_ptr< TransactionItem > > mItems;
 };
 
 } // namespace dbscqt
 
-dbscqt::AccountModel::AccountModel( AccountModelData const& accountData,
-                                    std::vector< std::unique_ptr< TransactionItem > > transactionItems,
+dbscqt::AccountModel::AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems,
                                     QObject* parent )
   : QAbstractTableModel( parent )
-  , mImp( std::make_unique< Private >( accountData, std::move( transactionItems ) ) )
+  , mImp( std::make_unique< Private >( std::move( transactionItems ) ) )
 {
 }
 
@@ -109,31 +101,6 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-auto dbscqt::AccountModel::accountDisplayText() const -> QString
-{
-  return dbscqt::displayText( mImp->mData.mId, mImp->mData.mName );
-}
-
-auto dbscqt::AccountModel::accountId() const -> QUuid
-{
-  return mImp->mData.mId;
-}
-
-auto dbscqt::AccountModel::balance() const -> QString const&
-{
-  return mImp->mData.mBalance;
-}
-
-auto dbscqt::AccountModel::description() const -> QString const&
-{
-  return mImp->mData.mDescription;
-}
-
-auto dbscqt::AccountModel::isOpen() const -> bool
-{
-  return mImp->mData.mIsOpen;
-}
-
 dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& transactionData )
   : mData( transactionData )
 {
@@ -141,8 +108,14 @@ dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& tra
 
 auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
 {
-  return mData.mOtherPartyId == QUuid() ? "External"
-                                        : dbscqt::displayText( mData.mOtherPartyId, mData.mOtherPartyAccountName );
+  return mData.mOtherPartyId == QUuid()
+         ? "External"
+         : dbscqt::createDisplayText( mData.mOtherPartyId, mData.mOtherPartyAccountName );
+}
+
+auto dbscqt::createDisplayText( QUuid id, QString const& name ) -> QString
+{
+  return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );
 }
 
 // -----------------------------------------------------------------------------

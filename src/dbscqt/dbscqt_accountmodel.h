@@ -86,21 +86,13 @@ class AccountModel : public QAbstractTableModel
 
 public:
   /// @param accountToModel is internally sorted by date.
-  AccountModel( AccountModelData const& accountData,
-                std::vector< std::unique_ptr< TransactionItem > > transactionItems,
-                QObject* parent = nullptr );
+  AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems, QObject* parent = nullptr );
   ~AccountModel() override;
 
   auto rowCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
   auto columnCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
   auto data( QModelIndex const& index, int role = Qt::DisplayRole ) const -> QVariant final;
   auto headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const -> QVariant final;
-
-  auto accountDisplayText() const -> QString;
-  auto accountId() const -> QUuid;
-  auto balance() const -> QString const&;
-  auto description() const -> QString const&;
-  auto isOpen() const -> bool;
 
 public Q_SLOTS:
   //  /// Implement sorting by a given column
@@ -115,6 +107,9 @@ private:
   class Private;
   std::unique_ptr< Private > mImp;
 };
+
+/// @return Formatted string for displaying shortened uuid + name.
+auto createDisplayText( QUuid id, QString const& name ) -> QString;
 } // namespace dbscqt
 #endif // include guard
 
