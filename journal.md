@@ -1,5 +1,15 @@
 # DBS Journal
 
+## 11 November 2025
+
+I've continued work on the dbscqt_accountbookwidget, even getting a working test (PY). 
+I am a bit concerned in that I'm not 100% sure there are no memory leaks in the
+implementation. I will need to do more analysis to ensure all allocated pointers are
+destoyed.
+
+Also, I think it's time to learn to use the debugger on Linux platforms. I may take a
+detour to learn gdb.
+
 ## 1 November 2025
 
 - Reworked model value printing.
