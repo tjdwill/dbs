@@ -90,8 +90,8 @@ add_test(NAME DbscAccountBookTest COMMAND dbsc_accountbook.t)
 
 # dbsc_dbsserializer
 ## Ensure the header compiles in isolation.
-add_library(dbsc_serializer)
-target_sources(dbsc_serializer
+add_library(dbsc_dbsserializer)
+target_sources(dbsc_dbsserializer
   PRIVATE
     dbsc_dbsserializer.cpp
   PUBLIC
@@ -99,22 +99,22 @@ target_sources(dbsc_serializer
     FILES
       dbsc_dbsserializer.h
 )
-target_link_libraries(dbsc_serializer PUBLIC dbsc_accountbook)
+target_link_libraries(dbsc_dbsserializer PUBLIC dbsc_accountbook)
 
 # dbsc_dbstomlserializer
 add_library(dbsc_tomlserializer) 
 target_sources(dbsc_tomlserializer 
   PRIVATE 
-    dbsc_dbstomlserializer.cpp
+    dbsc_tomlserializer.cpp
   PUBLIC
     FILE_SET HEADERS
     FILES
-      dbsc_dbstomlserializer.h
+      dbsc_tomlserializer.h
 )
 target_link_libraries(dbsc_tomlserializer PUBLIC
   dbsc_accountbook
   dbsc_account
-  dbsc_serializer
+  dbsc_dbsserializer
   dbsc_transaction
   dbsc_uuidstring
   bdl
@@ -123,7 +123,7 @@ target_link_libraries(dbsc_tomlserializer PUBLIC
 )
 
 add_executable(dbsc_tomlserializer.t)
-target_sources(dbsc_tomlserializer.t PRIVATE dbsc_dbstomlserializer.t.cpp)
+target_sources(dbsc_tomlserializer.t PRIVATE dbsc_tomlserializer.t.cpp)
 target_link_libraries(dbsc_tomlserializer.t 
   PRIVATE 
     dbsc_tomlserializer

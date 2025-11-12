@@ -1,4 +1,5 @@
 add_compile_definitions(QT_NO_KEYWORDS)
+set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
 # dbscqt_qobjectdeleteutil
 add_library(dbscqt_qobjectdeleteutil)
@@ -46,7 +47,7 @@ target_link_libraries(dbscqt_accountmodel PUBLIC
 
 add_executable(dbscqt_accountmodel.t dbscqt_accountmodel.t.cpp)
 target_sources(dbscqt_accountmodel.t PRIVATE dbscqt_accountmodel.t.cpp)
-target_compile_definitions(dbscqt_accountmodel.t PRIVATE PROJECT_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
+target_compile_definitions(dbscqt_accountmodel.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
 target_link_libraries(dbscqt_accountmodel.t 
   PRIVATE
     dbscqt_accountmodel
@@ -73,11 +74,18 @@ target_sources(dbscqt_accountbookwidget
 target_link_libraries(dbscqt_accountbookwidget
   PRIVATE
     dbscqt_qobjectdeleteutil
-    dbscqt_accountmodel
     dbsc_transaction
   PUBLIC
+    dbscqt_accountmodel
     dbsc_accountbook
     dbsc_account
     Qt::Widgets
 )
-
+add_executable(dbscqt_accountbookwidget.t)
+target_sources(dbscqt_accountbookwidget.t PRIVATE dbscqt_accountbookwidget.t.cpp)
+target_link_libraries(dbscqt_accountbookwidget.t 
+  PRIVATE
+    dbscqt_accountbookwidget
+    dbsc_tomlserializer
+)
+target_compile_definitions(dbscqt_accountbookwidget.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})

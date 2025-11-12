@@ -8,9 +8,8 @@
 //
 //@DESCRIPTION:
 
-#include "dbscqt_accountmodel.h"
-
 #include <dbsc_accountbook.h>
+#include <dbscqt_accountmodel.h>
 
 #include <QWidget>
 
@@ -29,11 +28,7 @@ public:
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
 public Q_SLOTS:
-  /// TODO: Ensure account balance is updated.
-  void handleTransactionCreated( std::vector< TransactionItem > );
-  void handleAccountBookChanged( std::shared_ptr< dbsc::AccountBook > );
-  void handleAccountCreated( AccountModelData accountData );
-  void handleAccountOpenStatusChanged( QUuid accountId, bool isOpen );
+  void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
   void handleAccountSelected( QUuid accountId );
 
 private:

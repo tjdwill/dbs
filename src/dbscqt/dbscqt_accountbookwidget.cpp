@@ -5,6 +5,7 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_qobjectdeleteutil.h>
 
+#include <QHeaderView>
 #include <QPointer>
 #include <QSignalBlocker>
 #include <QTableView>
@@ -79,7 +80,7 @@ namespace {
 
   auto toQUuid( dbsc::UuidString const& uuidString ) -> QUuid
   {
-    return QUuid::fromString( uuidString.view() );
+    return QUuid::fromString( uuidString.toStdString() );
   }
 
 } // namespace
@@ -111,7 +112,15 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
     mImp->mUi.mAccountTableViewContainer->layout()->addWidget( mImp->mAccountTableView );
   }
 
-  handleAccountBookChanged( accountBookHandle );
+  connect( mImp->mUi.mAccountSelectionBox, &QComboBox::currentIndexChanged, this, [this]( int index ) {
+    if ( index > -1 ) {
+      handleAccountSelected( mImp->mUi.mAccountSelectionBox->itemData( index ).toUuid() );
+    } else {
+      clearDisplay();
+    }
+  } );
+
+  handleAccountBookSet( accountBookHandle );
 }
 
 dbscqt::AccountBookWidget::~AccountBookWidget()
@@ -122,15 +131,15 @@ dbscqt::AccountBookWidget::~AccountBookWidget()
   }
 }
 
-void dbscqt::AccountBookWidget::handleAccountBookChanged( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
+void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
+  assert( mImp->mAccountBookHandle && accountBookPtr );
   deleteAccountModels();
   mImp->mDisplayDataMap.clear();
   mImp->mAccountBookHandle = std::move( accountBookPtr );
-
-  for ( auto const& [id, account] : *mImp->mAccountBookHandle ) {
-    QUuid const accountId = toQUuid( id );
-
+  auto const& accountBook  = *mImp->mAccountBookHandle;
+  for ( auto const& [id, account] : accountBook ) {
+    QUuid const accountId         = toQUuid( id );
     auto const accountModelData   = dbscqt::createAccountModelData( account );
     auto const accountDisplayData = dbscqt::StoredAccountDisplayData {
       .mAccountModelData = accountModelData,
@@ -149,6 +158,9 @@ void dbscqt::AccountBookWidget::handleAccountSelected( QUuid accountId )
   mImp->mUi.mBalanceDisplay->setText( displayData.mAccountModelData.mBalance );
   mImp->mUi.mDescriptionDisplay->setText( displayData.mAccountModelData.mDescription );
   mImp->mAccountTableView->setModel( displayData.mAccountModelHandle );
+  {
+    mImp->mAccountTableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+  }
 }
 
 void dbscqt::AccountBookWidget::clearDisplay()

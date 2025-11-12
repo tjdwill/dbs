@@ -1,5 +1,5 @@
-// dbsc_dbstomlserializer.cpp
-#include "dbsc_dbstomlserializer.h"
+// dbsc_tomlserializer.cpp
+#include "dbsc_tomlserializer.h"
 
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
@@ -33,7 +33,7 @@ namespace {
   using TomlCurrencyType = std::string;
 } // namespace
 
-auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath ) -> AccountBook
+auto TomlSerializer::readAccountBook( std::filesystem::path const& filePath ) -> AccountBook
 {
 
   // Assume a valid TOML file.
@@ -66,7 +66,7 @@ auto DbsTomlSerializer::readAccountBook( std::filesystem::path const& filePath )
   return accountBook;
 }
 
-auto DbsTomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidString const& accountId ) -> Account
+auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidString const& accountId ) -> Account
 {
   auto const accountName        = accountTomlTable[kAccountNameKey].value< std::string >().value();
   auto const accountDescription = accountTomlTable[kAccountDescriptionKey].value< std::string >().value();
@@ -78,7 +78,7 @@ auto DbsTomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidSt
   for ( auto& transactionTableNode : *transactionArrayOfTables ) {
     assert( transactionTableNode.is_table() );
     auto* transactionTable = transactionTableNode.as_table();
-    account.logTransaction( DbsTomlSerializer::readTransactionInternal( *transactionTable, accountId ) );
+    account.logTransaction( TomlSerializer::readTransactionInternal( *transactionTable, accountId ) );
   }
 
   auto const accountIsOpen = accountTomlTable[kAccountOpenStatusKey].value< bool >().value();
@@ -89,7 +89,7 @@ auto DbsTomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidSt
   return account;
 }
 
-auto DbsTomlSerializer::readTransactionInternal( InputType& transactionTable, UuidString const& owningPartyId )
+auto TomlSerializer::readTransactionInternal( InputType& transactionTable, UuidString const& owningPartyId )
   -> Transaction
 {
   auto const transactionId =
@@ -108,7 +108,7 @@ auto DbsTomlSerializer::readTransactionInternal( InputType& transactionTable, Uu
   return Transaction( transactionId, owningPartyId, otherPartyId, transactionAmount, timeStamp, transactionNotes );
 }
 
-void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath )
+void TomlSerializer::writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath )
 {
   toml::table topLevelTable;
   toml::value< std::string > accountOwner { accountBook.owner() };
@@ -116,7 +116,7 @@ void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::f
 
   for ( auto const& [accountId, account] : accountBook ) {
     toml::table accountTable;
-    DbsTomlSerializer::writeAccountInternal( accountTable, account );
+    TomlSerializer::writeAccountInternal( accountTable, account );
     topLevelTable.insert( accountId.view(), std::move( accountTable ) );
   }
 
@@ -127,7 +127,7 @@ void DbsTomlSerializer::writeAccountBook( AccountBook const& accountBook, std::f
   ofs << topLevelTable << "\n";
 }
 
-void DbsTomlSerializer::writeAccountInternal( OutputType& accountTable, Account const& account )
+void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account const& account )
 {
   toml::value< std::string > const accountName { account.name() };
   toml::value< std::string > const accountDescription { account.description() };
@@ -139,14 +139,14 @@ void DbsTomlSerializer::writeAccountInternal( OutputType& accountTable, Account 
   toml::array transactionArray {};
   for ( auto const& [_, transaction] : account ) {
     toml::table transactionTable;
-    DbsTomlSerializer::writeTransactionInternal( transactionTable, transaction );
+    TomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );
   }
   assert( transactionArray.is_array_of_tables() );
   accountTable.insert( kAccountTransactionsKey, std::move( transactionArray ) );
 }
 
-void DbsTomlSerializer::writeTransactionInternal( OutputType& transactionTable, Transaction const& transaction )
+void TomlSerializer::writeTransactionInternal( OutputType& transactionTable, Transaction const& transaction )
 {
   toml::value< std::string > const transactionId { transaction.transactionId().view() };
   toml::value< std::string > const otherPartyId { transaction.otherPartyId().view() };

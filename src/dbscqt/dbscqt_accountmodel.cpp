@@ -5,6 +5,8 @@
 
 #include <QTimeZone>
 
+#include <stdexcept>
+
 namespace dbscqt {
 
 namespace {
@@ -77,6 +79,8 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
         return item->otherPartyDisplayName();
       case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
         return item->notes();
+      default:
+        throw std::invalid_argument( "Unhandled enum variant" );
     }
   }
   return QVariant();
@@ -96,6 +100,8 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
         return "Other Party";
       case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
         return "Notes";
+      default:
+        throw std::invalid_argument( "Unhandled enum variant" );
     }
   }
   return QVariant();

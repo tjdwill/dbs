@@ -1,7 +1,7 @@
 // dbscqt_accountmodel.t.cpp
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
-#include <dbsc_dbstomlserializer.h>
+#include <dbsc_tomlserializer.h>
 #include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
 
@@ -18,8 +18,7 @@
 
 namespace {
 
-std::filesystem::path const kAccountBookPath { std::filesystem::path( PROJECT_RESOURCES_DIR )
-                                               / "testAccountBook.toml" };
+std::filesystem::path const kAccountBookPath { std::filesystem::path( DBS_RESOURCES_DIR ) / "testAccountBook.toml" };
 
 static auto createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
   -> dbscqt::TransactionItemData
@@ -70,7 +69,7 @@ int main( int argc, char* argv[] )
 {
   QApplication app { argc, argv };
 
-  auto const kAccountBook = dbsc::loadAccountBook< dbsc::DbsTomlSerializer >( kAccountBookPath );
+  auto const kAccountBook = dbsc::loadAccountBook< dbsc::TomlSerializer >( kAccountBookPath );
   auto const& kAccount    = ( *kAccountBook.cbegin() ).second;
 
   // NOLINTBEGIN(cppcoreguidelines-owning-memory)

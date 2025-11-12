@@ -2,7 +2,7 @@
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_dbsserializer.h>
-#include <dbsc_dbstomlserializer.h>
+#include <dbsc_tomlserializer.h>
 #include <dbsc_transaction.h>
 
 #include <bdldfp_decimal.fwd.h>
@@ -50,9 +50,9 @@ int main()
 {
   using namespace std::string_view_literals;
   std::filesystem::path const saveFile { "testAccountBook.toml"sv };
-  dbsc::saveAccountBook< dbsc::DbsTomlSerializer >( accountBook(), saveFile );
+  dbsc::saveAccountBook< dbsc::TomlSerializer >( accountBook(), saveFile );
 
-  auto const parsedAccountBook = dbsc::loadAccountBook< dbsc::DbsTomlSerializer >( saveFile );
+  auto const parsedAccountBook = dbsc::loadAccountBook< dbsc::TomlSerializer >( saveFile );
   assert( parsedAccountBook.owner() == accountBook().owner() );
   for ( auto const& [parsed, groundTruth] : std::views::zip( parsedAccountBook, accountBook() ) ) {
     assert( parsed == groundTruth );

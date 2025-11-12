@@ -1,11 +1,11 @@
-// dbsc_dbstomlserializer.h
+// dbsc_tomlserializer.h
 #ifndef INCLUDED_DBSC_TOMLSERIALIZER
 #define INCLUDED_DBSC_TOMLSERIALIZER
 
 //@PURPOSE: Provide a TOML-specific implementation of dbsc::DbsSerializer
 //
 //@CLASSES:
-//  dbsc::DbsTomlSerializer: Serializer for the DBS classes in a TOML interface.
+//  dbsc::TomlSerializer: Serializer for the DBS classes in a TOML interface.
 //
 //@DESCRIPTION: This component defines a specific implementation for
 //  dbsc::DbsSerializer.
@@ -24,7 +24,7 @@ class UuidString;
 
 /// This class adheres to the dbsc::DbsSerializer concept.
 /// It is uncertain if there is a way to enforce this programmatically.
-class DbsTomlSerializer
+class TomlSerializer
 {
 public:
   using InputType  = toml::table;
