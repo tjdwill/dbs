@@ -1,6 +1,6 @@
 ## Dependencies
 
-- [stduuid](https://github,com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
+- [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
 - [Qt]() (v6.10.1) 
 - [bde](https://github.com/bloomberg/bde) by Bloomberg
 - [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer (v3.4.0)
