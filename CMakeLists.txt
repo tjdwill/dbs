@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.23)
 project(dbs
   VERSION 0.0.1
   DESCRIPTION "An electronic budgeting system that emulates the envelope budgeting method."
@@ -17,13 +17,14 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Qt imports
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_standard_project_setup()
 # Bloomberg BDE imports
 find_package(Threads REQUIRED)
 #find_package(bal REQUIRED)
 find_package(bdl REQUIRED)
 find_package(bsl REQUIRED)
+
 find_package(tomlplusplus REQUIRED)
 find_package(stduuid REQUIRED)
 
@@ -31,7 +32,8 @@ find_package(stduuid REQUIRED)
 if (CMAKE_HOST_UNIX)
   execute_process(
     COMMAND       rm ${PROJECT_SOURCE_DIR}/build
-    ERROR_FILE    /dev/null)
+    ERROR_FILE    /dev/null
+  )
   execute_process(COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build)
 endif ()
 #============Subdirectories====================
