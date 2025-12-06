@@ -34,7 +34,7 @@ target_sources(dbscqt_displayutil
     FILES
       dbscqt_displayutil.h
 )
-target_link_libraries(dbscqt_displayutil PUBLIC Qt::Core)
+target_link_libraries(dbscqt_displayutil PUBLIC dbsc_uuidstring Qt::Core)
 add_executable(dbscqt_displayutil.t dbscqt_displayutil.t.cpp)
 target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil)
 add_test(NAME DbscqtDisplayUtilTest COMMAND dbscqt_displayutil.t)

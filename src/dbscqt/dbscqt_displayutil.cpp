@@ -6,6 +6,11 @@ auto dbscqt::DisplayUtil::accountNameWithShortenedUuid( QUuid id, QString const&
   return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );
 }
 
+auto dbscqt::DisplayUtil::toQUuid( dbsc::UuidString const& uuidString ) -> QUuid
+{
+  return QUuid::fromString( uuidString.toStdString() );
+}
+
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
 //

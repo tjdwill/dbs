@@ -10,6 +10,8 @@
 //@DESCRIPTION: This component defines Qt-versions of dbsc types and functions to create
 //  them.
 
+#include <dbsc_uuidstring.h>
+
 #include <QDateTime>
 #include <QString>
 #include <QUuid>
@@ -19,6 +21,7 @@ struct DisplayUtil
 {
   /// @return Formatted string for displaying shortened uuid + name.
   [[nodiscard]] static auto accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString;
+  [[nodiscard]] static auto toQUuid( dbsc::UuidString const& uuidString ) -> QUuid;
 };
 } // namespace dbscqt
 

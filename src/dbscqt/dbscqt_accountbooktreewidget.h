@@ -7,11 +7,13 @@
 //@CLASSES:
 //  dbscqt::AccountBookTreeWidget: A QTreeWidget subclass that represents an account book.
 //  dbscqt::AccountItem: Represents an account within a tree-like hierarchy
+//  dbscqt::AccountItemData: PoD struct containing Qt-compatible, account-specific data.
 //
 //@DESCRIPTION: This component defines a tree widget for the account book for use in the
 //  GUI display.
 #include <dbscqt_transactionitem.h>
 
+#include <QPointer>
 #include <QString>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -30,7 +32,6 @@ class AccountModel;
 
 struct AccountItemData
 {
-
   QString mName;
   QString mDescription;
   QString mBalance;
@@ -43,11 +44,25 @@ struct AccountItemData
 class AccountItem : public QTreeWidgetItem
 {
 public:
-  AccountItem( dbsc::Account const& account, AccountBookTreeWidget* parent = nullptr );
-  AccountItem( dbsc::Account const& account, QTreeWidgetItem* parent = nullptr );
+  // Since AccountItems are classified according to account open/close status, there will never be
+  // a top-level AccountItem in an AccountBookTreeWidget. Therefore, the constructor with a
+  // dbscqt::AccountBookTreeWidget parent item is omitted.
 
-  [[nodiscard]] auto accountModel( QUuid accountId ) const -> AccountModel*;
-  [[nodiscard]] auto accountItemData( QUuid accountId ) const -> dbscqt::AccountItemData const&;
+  ///@param accountModel takes ownership of the model
+  AccountItem( dbscqt::AccountItemData accountData,
+               dbscqt::AccountModel* accountModelHandle,
+               QTreeWidgetItem* parent = nullptr );
+  ~AccountItem() override;
+  AccountItem( AccountItem const& )                        = delete;
+  AccountItem( AccountItem&& ) noexcept                    = delete;
+  auto operator=( AccountItem const& )                     = delete;
+  auto operator=( AccountItem&& ) noexcept -> AccountItem& = delete;
+
+  [[nodiscard]] auto accountModel() const -> AccountModel*;
+  [[nodiscard]] auto accountItemData() const -> dbscqt::AccountItemData const&;
+  [[nodiscard]] auto accountId() const -> QUuid;
+
+  [[nodiscard]] auto accountItemDataMut() -> dbscqt::AccountItemData&;
 
 private:
   class Private;
@@ -59,12 +74,37 @@ class AccountBookTreeWidget : public QTreeWidget
   Q_OBJECT
 public:
   AccountBookTreeWidget( std::shared_ptr< dbsc::AccountBook > const&, QWidget* parent = nullptr );
+  ~AccountBookTreeWidget() override;
+  AccountBookTreeWidget( AccountBookTreeWidget const& )                        = delete;
+  AccountBookTreeWidget( AccountBookTreeWidget&& ) noexcept                    = delete;
+  auto operator=( AccountBookTreeWidget const& ) -> AccountBookTreeWidget&     = delete;
+  auto operator=( AccountBookTreeWidget&& ) noexcept -> AccountBookTreeWidget& = delete;
+
+  [[nodiscard]] auto accountItem( QUuid accountId ) const -> AccountItem*;
+  [[nodiscard]] auto accountItemData( QUuid accountId ) const -> dbscqt::AccountItemData const&;
+  [[nodiscard]] auto accountModel( QUuid accountId ) const -> AccountModel*;
+
+  [[nodiscard]] auto accountItemDataMut( QUuid accountId ) -> dbscqt::AccountItemData&;
+  [[nodiscard]] auto addAccountItem( AccountItem* ) -> bool;
+
+Q_SIGNALS:
+  void accountSelected( AccountItem* );
 
 public Q_SLOTS:
   // void handleAccountCreated( dbscqt::AccountItemData );
-  // void handleAccountStatusUpdated( QUuid accountId, bool isOpen );
+  void handleAccountStatusUpdated( QUuid accountId, bool isOpen );
   // /// Adds transaction data to the relevant model.
   // void handleTransactionMade( std::vector< TransactionItemData > transactionItems );
+
+private:
+  [[nodiscard]] auto isMemberOfThisTree( QTreeWidgetItem* ) -> bool;
+  [[nodiscard]] auto isAccountItemInThisTree( QTreeWidgetItem* itemCandidate ) -> bool;
+  [[nodiscard]] auto createAccountItem( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+    -> AccountItem*;
+  [[nodiscard]] auto categoryItem( bool accountIsActive ) -> QTreeWidgetItem*;
+
+  class Private;
+  std::unique_ptr< Private > mImp;
 };
 
 } // namespace dbscqt
