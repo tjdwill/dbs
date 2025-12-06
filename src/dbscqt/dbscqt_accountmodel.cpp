@@ -74,7 +74,7 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
       case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return item->amount();
       case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
-        /// TODO: Link this logic and the header logic via a QSettings entry
+        /// TODO: Link this logic and the header logic via a QSettings entry(?)
         return item->timeStamp().toLocalTime().toString( "yyyy-MM-dd hh:mm:ss.zzz" );
       case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
         return item->otherPartyDisplayName();

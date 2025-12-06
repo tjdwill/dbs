@@ -60,6 +60,28 @@ auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
                                                   mImp->mData.mOtherPartyId, mImp->mData.mOtherPartyAccountName );
 }
 
+auto dbscqt::createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
+  -> dbscqt::TransactionItemData
+{
+
+  QDateTime const timestamp =
+    QDateTime::fromStdTimePoint( std::chrono::time_point_cast< std::chrono::milliseconds >( transaction.timeStamp() ) );
+  QString const transactionAmount =
+    QString::fromStdString( dbsc::TransactionUtil::currencyAsString( transaction.amount() ) );
+  QUuid const otherPartyId = QUuid::fromString( transaction.otherPartyId().view() );
+  QString const otherPartyAccountName =
+    otherPartyId.isNull() ? "" : QString::fromStdString( accountBook.account( transaction.otherPartyId() ).name() );
+
+  return {
+    .mTimeStamp             = timestamp,
+    .mTransactionAmount     = transactionAmount,
+    .mNotes                 = QString::fromStdString( transaction.notes() ),
+    .mOtherPartyAccountName = otherPartyAccountName,
+    .mTransactionId         = QUuid::fromString( transaction.transactionId().view() ),
+    .mOtherPartyId          = otherPartyId,
+  };
+};
+
 auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
 {
@@ -75,8 +97,8 @@ auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::Account
   items.reserve( account.transactionCount() );
   for ( auto const& item : transactionsSortedByDescendingDate ) {
     auto const& [id, transaction] = item.get();
-    items.push_back( std::make_unique< dbscqt::TransactionItem >(
-      dbscqt::DisplayUtil::createTransactionItemData( transaction, accountBook ) ) );
+    items.push_back(
+      std::make_unique< dbscqt::TransactionItem >( dbscqt::createTransactionItemData( transaction, accountBook ) ) );
   }
 
   return items;

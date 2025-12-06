@@ -52,6 +52,7 @@ QualifierOrder: [inline, static, type, const]
 PointerAlignment: Left
 RemoveEmptyLinesInUnwrappedLines: true
 SeparateDefinitionBlocks: Always
+ShortNamespaceLines: 0
 SpaceBeforeCpp11BracedList: true
 SpacesInAngles: Always
 SpacesInParens: Custom

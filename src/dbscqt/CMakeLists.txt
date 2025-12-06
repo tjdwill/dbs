@@ -34,13 +34,10 @@ target_sources(dbscqt_displayutil
     FILES
       dbscqt_displayutil.h
 )
-target_link_libraries(dbscqt_displayutil
-  PUBLIC
-    dbsc_transaction
-    dbsc_account
-    dbsc_accountbook
-    Qt::Core
-)
+target_link_libraries(dbscqt_displayutil PUBLIC Qt::Core)
+add_executable(dbscqt_displayutil.t dbscqt_displayutil.t.cpp)
+target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil)
+add_test(NAME DbscqtDisplayUtilTest COMMAND dbscqt_displayutil.t)
 
 add_library(dbscqt_transactionitem)
 target_sources(dbscqt_transactionitem
@@ -51,7 +48,14 @@ target_sources(dbscqt_transactionitem
     FILES
       dbscqt_transactionitem.h
 )
-target_link_libraries(dbscqt_transactionitem PUBLIC dbscqt_displayutil Qt::Core)
+target_link_libraries(dbscqt_transactionitem 
+  PRIVATE 
+    dbscqt_displayutil 
+    dbsc_account
+    dbsc_accountbook
+  PUBLIC 
+    Qt::Core
+)
 
 add_library(dbscqt_accountmodel dbscqt_accountmodel.cpp)
 target_sources(dbscqt_accountmodel 
@@ -62,25 +66,44 @@ target_sources(dbscqt_accountmodel
     FILES
       dbscqt_accountmodel.h
 )
-target_link_libraries(dbscqt_accountmodel PUBLIC 
-  dbsutl_helpers
-  dbscqt_transactionitem
-  Qt::Core
-  Qt::Gui
-  Qt::Widgets
+target_link_libraries(dbscqt_accountmodel 
+  PRIVATE
+    dbsutl_helpers
+    dbscqt_transactionitem
+  PUBLIC 
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
 ) 
 add_executable(dbscqt_accountmodel.t dbscqt_accountmodel.t.cpp)
 target_sources(dbscqt_accountmodel.t PRIVATE dbscqt_accountmodel.t.cpp)
 target_compile_definitions(dbscqt_accountmodel.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
 target_link_libraries(dbscqt_accountmodel.t 
   PRIVATE
-    dbscqt_displayutil
     dbscqt_transactionitem
     dbscqt_accountmodel
     dbsc_account
     dbsc_accountbook
     dbsc_transaction
     dbsc_tomlserializer
+)
+
+add_library(dbscqt_accountbooktreewidget)
+target_sources(dbscqt_accountbooktreewidget
+  PRIVATE 
+    dbscqt_accountbooktreewidget.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_accountbooktreewidget.h
+)
+target_link_libraries(dbscqt_accountbooktreewidget
+ PRIVATE
+  dbscqt_accountmodel
+  dbsc_account
+  dbsc_accountbook
+ PUBLIC
+  dbscqt_transactionitem
 )
 
 add_library(dbscqt_accountbookwidget)
@@ -95,14 +118,15 @@ target_sources(dbscqt_accountbookwidget
 )
 target_link_libraries(dbscqt_accountbookwidget
   PRIVATE
-    dbscqt_qobjectdeleteutil
-    dbsc_transaction
-    dbscqt_displayutil
-  PUBLIC
-    dbscqt_transactionitem
+    dbscqt_accountbooktreewidget
     dbscqt_accountmodel
-    dbsc_accountbook
+    dbscqt_displayutil
+    dbscqt_qobjectdeleteutil
+    dbscqt_transactionitem
     dbsc_account
+    dbsc_accountbook
+    dbsc_transaction
+  PUBLIC
     Qt::Widgets
 )
 add_executable(dbscqt_accountbookwidget.t)

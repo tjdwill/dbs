@@ -38,5 +38,9 @@ if (CMAKE_HOST_UNIX)
 endif ()
 #============Subdirectories====================
 set(DBS_THIRDPARTY_BASE_DIR ${PROJECT_SOURCE_DIR}/3rdparty)
-add_subdirectory(tutorialSpace)
+
+option(BUILD_TUTORIALS "Build the components in the tutorialSpace directory" OFF )
+if (BUILD_TUTORIALS)
+  add_subdirectory(tutorialSpace)
+endif()
 add_subdirectory(src)

@@ -1,8 +1,11 @@
 // dbscqt_accountbookwidget.cpp
 #include "dbscqt_accountbookwidget.h"
 
+#include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
+#include <dbscqt_accountbooktreewidget.h>
 #include <dbscqt_accountmodel.h>
+#include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
 #include <dbscqt_transactionitem.h>
 
@@ -10,6 +13,7 @@
 #include <QPointer>
 #include <QSignalBlocker>
 #include <QTableView>
+#include <QUuid>
 #include <ui_dbscqt_accountbookwidget.h>
 
 #include <memory>
@@ -20,7 +24,7 @@ namespace {
   /// @return a sequence of transaction items sorted in descending date order.
   struct StoredAccountDisplayData
   {
-    dbscqt::AccountModelData mAccountModelData;
+    dbscqt::AccountItemData mAccountModelData;
     QPointer< dbscqt::AccountModel > mAccountModelHandle {};
   };
 
@@ -86,7 +90,7 @@ void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::Acc
   auto const& accountBook  = *mImp->mAccountBookHandle;
   for ( auto const& [id, account] : accountBook ) {
     QUuid const accountId         = toQUuid( id );
-    auto const accountModelData   = dbscqt::DisplayUtil::createAccountModelData( account );
+    auto const accountModelData   = dbscqt::createAccountItemData( account );
     auto const accountDisplayData = dbscqt::StoredAccountDisplayData {
       .mAccountModelData = accountModelData,
       .mAccountModelHandle =

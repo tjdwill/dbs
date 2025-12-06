@@ -1,44 +1,6 @@
 // dbscqt_displayutil.cpp
 #include "dbscqt_displayutil.h"
 
-#include <dbsc_account.h>
-#include <dbsc_accountbook.h>
-#include <dbsc_transaction.h>
-
-auto dbscqt::DisplayUtil::createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData
-{
-  return {
-    .mName        = QString::fromStdString( account.name() ),
-    .mDescription = QString::fromStdString( account.description() ),
-    .mBalance     = QString::fromStdString( dbsc::TransactionUtil::currencyAsString( account.balance() ) ),
-    .mId          = QUuid::fromString( account.id().view() ),
-    .mIsOpen      = account.isOpen(),
-  };
-}
-
-auto dbscqt::DisplayUtil::createTransactionItemData( dbsc::Transaction const& transaction,
-                                                     dbsc::AccountBook const& accountBook )
-  -> dbscqt::TransactionItemData
-{
-
-  QDateTime const timestamp =
-    QDateTime::fromStdTimePoint( std::chrono::time_point_cast< std::chrono::milliseconds >( transaction.timeStamp() ) );
-  QString const transactionAmount =
-    QString::fromStdString( dbsc::TransactionUtil::currencyAsString( transaction.amount() ) );
-  QUuid const otherPartyId = QUuid::fromString( transaction.otherPartyId().view() );
-  QString const otherPartyDisplayName =
-    otherPartyId.isNull() ? "" : QString::fromStdString( accountBook.account( transaction.otherPartyId() ).name() );
-
-  return {
-    .mTimeStamp             = timestamp,
-    .mTransactionAmount     = transactionAmount,
-    .mNotes                 = QString::fromStdString( transaction.notes() ),
-    .mOtherPartyAccountName = otherPartyDisplayName,
-    .mTransactionId         = QUuid::fromString( transaction.transactionId().view() ),
-    .mOtherPartyId          = otherPartyId,
-  };
-};
-
 auto dbscqt::DisplayUtil::accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString
 {
   return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );

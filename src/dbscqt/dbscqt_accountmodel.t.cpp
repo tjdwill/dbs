@@ -2,9 +2,7 @@
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_tomlserializer.h>
-#include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
-#include <dbscqt_displayutil.h>
 #include <dbscqt_transactionitem.h>
 
 #include <QApplication>

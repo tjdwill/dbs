@@ -9,13 +9,14 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
-#include <dbsc_accountbook.h>
-#include <dbscqt_accountmodel.h>
-#include <dbscqt_displayutil.h>
-
+#include <QUuid>
 #include <QWidget>
 
 #include <memory>
+
+namespace dbsc {
+class AccountBook;
+} // namespace dbsc
 
 namespace dbscqt {
 class AccountBookWidget : public QWidget
@@ -32,10 +33,6 @@ public:
 public Q_SLOTS:
   void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
   void handleAccountSelected( QUuid accountId );
-  // void handleAccountCreated( QUuid accountId );
-  // void handleAccountStatusChanged( QUuid accountId, bool isOpened );
-  // /// Adds transaction data to the relevant model.
-  // void handleTransactionMade( std::vector< TransactionItemData > transactionItems );
 
 private:
   void clearDisplay();

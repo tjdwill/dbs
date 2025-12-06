@@ -1,12 +1,10 @@
 // dbscqt_displayutil.h
 #ifndef INCLUDED_DBSCQT_DISPLAYUTIL
 #define INCLUDED_DBSCQT_DISPLAYUTIL
-//@PURPOSE: Provide types and factory methods for creation of Qt representations of dbsc
+//@PURPOSE: Provide types and/or factory methods for creation of Qt representations of dbsc
 //   classes. Necessary for interfacing with Qt widgets.
 //
 //@CLASSES:
-//  dbscqt::AccountModelData: Represents dbsc::Account via Qt types.
-//  dbscqt::TransactionItemData: Represents dbsc::Transaction via Qt types.
 //  dbscqt::DisplayUtil: Stores the methods for facilitating the display of dbsc data.
 //
 //@DESCRIPTION: This component defines Qt-versions of dbsc types and functions to create
@@ -16,38 +14,9 @@
 #include <QString>
 #include <QUuid>
 
-namespace dbsc {
-class Account;
-class Transaction;
-class AccountBook;
-} // namespace dbsc
-
 namespace dbscqt {
-struct AccountModelData
-{
-  QString mName;
-  QString mDescription;
-  QString mBalance;
-  QUuid mId;
-  bool mIsOpen;
-};
-
-struct TransactionItemData
-{
-  QDateTime mTimeStamp {};
-  QString mTransactionAmount {};
-  QString mNotes {};
-  QString mOtherPartyAccountName {};
-  QUuid mTransactionId {};
-  QUuid mOtherPartyId {};
-};
-
 struct DisplayUtil
 {
-  [[nodiscard]] static auto createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData;
-  [[nodiscard]] static auto createTransactionItemData( dbsc::Transaction const& transaction,
-                                                       dbsc::AccountBook const& accountBook )
-    -> dbscqt::TransactionItemData;
   /// @return Formatted string for displaying shortened uuid + name.
   [[nodiscard]] static auto accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString;
 };

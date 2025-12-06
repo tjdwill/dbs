@@ -7,6 +7,7 @@
 //
 //@CLASSES:
 //  dbscqt::TransactionItem: Represents data for a single transaction.
+//  dbscqt::TransactionItemData: POD data for the trasnaction item.
 //
 //@DESCRIPTION: This component defines a means to represent displayable transaction data.
 
@@ -17,10 +18,19 @@
 namespace dbsc {
 class Account;
 class AccountBook;
+class Transaction;
 } // namespace dbsc
 
 namespace dbscqt {
-struct TransactionItemData;
+struct TransactionItemData
+{
+  QDateTime mTimeStamp {};
+  QString mTransactionAmount {};
+  QString mNotes {};
+  QString mOtherPartyAccountName {};
+  QUuid mTransactionId {};
+  QUuid mOtherPartyId {};
+};
 
 /// Represents a row in the view. Its data is the data associated with a single
 /// transaction.
@@ -50,6 +60,8 @@ private:
   std::unique_ptr< Private > mImp;
 };
 
+[[nodiscard]] auto createTransactionItemData( dbsc::Transaction const& transaction,
+                                              dbsc::AccountBook const& accountBook ) -> dbscqt::TransactionItemData;
 /// @return a sequence of transaction items sorted in descending date order.
 [[nodiscard]] auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >;
