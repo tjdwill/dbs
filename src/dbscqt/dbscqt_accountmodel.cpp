@@ -107,6 +107,11 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
+void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::TransactionItem > transactionItemHandle )
+{
+  mImp->mItems.push_back( std::move( transactionItemHandle ) );
+}
+
 dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& transactionData )
   : mData( transactionData )
 {

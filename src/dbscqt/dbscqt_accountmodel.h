@@ -89,10 +89,15 @@ public:
   AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems, QObject* parent = nullptr );
   ~AccountModel() override;
 
-  auto rowCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
-  auto columnCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
-  auto data( QModelIndex const& index, int role = Qt::DisplayRole ) const -> QVariant final;
-  auto headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const -> QVariant final;
+  [[nodiscard]] auto rowCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
+  [[nodiscard]] auto columnCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
+  [[nodiscard]] auto data( QModelIndex const& index, int role = Qt::DisplayRole ) const -> QVariant final;
+  [[nodiscard]] auto headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const
+    -> QVariant final;
+
+  /// @note Assumes validation has been done on this transaction before adding to the
+  /// model
+  void addTransactionItem( std::unique_ptr< TransactionItem > );
 
 public Q_SLOTS:
   //  /// Implement sorting by a given column
