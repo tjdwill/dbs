@@ -1,6 +1,8 @@
 // dbscqt_accountbookwidget.cpp
 #include "dbscqt_accountbookwidget.h"
 
+#include "Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h"
+
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
 #include <dbscqt_accountbooktreewidget.h>
@@ -17,24 +19,6 @@
 #include <ui_dbscqt_accountbookwidget.h>
 
 #include <memory>
-#include <ranges>
-
-namespace dbscqt {
-namespace {
-  /// @return a sequence of transaction items sorted in descending date order.
-  struct StoredAccountDisplayData
-  {
-    dbscqt::AccountItemData mAccountModelData;
-    QPointer< dbscqt::AccountModel > mAccountModelHandle {};
-  };
-
-  auto toQUuid( dbsc::UuidString const& uuidString ) -> QUuid
-  {
-    return QUuid::fromString( uuidString.toStdString() );
-  }
-
-} // namespace
-} // namespace dbscqt
 
 class dbscqt::AccountBookWidget::Private
 {
@@ -46,8 +30,8 @@ public:
 
   ::Ui::AccountBookWidget mUi {};
   std::shared_ptr< dbsc::AccountBook > mAccountBookHandle;
-  std::map< QUuid, dbscqt::StoredAccountDisplayData > mDisplayDataMap;
-  QTableView* mAccountTableView {};
+  QPointer< AccountBookTreeWidget > mTreeWidgetHandle;
+  QPointer< QTableView > mAccountTableView;
 };
 
 dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook > const& accountBookHandle,
@@ -58,7 +42,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
   mImp->mUi.setupUi( this );
   {
     mImp->mUi.mAccountSelectionBox->setInsertPolicy( QComboBox::InsertAlphabetically );
-    mImp->mAccountTableView = new QTableView();
+    mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
+
+    mImp->mAccountTableView = QPointer( new QTableView() );
     mImp->mUi.mAccountTableViewContainer->layout()->addWidget( mImp->mAccountTableView );
   }
 
@@ -73,41 +59,25 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
   handleAccountBookSet( accountBookHandle );
 }
 
-dbscqt::AccountBookWidget::~AccountBookWidget()
-{
-  // Delete any orphaned AccountModels
-  for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::QObjectDeleteUtil::deleteOrphaned( storedDisplayData.mAccountModelHandle );
-  }
-}
+dbscqt::AccountBookWidget::~AccountBookWidget() = default;
 
 void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
   assert( mImp->mAccountBookHandle && accountBookPtr );
-  deleteAccountModels();
-  mImp->mDisplayDataMap.clear();
   mImp->mAccountBookHandle = std::move( accountBookPtr );
-  auto const& accountBook  = *mImp->mAccountBookHandle;
-  for ( auto const& [id, account] : accountBook ) {
-    QUuid const accountId         = toQUuid( id );
-    auto const accountModelData   = dbscqt::createAccountItemData( account );
-    auto const accountDisplayData = dbscqt::StoredAccountDisplayData {
-      .mAccountModelData = accountModelData,
-      .mAccountModelHandle =
-        new dbscqt::AccountModel( dbscqt::createTransactionItems( account, *mImp->mAccountBookHandle ), nullptr )
-    };
-    mImp->mDisplayDataMap.insert( { accountId, std::move( accountDisplayData ) } );
-  }
+  mImp->mTreeWidgetHandle.get()->deleteLater();
+  mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
+  // layout->addWidget(mImp->mTreeWidgetHandle);
 
   refreshAccountComboBox();
 }
 
-void dbscqt::AccountBookWidget::handleAccountSelected( QUuid accountId )
+void dbscqt::AccountBookWidget::handleAccountSelected( QUuid const accountId )
 {
-  auto const& displayData = mImp->mDisplayDataMap.at( accountId );
-  mImp->mUi.mBalanceDisplay->setText( displayData.mAccountModelData.mBalance );
-  mImp->mUi.mDescriptionDisplay->setText( displayData.mAccountModelData.mDescription );
-  mImp->mAccountTableView->setModel( displayData.mAccountModelHandle );
+  auto const& accountItemData = mImp->mTreeWidgetHandle->accountItemData( accountId );
+  mImp->mUi.mBalanceDisplay->setText( accountItemData.mBalance );
+  mImp->mUi.mDescriptionDisplay->setText( accountItemData.mDescription );
+  mImp->mAccountTableView->setModel( mImp->mTreeWidgetHandle->accountModel( accountId ) );
   {
     mImp->mAccountTableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
   }
@@ -122,13 +92,6 @@ void dbscqt::AccountBookWidget::clearDisplay()
   mImp->mUi.mDescriptionDisplay->clear();
 }
 
-void dbscqt::AccountBookWidget::deleteAccountModels()
-{
-  for ( auto& [_, storedDisplayData] : mImp->mDisplayDataMap ) {
-    dbscqt::QObjectDeleteUtil::deleteUnchecked( storedDisplayData.mAccountModelHandle );
-  }
-}
-
 /// Precondition(s):
 ///     - The account book map has valid data.
 ///     - The account book pointer is non-null
@@ -138,8 +101,11 @@ void dbscqt::AccountBookWidget::refreshAccountComboBox()
   assert( mImp->mAccountBookHandle );
 
   // Display open accounts.
-  for ( auto const& [accountId, displayData] : mImp->mDisplayDataMap ) {
-    auto const& accountModelData = mImp->mDisplayDataMap[accountId].mAccountModelData;
+
+  auto* openAccountsItem = mImp->mTreeWidgetHandle->findItems( "Active", Qt::MatchExactly ).front();
+  for ( int childIndex = 0; childIndex < openAccountsItem->childCount(); ++childIndex ) {
+    auto* accountItem            = dynamic_cast< dbscqt::AccountItem* >( openAccountsItem->child( childIndex ) );
+    auto const& accountModelData = accountItem->accountItemData();
     if ( accountModelData.mIsOpen ) {
       mImp->mUi.mAccountSelectionBox->addItem(
         dbscqt::DisplayUtil::accountNameWithShortenedUuid( accountModelData.mId, accountModelData.mName ),
