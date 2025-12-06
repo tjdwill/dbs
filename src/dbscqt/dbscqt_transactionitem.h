@@ -1,11 +1,14 @@
 // dbscqt_transactionitem.h
 #ifndef INCLUDED_DBSCQT_TRANSACTIONITEM
 #define INCLUDED_DBSCQT_TRANSACTIONITEM
+
 //@PURPOSE: Create a Qt-compatible representation of a dbsc::Transaction for use in
 //  Model/View programming
 //
 //@CLASSES:
-//  dbscqt::TransactionItem
+//  dbscqt::TransactionItem: Represents data for a single transaction.
+//
+//@DESCRIPTION: This component defines a means to represent displayable transaction data.
 
 #include <QDateTime>
 #include <QString>
@@ -48,7 +51,7 @@ private:
 };
 
 /// @return a sequence of transaction items sorted in descending date order.
-auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+[[nodiscard]] auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >;
 } // namespace dbscqt
 #endif

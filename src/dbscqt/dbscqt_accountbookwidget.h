@@ -6,7 +6,8 @@
 //@CLASSES:
 //  dbscqt::AccountBookWidget: Qt representation of a dbsc::AccountBook.
 //
-//@DESCRIPTION:
+//@DESCRIPTION: This component handles the user interaction needed to interface with the
+//  DBS program.
 
 #include <dbsc_accountbook.h>
 #include <dbscqt_accountmodel.h>

@@ -6,10 +6,6 @@
 //
 //@CLASSES:
 //  dbscqt::AccountModel: Adheres to the Qt Model/View interface.
-//  dbscqt::TransactionItem: Represents data for a single transaction.
-//  dbscqt::ItemSortOrder: Determines how items are sorted.
-//  dbscqt::TransactionItemData: A struct that packs needed information for the transaction.
-//  dbscqt::AccountModelData: Information associated with the given account.
 //
 //@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
 //  the dbsc::Account class.
