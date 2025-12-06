@@ -28,12 +28,20 @@ After building and installing the library to your desired location, create a sym
 This dependency is used to generate unique account and transaction ids.
 
 - Git clone the repository
-- Symlink to `$dbs/3rdparty/stduuid`
+- Run `cmake`
+- Install to `$dbs/3rdparty/stduuid` 
+    ```bash
+    stduuid/build$ cmake install --prefix=$dbs/3rdparty/stduuid
+    ```
 
 ### `tomlplusplus`
 
 This dependency is what is used for serialization (data-persistence).
 
-- Git clone the repo.
-- Symlink to `$dbs/3rdparty/tomlplusplus`
+- Git clone the repository
+- Run `cmake`
+- Install to `$dbs/3rdparty/tomlplusplus` 
+    ```bash
+    stduuid/build$ cmake install --prefix=$dbs/3rdparty/tomlplusplus
+    ```
 
