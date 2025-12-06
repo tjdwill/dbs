@@ -4,6 +4,7 @@
 #include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_qobjectdeleteutil.h>
+#include <dbscqt_transactionitem.h>
 
 #include <QHeaderView>
 #include <QPointer>
@@ -16,39 +17,6 @@
 
 namespace dbscqt {
 namespace {
-  static auto createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData
-  {
-    return {
-      .mName        = QString::fromStdString( account.name() ),
-      .mDescription = QString::fromStdString( account.description() ),
-      .mBalance     = QString::fromStdString( dbsc::TransactionUtil::currencyAsString( account.balance() ) ),
-      .mId          = QUuid::fromString( account.id().view() ),
-      .mIsOpen      = account.isOpen(),
-    };
-  }
-
-  static auto createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
-    -> dbscqt::TransactionItemData
-  {
-
-    QDateTime const timestamp = QDateTime::fromStdTimePoint(
-      std::chrono::time_point_cast< std::chrono::milliseconds >( transaction.timeStamp() ) );
-    QString const transactionAmount =
-      QString::fromStdString( dbsc::TransactionUtil::currencyAsString( transaction.amount() ) );
-    QUuid const otherPartyId = QUuid::fromString( transaction.otherPartyId().view() );
-    QString const otherPartyDisplayName =
-      otherPartyId.isNull() ? "" : QString::fromStdString( accountBook.account( transaction.otherPartyId() ).name() );
-
-    return {
-      .mTimeStamp             = timestamp,
-      .mTransactionAmount     = transactionAmount,
-      .mNotes                 = QString::fromStdString( transaction.notes() ),
-      .mOtherPartyAccountName = otherPartyDisplayName,
-      .mTransactionId         = QUuid::fromString( transaction.transactionId().view() ),
-      .mOtherPartyId          = otherPartyId,
-    };
-  };
-
   /// @return a sequence of transaction items sorted in descending date order.
   static auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
     -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
@@ -65,8 +33,8 @@ namespace {
     items.reserve( account.transactionCount() );
     for ( auto const& item : transactionsSortedByDescendingDate ) {
       auto const& [id, transaction] = item.get();
-      items.push_back(
-        std::make_unique< dbscqt::TransactionItem >( createTransactionItemData( transaction, accountBook ) ) );
+      items.push_back( std::make_unique< dbscqt::TransactionItem >(
+        dbscqt::DisplayUtil::createTransactionItemData( transaction, accountBook ) ) );
     }
 
     return items;
@@ -140,7 +108,7 @@ void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::Acc
   auto const& accountBook  = *mImp->mAccountBookHandle;
   for ( auto const& [id, account] : accountBook ) {
     QUuid const accountId         = toQUuid( id );
-    auto const accountModelData   = dbscqt::createAccountModelData( account );
+    auto const accountModelData   = dbscqt::DisplayUtil::createAccountModelData( account );
     auto const accountDisplayData = dbscqt::StoredAccountDisplayData {
       .mAccountModelData = accountModelData,
       .mAccountModelHandle =
@@ -192,7 +160,8 @@ void dbscqt::AccountBookWidget::refreshAccountComboBox()
     auto const& accountModelData = mImp->mDisplayDataMap[accountId].mAccountModelData;
     if ( accountModelData.mIsOpen ) {
       mImp->mUi.mAccountSelectionBox->addItem(
-        dbscqt::createDisplayText( accountModelData.mId, accountModelData.mName ), QVariant( accountModelData.mId ) );
+        dbscqt::DisplayUtil::accountNameWithShortenedUuid( accountModelData.mId, accountModelData.mName ),
+        QVariant( accountModelData.mId ) );
     }
   }
 }

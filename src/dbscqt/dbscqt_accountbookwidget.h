@@ -10,6 +10,7 @@
 
 #include <dbsc_accountbook.h>
 #include <dbscqt_accountmodel.h>
+#include <dbscqt_displayutil.h>
 
 #include <QWidget>
 
@@ -30,6 +31,10 @@ public:
 public Q_SLOTS:
   void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
   void handleAccountSelected( QUuid accountId );
+  // void handleAccountCreated( QUuid accountId );
+  // void handleAccountStatusChanged( QUuid accountId, bool isOpened );
+  // /// Adds transaction data to the relevant model.
+  // void handleTransactionMade( std::vector< TransactionItemData > transactionItems );
 
 private:
   void clearDisplay();

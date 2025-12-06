@@ -1,6 +1,7 @@
 // dbscqt_accountmodel.cpp
 #include "dbscqt_accountmodel.h"
 
+#include <dbscqt_transactionitem.h>
 #include <dbsutl_helpers.h>
 
 #include <QTimeZone>
@@ -110,23 +111,6 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
 void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::TransactionItem > transactionItemHandle )
 {
   mImp->mItems.push_back( std::move( transactionItemHandle ) );
-}
-
-dbscqt::TransactionItem::TransactionItem( dbscqt::TransactionItemData const& transactionData )
-  : mData( transactionData )
-{
-}
-
-auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
-{
-  return mData.mOtherPartyId == QUuid()
-         ? "External"
-         : dbscqt::createDisplayText( mData.mOtherPartyId, mData.mOtherPartyAccountName );
-}
-
-auto dbscqt::createDisplayText( QUuid id, QString const& name ) -> QString
-{
-  return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );
 }
 
 // -----------------------------------------------------------------------------

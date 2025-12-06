@@ -29,53 +29,7 @@ class QDateTime;
 
 namespace dbscqt {
 
-struct TransactionItemData
-{
-  QDateTime mTimeStamp {};
-  QString mTransactionAmount {};
-  QString mNotes {};
-  QString mOtherPartyAccountName {};
-  QUuid mTransactionId {};
-  QUuid mOtherPartyId {};
-};
-
-/// TODO: Define this class's interface.
-/// TODO: Implement sorting (this should be a later feature)
-/// Represents a row in the view. Its data is the data associated with a single
-/// transaction.
-class TransactionItem
-{
-public:
-  /// @note @param transactionAmount is a QString due to its representation in dbsc
-  /// (bdlfp::Decimal64). A double is not a good representation.
-  TransactionItem( TransactionItemData const& transactionData );
-
-  [[nodiscard]] inline auto amount() const -> QString const& { return mData.mTransactionAmount; }
-
-  [[nodiscard]] inline auto notes() const -> QString const& { return mData.mNotes; }
-
-  [[nodiscard]] inline auto otherPartyId() const -> QUuid { return mData.mOtherPartyId; }
-
-  [[nodiscard]] inline auto timeStamp() const -> QDateTime const& { return mData.mTimeStamp; }
-
-  [[nodiscard]] inline auto transactionId() const -> QUuid { return mData.mTransactionId; }
-
-  /// @return the display name associated with the other party id
-  /// @note format: `${AccountName} (<stringified first byte sequence of Uuid>)`
-  [[nodiscard]] auto otherPartyDisplayName() const -> QString;
-
-private:
-  TransactionItemData mData;
-};
-
-struct AccountModelData
-{
-  QString mName;
-  QString mDescription;
-  QString mBalance;
-  QUuid mId;
-  bool mIsOpen;
-};
+class TransactionItem;
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
 /// Given the header inclusion order issue between Qt and BDE, no dbsc code can actually be
@@ -113,8 +67,6 @@ private:
   std::unique_ptr< Private > mImp;
 };
 
-/// @return Formatted string for displaying shortened uuid + name.
-auto createDisplayText( QUuid id, QString const& name ) -> QString;
 } // namespace dbscqt
 #endif // include guard
 

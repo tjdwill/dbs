@@ -1,0 +1,73 @@
+// dbscqt_displayutil.h
+#ifndef INCLUDED_DBSCQT_DISPLAYUTIL
+#define INCLUDED_DBSCQT_DISPLAYUTIL
+//@PURPOSE: Provide types and factory methods for creation of Qt representations of dbsc
+//   classes. Necessary for interfacing with Qt widgets.
+//
+//@CLASSES:
+//  dbscqt::AccountModelData: Represents dbsc::Account via Qt types.
+//  dbscqt::TransactionItemData: Represents dbsc::Transaction via Qt types.
+//  dbscqt::DisplayUtil: Stores the methods for facilitating the display of dbsc data.
+//
+//@DESCRIPTION: This component defines Qt-versions of dbsc types and functions to create
+//  them.
+
+#include <QDateTime>
+#include <QString>
+#include <QUuid>
+
+namespace dbsc {
+class Account;
+class Transaction;
+class AccountBook;
+} // namespace dbsc
+
+namespace dbscqt {
+struct AccountModelData
+{
+  QString mName;
+  QString mDescription;
+  QString mBalance;
+  QUuid mId;
+  bool mIsOpen;
+};
+
+struct TransactionItemData
+{
+  QDateTime mTimeStamp {};
+  QString mTransactionAmount {};
+  QString mNotes {};
+  QString mOtherPartyAccountName {};
+  QUuid mTransactionId {};
+  QUuid mOtherPartyId {};
+};
+
+struct DisplayUtil
+{
+  [[nodiscard]] static auto createAccountModelData( dbsc::Account const& account ) -> dbscqt::AccountModelData;
+  [[nodiscard]] static auto createTransactionItemData( dbsc::Transaction const& transaction,
+                                                       dbsc::AccountBook const& accountBook )
+    -> dbscqt::TransactionItemData;
+  /// @return Formatted string for displaying shortened uuid + name.
+  [[nodiscard]] static auto accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString;
+};
+} // namespace dbscqt
+
+#endif // header include guard
+
+// -----------------------------------------------------------------------------
+// Copyright (C) 2025 Terrance Williams
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// ------------------------------ END_OF_FILE ----------------------------------

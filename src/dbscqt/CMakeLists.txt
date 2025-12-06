@@ -1,7 +1,7 @@
 add_compile_definitions(QT_NO_KEYWORDS)
 set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
-# dbscqt_qobjectdeleteutil
+
 add_library(dbscqt_qobjectdeleteutil)
 target_sources(dbscqt_qobjectdeleteutil
   PRIVATE
@@ -16,7 +16,6 @@ target_link_libraries(dbscqt_qobjectdeleteutil
     Qt::Core
     Qt::Widgets
 )
-
 add_executable(dbscqt_qobjectdeleteutil.t dbscqt_qobjectdeleteutil.t.cpp)
 set(isLinux "$<PLATFORM_ID:Linux>")
 set(usingClang "$<CXX_COMPILER_ID:Clang>")
@@ -26,7 +25,34 @@ target_link_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsa
 target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil)
 add_test(NAME DbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
 
-# dbscqt_accountmodel
+add_library(dbscqt_displayutil)
+target_sources(dbscqt_displayutil
+  PRIVATE
+    dbscqt_displayutil.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_displayutil.h
+)
+target_link_libraries(dbscqt_displayutil
+  PUBLIC
+    dbsc_transaction
+    dbsc_account
+    dbsc_accountbook
+    Qt::Core
+)
+
+add_library(dbscqt_transactionitem)
+target_sources(dbscqt_transactionitem
+  PRIVATE 
+    dbscqt_transactionitem.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_transactionitem.h
+)
+target_link_libraries(dbscqt_transactionitem PUBLIC dbscqt_displayutil Qt::Core)
+
 add_library(dbscqt_accountmodel dbscqt_accountmodel.cpp)
 target_sources(dbscqt_accountmodel 
   PRIVATE
@@ -37,30 +63,26 @@ target_sources(dbscqt_accountmodel
       dbscqt_accountmodel.h
 )
 target_link_libraries(dbscqt_accountmodel PUBLIC 
-  dbsc_account
-  dbsc_transaction
   dbsutl_helpers
+  dbscqt_transactionitem
   Qt::Core
   Qt::Gui
   Qt::Widgets
 ) 
-
 add_executable(dbscqt_accountmodel.t dbscqt_accountmodel.t.cpp)
 target_sources(dbscqt_accountmodel.t PRIVATE dbscqt_accountmodel.t.cpp)
 target_compile_definitions(dbscqt_accountmodel.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
 target_link_libraries(dbscqt_accountmodel.t 
   PRIVATE
+    dbscqt_displayutil
+    dbscqt_transactionitem
     dbscqt_accountmodel
     dbsc_account
     dbsc_accountbook
     dbsc_transaction
     dbsc_tomlserializer
-    Qt::Core
-    Qt::Widgets
 )
 
-
-# dbscqt_accountbookwidget
 add_library(dbscqt_accountbookwidget)
 target_sources(dbscqt_accountbookwidget
   PRIVATE
@@ -75,7 +97,9 @@ target_link_libraries(dbscqt_accountbookwidget
   PRIVATE
     dbscqt_qobjectdeleteutil
     dbsc_transaction
+    dbscqt_displayutil
   PUBLIC
+    dbscqt_transactionitem
     dbscqt_accountmodel
     dbsc_accountbook
     dbsc_account
