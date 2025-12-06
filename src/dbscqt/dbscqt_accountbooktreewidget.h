@@ -13,7 +13,6 @@
 //  GUI display.
 #include <dbscqt_transactionitem.h>
 
-#include <QPointer>
 #include <QString>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -101,7 +100,7 @@ private:
   [[nodiscard]] auto isAccountItemInThisTree( QTreeWidgetItem* itemCandidate ) -> bool;
   [[nodiscard]] auto createAccountItem( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
     -> AccountItem*;
-  [[nodiscard]] auto categoryItem( bool accountIsActive ) -> QTreeWidgetItem*;
+  [[nodiscard]] auto categoryItem( bool accountIsActive ) const -> QTreeWidgetItem*;
 
   class Private;
   std::unique_ptr< Private > mImp;

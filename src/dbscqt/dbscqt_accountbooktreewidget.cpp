@@ -11,8 +11,6 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_qobjectdeleteutil.h>
 
-#include <QPointer>
-
 namespace dbscqt {
 
 namespace {
@@ -42,9 +40,9 @@ public:
   }
 
   std::weak_ptr< dbsc::AccountBook > mAccountBookHandle;
-  std::map< QUuid, QPointer< AccountItem > > mAccountItems;
-  QPointer< QTreeWidgetItem > mActiveAccountsCategoryItem;
-  QPointer< QTreeWidgetItem > mInactiveAccountsCategoryItem;
+  std::map< QUuid, AccountItem* > mAccountItems;
+  QTreeWidgetItem* mActiveAccountsCategoryItem;
+  QTreeWidgetItem* mInactiveAccountsCategoryItem;
 };
 } // namespace dbscqt
 
@@ -183,9 +181,9 @@ auto dbscqt::AccountBookTreeWidget::createAccountItem( dbsc::Account const& acco
   return accountItem;
 }
 
-auto dbscqt::AccountBookTreeWidget::categoryItem( bool const accountIsActive ) -> QTreeWidgetItem*
+auto dbscqt::AccountBookTreeWidget::categoryItem( bool const accountIsActive ) const -> QTreeWidgetItem*
 {
-  auto const& item = accountIsActive ? mImp->mActiveAccountsCategoryItem : mImp->mInactiveAccountsCategoryItem;
+  auto* item = accountIsActive ? mImp->mActiveAccountsCategoryItem : mImp->mInactiveAccountsCategoryItem;
 
   return item;
 }
