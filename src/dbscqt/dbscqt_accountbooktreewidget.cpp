@@ -11,6 +11,8 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_qobjectdeleteutil.h>
 
+#include <stdexcept>
+
 namespace dbscqt {
 
 namespace {
@@ -41,8 +43,8 @@ public:
 
   std::weak_ptr< dbsc::AccountBook > mAccountBookHandle;
   std::map< QUuid, AccountItem* > mAccountItems;
-  QTreeWidgetItem* mActiveAccountsCategoryItem;
-  QTreeWidgetItem* mInactiveAccountsCategoryItem;
+  QTreeWidgetItem* mActiveAccountsCategoryItem {};
+  QTreeWidgetItem* mInactiveAccountsCategoryItem {};
 };
 } // namespace dbscqt
 
@@ -140,21 +142,39 @@ auto dbscqt::AccountBookTreeWidget::accountItemDataMut( QUuid const accountId ) 
   return mImp->mAccountItems.at( accountId )->accountItemDataMut();
 }
 
-/*
-void dbscqt::AccountBookTreeWidget::handleAccountCreated( dbscqt::AccountItemData ) {
+auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCandidate ) -> bool
+{
+  if ( mImp->mAccountItems.contains( accountItemCandidate->accountId() ) ) {
+    return false;
+  }
+  auto [_, insertSuccessful] =
+    mImp->mAccountItems.insert( { accountItemCandidate->accountId(), accountItemCandidate } );
+
+  return insertSuccessful;
+}
+
+void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
+{
   auto accountBookHandle = mImp->mAccountBookHandle.lock();
-  if (accountBookHandle)
-  {
-    createAccountItem()
+  assert( accountBookHandle );
+  if ( !addAccountItem( createAccountItem(
+         accountBookHandle->account( dbscqt::DisplayUtil::toDbscUuidString( accountId ) ), *accountBookHandle ) ) ) {
+    throw std::runtime_error( "Could not create the account." );
   }
 }
-*/
+
 void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isOpen )
 {
   auto* accountItemHandle                         = accountItem( accountId );
   accountItemHandle->accountItemDataMut().mIsOpen = isOpen;
   accountItemHandle->parent()->removeChild( accountItemHandle );
   categoryItem( isOpen )->addChild( accountItemHandle );
+}
+
+void dbscqt::AccountBookTreeWidget::handleTransactionMade( QUuid const accountId,
+                                                           dbscqt::TransactionItem* const transactionItem )
+{
+  accountModel( accountId )->addTransactionItem( transactionItem );
 }
 
 auto dbscqt::AccountBookTreeWidget::isMemberOfThisTree( QTreeWidgetItem* itemCandidate ) -> bool

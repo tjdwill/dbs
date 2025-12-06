@@ -46,8 +46,8 @@ public:
     -> QVariant final;
 
   /// @note Assumes validation has been done on this transaction before adding to the
-  /// model
-  void addTransactionItem( std::unique_ptr< TransactionItem > );
+  /// model. Takes ownership of the incoming transaction item.
+  void addTransactionItem( TransactionItem* const transactionData );
 
 public Q_SLOTS:
   //  /// Implement sorting by a given column

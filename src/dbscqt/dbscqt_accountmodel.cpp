@@ -6,6 +6,8 @@
 
 #include <QTimeZone>
 
+#include <algorithm>
+#include <memory>
 #include <stdexcept>
 
 namespace dbscqt {
@@ -74,7 +76,7 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
       case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return item->amount();
       case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
-        /// TODO: Link this logic and the header logic via a QSettings entry(?)
+        /// TODO: Link this logic and the headerData logic via a QSettings entry(?)
         return item->timeStamp().toLocalTime().toString( "yyyy-MM-dd hh:mm:ss.zzz" );
       case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
         return item->otherPartyDisplayName();
@@ -108,9 +110,17 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::TransactionItem > transactionItemHandle )
+void dbscqt::AccountModel::addTransactionItem( dbscqt::TransactionItem* const transactionData )
 {
-  mImp->mItems.push_back( std::move( transactionItemHandle ) );
+  std::unique_ptr< TransactionItem > transactionItem { transactionData };
+  auto const insertionIter = std::ranges::upper_bound(
+    mImp->mItems, transactionItem, []( auto&& transactionItemPtr, auto&& containerElement ) -> bool {
+      return transactionItemPtr->timeStamp() < containerElement->timeStamp();
+    } );
+  // Insert latest transaction at top
+  beginInsertRows( QModelIndex(), 0, 0 );
+  mImp->mItems.insert( insertionIter, std::move( transactionItem ) );
+  endInsertRows();
 }
 
 // -----------------------------------------------------------------------------

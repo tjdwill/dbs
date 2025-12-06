@@ -90,10 +90,12 @@ Q_SIGNALS:
   void accountSelected( AccountItem* );
 
 public Q_SLOTS:
-  // void handleAccountCreated( dbscqt::AccountItemData );
+  /// @pre The new account has already been created and added to the current dbsc::AccountBook.
+  void handleAccountCreated( QUuid accountId );
+
   void handleAccountStatusUpdated( QUuid accountId, bool isOpen );
-  // /// Adds transaction data to the relevant model.
-  // void handleTransactionMade( std::vector< TransactionItemData > transactionItems );
+  /// Adds transaction data to the relevant model.
+  void handleTransactionMade( QUuid accountId, TransactionItem* transactionData );
 
 private:
   [[nodiscard]] auto isMemberOfThisTree( QTreeWidgetItem* ) -> bool;
