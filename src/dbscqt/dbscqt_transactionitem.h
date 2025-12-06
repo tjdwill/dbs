@@ -11,6 +11,11 @@
 #include <QString>
 #include <QUuid>
 
+namespace dbsc {
+class Account;
+class AccountBook;
+} // namespace dbsc
+
 namespace dbscqt {
 struct TransactionItemData;
 
@@ -41,5 +46,9 @@ private:
   class Private;
   std::unique_ptr< Private > mImp;
 };
+
+/// @return a sequence of transaction items sorted in descending date order.
+auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+  -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >;
 } // namespace dbscqt
 #endif

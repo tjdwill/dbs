@@ -14,35 +14,12 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <algorithm>
 #include <filesystem>
-#include <ranges>
 
 namespace {
 
 std::filesystem::path const kAccountBookPath { std::filesystem::path( DBS_RESOURCES_DIR ) / "testAccountBook.toml" };
 
-static auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
-  -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
-{
-  auto transactionsSortedByDescendingDate =
-    account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
-    | std::ranges::to< std::vector >();
-  std::ranges::sort( transactionsSortedByDescendingDate, std::greater<>(), []( auto&& item ) -> dbsc::TimeStamp {
-    auto const& [_, transaction] = item.get();
-    return transaction.timeStamp();
-  } );
-
-  std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
-  items.reserve( account.transactionCount() );
-  for ( auto const& item : transactionsSortedByDescendingDate ) {
-    auto const& [id, transaction] = item.get();
-    items.push_back( std::make_unique< dbscqt::TransactionItem >(
-      dbscqt::DisplayUtil::createTransactionItemData( transaction, accountBook ) ) );
-  }
-
-  return items;
-}
 } // namespace
 
 int main( int argc, char* argv[] )
@@ -59,7 +36,7 @@ int main( int argc, char* argv[] )
     mainWindow->setCentralWidget( centralWidget );
     auto* widgetLayout = new QVBoxLayout( centralWidget );
     auto* tableView    = new QTableView();
-    auto* tableModel   = new dbscqt::AccountModel( createTransactionItems( kAccount, kAccountBook ), nullptr );
+    auto* tableModel   = new dbscqt::AccountModel( dbscqt::createTransactionItems( kAccount, kAccountBook ), nullptr );
     tableView->setModel( tableModel );
     tableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
     widgetLayout->addWidget( tableView );

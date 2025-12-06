@@ -1,7 +1,12 @@
 // dbscqt_transactionitem.cpp
 #include "dbscqt_transactionitem.h"
 
+#include <dbsc_account.h>
+#include <dbsc_accountbook.h>
 #include <dbscqt_displayutil.h>
+
+#include <algorithm>
+#include <ranges>
 
 namespace dbscqt {
 class TransactionItem::Private
@@ -53,6 +58,28 @@ auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
   return mImp->mData.mOtherPartyId == QUuid() ? "External"
                                               : dbscqt::DisplayUtil::accountNameWithShortenedUuid(
                                                   mImp->mData.mOtherPartyId, mImp->mData.mOtherPartyAccountName );
+}
+
+auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+  -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
+{
+  auto transactionsSortedByDescendingDate =
+    account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
+    | std::ranges::to< std::vector >();
+  std::ranges::sort( transactionsSortedByDescendingDate, std::greater<>(), []( auto&& item ) -> dbsc::TimeStamp {
+    auto const& [_, transaction] = item.get();
+    return transaction.timeStamp();
+  } );
+
+  std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
+  items.reserve( account.transactionCount() );
+  for ( auto const& item : transactionsSortedByDescendingDate ) {
+    auto const& [id, transaction] = item.get();
+    items.push_back( std::make_unique< dbscqt::TransactionItem >(
+      dbscqt::DisplayUtil::createTransactionItemData( transaction, accountBook ) ) );
+  }
+
+  return items;
 }
 
 // -----------------------------------------------------------------------------
