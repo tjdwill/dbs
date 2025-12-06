@@ -1,9 +1,26 @@
 // dbscqt_displayutil.t.cpp
+#include <dbsc_uuidstring.h>
 #include <dbscqt_displayutil.h>
 
+#include <bdldfp_decimal.h>
+
+#include <QString>
+
 #include <cassert>
+#include <concepts>
 
 namespace {
+
+template< typename T, typename U, typename Converter, typename Inverter >
+  requires requires( T const& type, U const& invertedType, Converter convert, Inverter invert ) {
+    { convert( type ) } -> std::same_as< U >;
+    { invert( invertedType ) } -> std::same_as< T >;
+  }
+auto testRoundTrip( T const& startingValue, Converter convert, Inverter invert ) -> bool
+{
+  return startingValue == invert( convert( invert( convert( startingValue ) ) ) );
+}
+
 struct DisplayUtilTest
 {
   struct AccountNameWithShortenedUuid
@@ -18,7 +35,51 @@ struct DisplayUtilTest
     }
   };
 
-  DisplayUtilTest() { AccountNameWithShortenedUuid(); }
+  struct DecimalFpRoundTrip
+  {
+    DecimalFpRoundTrip()
+    {
+      using namespace BloombergLP::bdldfp::DecimalLiterals;
+      using BloombergLP::bdldfp::Decimal64;
+      Decimal64 const sampleAmount { "12395.52"_d64 };
+      Decimal64 const negatedAmount { -sampleAmount };
+      bool const trip1Passed = testRoundTrip< Decimal64,
+                                              QString,
+                                              decltype( dbscqt::DisplayUtil::toDecimalQString ),
+                                              decltype( dbscqt::DisplayUtil::toDecimal64 ) >(
+        sampleAmount, dbscqt::DisplayUtil::toDecimalQString, dbscqt::DisplayUtil::toDecimal64 );
+      assert( trip1Passed );
+
+      bool const trip2Passed = testRoundTrip< Decimal64,
+                                              QString,
+                                              decltype( dbscqt::DisplayUtil::toDecimalQString ),
+                                              decltype( dbscqt::DisplayUtil::toDecimal64 ) >(
+        negatedAmount, dbscqt::DisplayUtil::toDecimalQString, dbscqt::DisplayUtil::toDecimal64 );
+
+      assert( trip2Passed );
+    }
+  };
+
+  struct UuidConversionRoundTrip
+  {
+    UuidConversionRoundTrip()
+    {
+      auto const uuidString = dbsc::UuidStringUtil::generate();
+      assert( ( testRoundTrip< dbsc::UuidString, QUuid >(
+        uuidString, dbscqt::DisplayUtil::toQUuid, dbscqt::DisplayUtil::toDbscUuidString ) ) );
+
+      auto const quuid = QUuid::createUuid();
+      assert( ( testRoundTrip< QUuid, dbsc::UuidString >(
+        quuid, dbscqt::DisplayUtil::toDbscUuidString, dbscqt::DisplayUtil::toQUuid ) ) );
+    }
+  };
+
+  DisplayUtilTest()
+  {
+    AccountNameWithShortenedUuid();
+    DecimalFpRoundTrip();
+    UuidConversionRoundTrip();
+  }
 };
 } // namespace
 

@@ -11,6 +11,38 @@ auto dbscqt::DisplayUtil::toQUuid( dbsc::UuidString const& uuidString ) -> QUuid
   return QUuid::fromString( uuidString.toStdString() );
 }
 
+auto dbscqt::DisplayUtil::toDbscUuidString( QUuid const uuid ) -> dbsc::UuidString
+{
+  return dbsc::UuidStringUtil::fromString( uuid.toString( QUuid::WithoutBraces ).toStdString() );
+}
+
+auto dbscqt::DisplayUtil::toQDateTime( dbsc::TimeStamp const& timestamp ) -> QDateTime
+{
+  return QDateTime::fromStdTimePoint( std::chrono::time_point_cast< std::chrono::milliseconds >( timestamp ) );
+}
+
+auto dbscqt::DisplayUtil::toDecimalQString( BloombergLP::bdldfp::Decimal64 amount ) -> QString
+{
+  return QString::fromStdString( dbsc::TransactionUtil::currencyAsString( amount ) );
+}
+
+auto dbscqt::DisplayUtil::toDecimal64( QString const& decimalString ) -> BloombergLP::bdldfp::Decimal64
+{
+  return dbsc::TransactionUtil::currencyFromString( qPrintable( decimalString ) );
+}
+
+auto dbscqt::DisplayUtil::externalPartyId() -> QUuid
+{
+  return {};
+}
+
+auto dbscqt::DisplayUtil::externalPartyLabel() -> QString const&
+{
+  static QString const kExternalPartyLabel { "External" };
+
+  return kExternalPartyLabel;
+}
+
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
 //

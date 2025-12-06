@@ -55,29 +55,29 @@ auto dbscqt::TransactionItem::transactionId() const -> QUuid
 
 auto dbscqt::TransactionItem::otherPartyDisplayName() const -> QString
 {
-  return mImp->mData.mOtherPartyId == QUuid() ? "External"
-                                              : dbscqt::DisplayUtil::accountNameWithShortenedUuid(
-                                                  mImp->mData.mOtherPartyId, mImp->mData.mOtherPartyAccountName );
+  return mImp->mData.mOtherPartyId == dbscqt::DisplayUtil::externalPartyId()
+         ? dbscqt::DisplayUtil::externalPartyLabel()
+         : dbscqt::DisplayUtil::accountNameWithShortenedUuid( mImp->mData.mOtherPartyId,
+                                                              mImp->mData.mOtherPartyAccountName );
 }
 
 auto dbscqt::createTransactionItemData( dbsc::Transaction const& transaction, dbsc::AccountBook const& accountBook )
   -> dbscqt::TransactionItemData
 {
 
-  QDateTime const timestamp =
-    QDateTime::fromStdTimePoint( std::chrono::time_point_cast< std::chrono::milliseconds >( transaction.timeStamp() ) );
-  QString const transactionAmount =
-    QString::fromStdString( dbsc::TransactionUtil::currencyAsString( transaction.amount() ) );
-  QUuid const otherPartyId = QUuid::fromString( transaction.otherPartyId().view() );
+  QDateTime const timestamp       = dbscqt::DisplayUtil::toQDateTime( transaction.timeStamp() );
+  QString const transactionAmount = dbscqt::DisplayUtil::toDecimalQString( transaction.amount() );
+  QUuid const otherPartyId        = dbscqt::DisplayUtil::toQUuid( transaction.otherPartyId() );
   QString const otherPartyAccountName =
-    otherPartyId.isNull() ? "" : QString::fromStdString( accountBook.account( transaction.otherPartyId() ).name() );
+    otherPartyId.isNull() ? dbscqt::DisplayUtil::externalPartyLabel()
+                          : QString::fromStdString( accountBook.account( transaction.otherPartyId() ).name() );
 
   return {
     .mTimeStamp             = timestamp,
     .mTransactionAmount     = transactionAmount,
     .mNotes                 = QString::fromStdString( transaction.notes() ),
     .mOtherPartyAccountName = otherPartyAccountName,
-    .mTransactionId         = QUuid::fromString( transaction.transactionId().view() ),
+    .mTransactionId         = dbscqt::DisplayUtil::toQUuid( transaction.transactionId() ),
     .mOtherPartyId          = otherPartyId,
   };
 };

@@ -10,7 +10,10 @@
 //@DESCRIPTION: This component defines Qt-versions of dbsc types and functions to create
 //  them.
 
+#include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
+
+#include <bdldfp_decimal.fwd.h>
 
 #include <QDateTime>
 #include <QString>
@@ -22,6 +25,14 @@ struct DisplayUtil
   /// @return Formatted string for displaying shortened uuid + name.
   [[nodiscard]] static auto accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString;
   [[nodiscard]] static auto toQUuid( dbsc::UuidString const& uuidString ) -> QUuid;
+  [[nodiscard]] static auto toDbscUuidString( QUuid const uuid ) -> dbsc::UuidString;
+  [[nodiscard]] static auto toQDateTime( dbsc::TimeStamp const& timestamp ) -> QDateTime;
+  [[nodiscard]] static auto toDecimalQString( BloombergLP::bdldfp::Decimal64 amount ) -> QString;
+  [[nodiscard]] static auto toDecimal64( QString const& ) -> BloombergLP::bdldfp::Decimal64;
+  /// @return the representation of the name of an external entity with whom one makes a
+  /// transaction.
+  [[nodiscard]] static auto externalPartyLabel() -> QString const&;
+  [[nodiscard]] static auto externalPartyId() -> QUuid;
 };
 } // namespace dbscqt
 
