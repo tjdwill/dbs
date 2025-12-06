@@ -1,5 +1,10 @@
 # DBS Journal
 
+## 6 December 2025
+
+A *ton* of structural changes today, PY. Ideally, the transition to the QTreeWidget representation will be concluded in the near future.
+I'm going to have to double-check the Model/View programming aspects of the code; I'm still new to the paradigm.
+
 ## 11 November 2025
 
 I've continued work on the dbscqt_accountbookwidget, even getting a working test (PY). 
