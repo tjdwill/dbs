@@ -1,15 +1,11 @@
 // dbscqt_accountbooktreewidget.cpp
 #include "dbscqt_accountbooktreewidget.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtCore/quuid.h"
-#include "Qt/6.9.1/gcc_64/include/QtWidgets/qtreewidget.h"
-#include "dbsc_accountbook.h"
-#include "dbscqt_displayutil.h"
-#include "dbscqt_transactionitem.h"
-
 #include <dbsc_account.h>
+#include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
 #include <dbscqt_accountmodel.h>
+#include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
 
 #include <stdexcept>

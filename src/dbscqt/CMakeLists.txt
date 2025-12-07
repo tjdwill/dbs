@@ -106,8 +106,11 @@ target_sources(dbscqt_accountbooktreewidget
 target_link_libraries(dbscqt_accountbooktreewidget
  PRIVATE
   dbscqt_accountmodel
+  dbscqt_displayutil
+  dbscqt_qobjectdeleteutil
   dbsc_account
   dbsc_accountbook
+  dbsc_transaction
  PUBLIC
   dbscqt_transactionitem
 )
