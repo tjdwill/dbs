@@ -1,7 +1,7 @@
 // dbscqt_accountbookwidget.cpp
 #include "dbscqt_accountbookwidget.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h"
+#include "Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h"
 
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
@@ -19,6 +19,25 @@
 #include <ui_dbscqt_accountbookwidget.h>
 
 #include <memory>
+
+namespace {
+
+/// @return a copy of the input string truncated to two decimal places.
+auto truncateDecimalString( QString const& decimalString ) -> QString
+{
+  int const decimalOffset    = 3; // Not 2; See documentation of QString::first().
+  auto const decimalPosition = decimalString.indexOf( '.' );
+  QString truncatedString;
+  if ( decimalPosition != -1 ) {
+    assert( decimalPosition + decimalOffset <= decimalString.size() );
+    truncatedString = decimalString.first( decimalPosition + decimalOffset );
+  } else {
+    truncatedString = decimalString;
+  }
+  return truncatedString;
+}
+
+} // namespace
 
 class dbscqt::AccountBookWidget::Private
 {
@@ -39,23 +58,16 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
   : QWidget( parent )
   , mImp( std::make_unique< Private >( accountBookHandle ) )
 {
+  setObjectName( "mAccountBookWidget" );
   mImp->mUi.setupUi( this );
   {
-    mImp->mUi.mAccountSelectionBox->setInsertPolicy( QComboBox::InsertAlphabetically );
-    mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
-
     mImp->mAccountTableView = QPointer( new QTableView() );
     mImp->mUi.mAccountTableViewContainer->layout()->addWidget( mImp->mAccountTableView );
+    mImp->mUi.mAccountTreeWidgetContainer->layout()->setContentsMargins( {} );
   }
 
-  connect( mImp->mUi.mAccountSelectionBox, &QComboBox::currentIndexChanged, this, [this]( int index ) {
-    if ( index > -1 ) {
-      handleAccountSelected( mImp->mUi.mAccountSelectionBox->itemData( index ).toUuid() );
-    } else {
-      clearDisplay();
-    }
-  } );
-
+  // Set initial widget state
+  clearDisplay();
   handleAccountBookSet( accountBookHandle );
 }
 
@@ -65,19 +77,18 @@ void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::Acc
 {
   assert( mImp->mAccountBookHandle && accountBookPtr );
   mImp->mAccountBookHandle = std::move( accountBookPtr );
-  mImp->mTreeWidgetHandle.get()->deleteLater();
-  mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
-  // layout->addWidget(mImp->mTreeWidgetHandle);
-
-  refreshAccountComboBox();
+  if ( mImp->mTreeWidgetHandle ) {
+    mImp->mTreeWidgetHandle.get()->deleteLater();
+  }
+  createAndInitializeAccountBookTreeWidget();
 }
 
-void dbscqt::AccountBookWidget::handleAccountSelected( QUuid const accountId )
+void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* selectedItem )
 {
-  auto const& accountItemData = mImp->mTreeWidgetHandle->accountItemData( accountId );
-  mImp->mUi.mBalanceDisplay->setText( accountItemData.mBalance );
+  auto const& accountItemData = selectedItem->accountItemData();
+  mImp->mUi.mBalanceDisplay->setText( truncateDecimalString( accountItemData.mBalance ) );
   mImp->mUi.mDescriptionDisplay->setText( accountItemData.mDescription );
-  mImp->mAccountTableView->setModel( mImp->mTreeWidgetHandle->accountModel( accountId ) );
+  mImp->mAccountTableView->setModel( selectedItem->accountModel() );
   {
     mImp->mAccountTableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
   }
@@ -85,33 +96,24 @@ void dbscqt::AccountBookWidget::handleAccountSelected( QUuid const accountId )
 
 void dbscqt::AccountBookWidget::clearDisplay()
 {
-  QSignalBlocker sbAccountSelectionBox { mImp->mUi.mAccountSelectionBox };
-  mImp->mUi.mAccountSelectionBox->clear();
   mImp->mAccountTableView->setModel( nullptr );
   mImp->mUi.mBalanceDisplay->clear();
   mImp->mUi.mDescriptionDisplay->clear();
 }
 
-/// Precondition(s):
-///     - The account book map has valid data.
-///     - The account book pointer is non-null
-void dbscqt::AccountBookWidget::refreshAccountComboBox()
+void dbscqt::AccountBookWidget::createAndInitializeAccountBookTreeWidget()
 {
-  mImp->mUi.mAccountSelectionBox->clear();
-  assert( mImp->mAccountBookHandle );
+  mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
+  mImp->mUi.mAccountTreeWidgetContainer->layout()->addWidget( mImp->mTreeWidgetHandle );
+  connect( mImp->mTreeWidgetHandle,
+           &dbscqt::AccountBookTreeWidget::accountCleared,
+           this,
+           &dbscqt::AccountBookWidget::clearDisplay );
 
-  // Display open accounts.
-
-  auto* openAccountsItem = mImp->mTreeWidgetHandle->findItems( "Active", Qt::MatchExactly ).front();
-  for ( int childIndex = 0; childIndex < openAccountsItem->childCount(); ++childIndex ) {
-    auto* accountItem            = dynamic_cast< dbscqt::AccountItem* >( openAccountsItem->child( childIndex ) );
-    auto const& accountModelData = accountItem->accountItemData();
-    if ( accountModelData.mIsOpen ) {
-      mImp->mUi.mAccountSelectionBox->addItem(
-        dbscqt::DisplayUtil::accountNameWithShortenedUuid( accountModelData.mId, accountModelData.mName ),
-        QVariant( accountModelData.mId ) );
-    }
-  }
+  connect( mImp->mTreeWidgetHandle,
+           &dbscqt::AccountBookTreeWidget::accountSelected,
+           this,
+           &dbscqt::AccountBookWidget::handleAccountSelected );
 }
 
 // -----------------------------------------------------------------------------

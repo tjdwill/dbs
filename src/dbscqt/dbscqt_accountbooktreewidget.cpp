@@ -2,6 +2,7 @@
 #include "dbscqt_accountbooktreewidget.h"
 
 #include "Qt/6.9.1/gcc_64/include/QtCore/quuid.h"
+#include "Qt/6.9.1/gcc_64/include/QtWidgets/qtreewidget.h"
 #include "dbsc_accountbook.h"
 #include "dbscqt_displayutil.h"
 #include "dbscqt_transactionitem.h"
@@ -102,6 +103,7 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
 {
   assert( accountBookHandle );
 
+  setHeaderLabel( "Accounts" );
   // Create categorization items. Open accounts should be listed first, so use a name
   // beginning with 'A'.
   mImp->mActiveAccountsCategoryItem   = new QTreeWidgetItem( this, { dbscqt::kOpenAccountsCategoryLabel } );
@@ -118,6 +120,17 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
 
     mImp->mAccountItems.insert( { dbscqt::DisplayUtil::toQUuid( accountId ), accountItem } );
   }
+  mImp->mActiveAccountsCategoryItem->setExpanded( true );
+  mImp->mInactiveAccountsCategoryItem->setExpanded( false );
+
+  connect(
+    this, &QTreeWidget::currentItemChanged, this, [this]( QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/ ) {
+      if ( isAccountItemInThisTree( current ) ) {
+        Q_EMIT accountSelected( dynamic_cast< dbscqt::AccountItem* >( current ) );
+      } else {
+        Q_EMIT accountCleared();
+      }
+    } );
 }
 
 dbscqt::AccountBookTreeWidget::~AccountBookTreeWidget() = default;

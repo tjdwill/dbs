@@ -9,6 +9,8 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
+#include "dbscqt_accountbooktreewidget.h"
+
 #include <QUuid>
 #include <QWidget>
 
@@ -32,12 +34,11 @@ public:
 
 public Q_SLOTS:
   void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
-  void handleAccountSelected( QUuid accountId );
+  void handleAccountSelected( AccountItem* );
 
 private:
   void clearDisplay();
-  void deleteAccountModels();
-  void refreshAccountComboBox();
+  void createAndInitializeAccountBookTreeWidget();
 
   class Private;
   std::unique_ptr< Private > mImp;

@@ -88,6 +88,8 @@ public:
 
 Q_SIGNALS:
   void accountSelected( AccountItem* );
+  /// Signal that some display should reset itself.
+  void accountCleared();
 
 public Q_SLOTS:
   /// @pre The new account has already been created and added to the current dbsc::AccountBook.
