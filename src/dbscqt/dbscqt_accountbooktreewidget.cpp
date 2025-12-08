@@ -8,6 +8,8 @@
 #include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
 
+#include <bsls_assert.h>
+
 #include <stdexcept>
 
 namespace dbscqt {
@@ -97,7 +99,7 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
   : QTreeWidget( parent )
   , mImp( std::make_unique< Private >( accountBookHandle ) )
 {
-  assert( accountBookHandle );
+  BSLS_ASSERT( accountBookHandle );
 
   setHeaderLabel( "Accounts" );
   // Create categorization items. Open accounts should be listed first, so use a name
@@ -165,7 +167,7 @@ auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCand
 void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
 {
   auto accountBookHandle = mImp->mAccountBookHandle.lock();
-  assert( accountBookHandle );
+  BSLS_ASSERT( accountBookHandle );
   if ( !addAccountItem( createAccountItem(
          accountBookHandle->account( dbscqt::DisplayUtil::toDbscUuidString( accountId ) ), *accountBookHandle ) ) ) {
     throw std::runtime_error( "Could not create the account." );

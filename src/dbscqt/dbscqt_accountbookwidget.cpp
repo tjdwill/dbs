@@ -1,8 +1,6 @@
 // dbscqt_accountbookwidget.cpp
 #include "dbscqt_accountbookwidget.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h"
-
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
 #include <dbscqt_accountbooktreewidget.h>
@@ -10,6 +8,8 @@
 #include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
 #include <dbscqt_transactionitem.h>
+
+#include <bsls_assert.h>
 
 #include <QHeaderView>
 #include <QPointer>
@@ -29,7 +29,7 @@ auto truncateDecimalString( QString const& decimalString ) -> QString
   auto const decimalPosition = decimalString.indexOf( '.' );
   QString truncatedString;
   if ( decimalPosition != -1 ) {
-    assert( decimalPosition + decimalOffset <= decimalString.size() );
+    BSLS_ASSERT( decimalPosition + decimalOffset <= decimalString.size() );
     truncatedString = decimalString.first( decimalPosition + decimalOffset );
   } else {
     truncatedString = decimalString;
@@ -75,7 +75,7 @@ dbscqt::AccountBookWidget::~AccountBookWidget() = default;
 
 void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
-  assert( mImp->mAccountBookHandle && accountBookPtr );
+  BSLS_ASSERT( mImp->mAccountBookHandle && accountBookPtr );
   mImp->mAccountBookHandle = std::move( accountBookPtr );
   if ( mImp->mTreeWidgetHandle ) {
     mImp->mTreeWidgetHandle.get()->deleteLater();

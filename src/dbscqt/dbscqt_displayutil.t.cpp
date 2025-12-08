@@ -3,10 +3,10 @@
 #include <dbscqt_displayutil.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h>
 
 #include <QString>
 
-#include <cassert>
 #include <concepts>
 
 namespace {
@@ -31,7 +31,7 @@ struct DisplayUtilTest
       QString const expectedString = QString( "%1 (%2)" ).arg( name ).arg( "00000000" );
       QString const shortenedName  = dbscqt::DisplayUtil::accountNameWithShortenedUuid( QUuid(), name );
 
-      assert( shortenedName == expectedString );
+      BSLS_ASSERT( shortenedName == expectedString );
     }
   };
 
@@ -48,7 +48,7 @@ struct DisplayUtilTest
                                               decltype( dbscqt::DisplayUtil::toDecimalQString ),
                                               decltype( dbscqt::DisplayUtil::toDecimal64 ) >(
         sampleAmount, dbscqt::DisplayUtil::toDecimalQString, dbscqt::DisplayUtil::toDecimal64 );
-      assert( trip1Passed );
+      BSLS_ASSERT( trip1Passed );
 
       bool const trip2Passed = testRoundTrip< Decimal64,
                                               QString,
@@ -56,7 +56,7 @@ struct DisplayUtilTest
                                               decltype( dbscqt::DisplayUtil::toDecimal64 ) >(
         negatedAmount, dbscqt::DisplayUtil::toDecimalQString, dbscqt::DisplayUtil::toDecimal64 );
 
-      assert( trip2Passed );
+      BSLS_ASSERT( trip2Passed );
     }
   };
 
@@ -65,11 +65,11 @@ struct DisplayUtilTest
     UuidConversionRoundTrip()
     {
       auto const uuidString = dbsc::UuidStringUtil::generate();
-      assert( ( testRoundTrip< dbsc::UuidString, QUuid >(
+      BSLS_ASSERT( ( testRoundTrip< dbsc::UuidString, QUuid >(
         uuidString, dbscqt::DisplayUtil::toQUuid, dbscqt::DisplayUtil::toDbscUuidString ) ) );
 
       auto const quuid = QUuid::createUuid();
-      assert( ( testRoundTrip< QUuid, dbsc::UuidString >(
+      BSLS_ASSERT( ( testRoundTrip< QUuid, dbsc::UuidString >(
         quuid, dbscqt::DisplayUtil::toDbscUuidString, dbscqt::DisplayUtil::toQUuid ) ) );
     }
   };

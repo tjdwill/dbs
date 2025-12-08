@@ -1,11 +1,11 @@
 // dbscqt_qobjectdeleteutil.t.cpp
 #include <dbscqt_qobjectdeleteutil.h>
 
+#include <bsls_assert.h>
+
 #include <QObject>
 #include <QPointer>
 #include <QScopedPointer>
-
-#include <cassert>
 
 namespace {
 struct DbscqtQObjectDeleteTestSuite
@@ -18,10 +18,10 @@ struct DbscqtQObjectDeleteTestSuite
       auto orphanedObject = QPointer< QObject >( new QObject );
       auto childObject    = QPointer< QObject >( new QObject( someParent.get() ) );
 
-      assert( orphanedObject && childObject && someParent );
+      BSLS_ASSERT( orphanedObject && childObject && someParent );
       dbscqt::QObjectDeleteUtil::deleteOrphaned( childObject );
       dbscqt::QObjectDeleteUtil::deleteOrphaned( orphanedObject );
-      assert( !orphanedObject && childObject );
+      BSLS_ASSERT( !orphanedObject && childObject );
 
       // Ensure nullptr delete doesn't crash
       dbscqt::QObjectDeleteUtil::deleteOrphaned( nullptr );
@@ -35,10 +35,10 @@ struct DbscqtQObjectDeleteTestSuite
       auto orphanedObject = QPointer< QObject >( new QObject() );
       auto childObject    = QPointer< QObject >( new QObject() );
 
-      assert( orphanedObject && childObject );
+      BSLS_ASSERT( orphanedObject && childObject );
       dbscqt::QObjectDeleteUtil::deleteUnchecked( childObject );
       dbscqt::QObjectDeleteUtil::deleteUnchecked( orphanedObject );
-      assert( !orphanedObject && !childObject );
+      BSLS_ASSERT( !orphanedObject && !childObject );
       //
       // Ensure nullptr delete doesn't crash
       dbscqt::QObjectDeleteUtil::deleteUnchecked( nullptr );

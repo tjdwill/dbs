@@ -22,7 +22,7 @@ set(usingClang "$<CXX_COMPILER_ID:Clang>")
 set(isAsanEligible "$<AND:${isLinux},${usingClang}>")
 target_compile_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsanitize=address;-fno-omit-frame-pointer>")
 target_link_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsanitize=address;-fno-omit-frame-pointer>")
-target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil)
+target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil bsl)
 add_test(NAME DbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
 
 add_library(dbscqt_displayutil)
@@ -42,7 +42,7 @@ target_link_libraries(dbscqt_displayutil
     Qt::Core
 )
 add_executable(dbscqt_displayutil.t dbscqt_displayutil.t.cpp)
-target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil bdl Qt::Core)
+target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil bdl bsl Qt::Core)
 add_test(NAME DbscqtDisplayUtilTest COMMAND dbscqt_displayutil.t)
 
 add_library(dbscqt_transactionitem)
@@ -111,6 +111,7 @@ target_link_libraries(dbscqt_accountbooktreewidget
   dbsc_account
   dbsc_accountbook
   dbsc_transaction
+  bsl
  PUBLIC
   dbscqt_transactionitem
 )
@@ -135,6 +136,7 @@ target_link_libraries(dbscqt_accountbookwidget
     dbsc_account
     dbsc_accountbook
     dbsc_transaction
+    bsl
   PUBLIC
     Qt::Widgets
 )
