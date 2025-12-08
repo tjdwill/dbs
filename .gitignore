@@ -3,3 +3,4 @@ build*
 CMakeUserPresets.json
 3rdparty
 .vscode
+compile_commands.json

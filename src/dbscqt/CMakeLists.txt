@@ -1,3 +1,18 @@
+# Helper Function(s)
+
+function(run_windeployqt targetList)
+  message("ENTERED deploy function with argument ${targetList}")
+  foreach(target ${targetList})
+    add_custom_command(TARGET ${target}
+      POST_BUILD
+      COMMAND ${WINDEPLOY_EXECUTABLE} $<TARGET_FILE:${target}>
+      COMMENT "\nDeploying ${target}"
+      VERBATIM
+    ) 
+  endforeach()
+endfunction()
+
+# ---
 add_compile_definitions(QT_NO_KEYWORDS)
 set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
@@ -148,3 +163,33 @@ target_link_libraries(dbscqt_accountbookwidget.t
     dbsc_tomlserializer
 )
 target_compile_definitions(dbscqt_accountbookwidget.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+
+# Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
+if (WIN32)
+  set(deployable_targets 
+    dbscqt_qobjectdeleteutil.t
+    dbscqt_displayutil.t
+    #dbscqt_accountbooktreewidget.t
+    dbscqt_accountbookwidget.t
+  )
+  function(retrieve_target_artifacts targetList oList)
+    foreach(target IN LISTS targetList)
+      list(APPEND targets "$<TARGET_FILE:${target}>")
+      #message("${targets}")
+    endforeach()
+    set(${oList} "${targets}" PARENT_SCOPE)
+  endfunction()
+  
+  retrieve_target_artifacts("${deployable_targets}" windeployqt_args)
+
+  set(deploy_command_args ${WINDEPLOYQT_EXECUTABLE}) 
+  list(APPEND deploy_command_args "${windeployqt_args}")
+  list(JOIN deploy_command_args " " deploy_command)
+  # message(COMMAND: "${deploy_command}")
+  add_custom_target(deployQtExecutables ALL
+    COMMAND powershell "${deploy_command}" # Use powershell because the default cmd.exe doesn't handle pathing well
+    COMMENT "Deploying Qt Executables."
+    VERBATIM
+  )
+  add_dependencies(deployQtExecutables ${deployable_targets})
+endif()

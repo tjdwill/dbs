@@ -39,8 +39,8 @@ auto TomlSerializer::readAccountBook( std::filesystem::path const& filePath ) ->
   // Assume a valid TOML file.
   if ( filePath.extension() != kTomlExtension ) {
     throw DbsSerializationException( std::format( "Invalid file extension. Expected {}. Got {}",
-                                                  filePath.filename().replace_extension( kTomlExtension ).c_str(),
-                                                  filePath.filename().c_str() ) );
+                                                  filePath.filename().replace_extension( kTomlExtension ).string(),
+                                                  filePath.filename().string() ) );
   }
   InputType parsedFile  = toml::parse_file( filePath.c_str() );
   auto accountBookOwner = parsedFile.at( kAccountBookOwnerKey ).value< std::string >();
@@ -122,7 +122,7 @@ void TomlSerializer::writeAccountBook( AccountBook const& accountBook, std::file
 
   std::ofstream ofs { filePath };
   if ( !ofs ) {
-    throw DbsSerializationException( std::format( "Could not write to file '{}'.", filePath.c_str() ) );
+    throw DbsSerializationException( std::format( "Could not write to file '{}'.", filePath.string() ) );
   }
   ofs << topLevelTable << "\n";
 }

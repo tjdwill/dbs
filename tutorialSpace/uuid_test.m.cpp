@@ -18,8 +18,8 @@ int main()
   uuids::uuid_random_generator uuidGenerator { generator };
 
   using namespace uuids;
-  for ( auto _ : std::views::iota( 0, 10 ) ) {
-    uuid currentUuid = uuidGenerator();
+  for ( [[maybe_unused]] auto _ : std::views::iota( 0, 10 ) ) {
+    uuid currentUuid        = uuidGenerator();
     std::cout << currentUuid << "\n";
     uuid const testUuid = uuid::from_string( uuids::to_string( currentUuid ) ).value();
     assert( currentUuid == testUuid );

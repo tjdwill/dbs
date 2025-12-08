@@ -1,4 +1,3 @@
-set(debugOptions -Wall -Werror -Wextra -Wpedantic)
 
 # dbsc_uuidstring
 add_library(dbsc_uuidstring dbsc_uuidstring.cpp)
@@ -11,7 +10,6 @@ target_sources(dbsc_uuidstring
       dbsc_uuidstring.h
       dbsc_registerexception.h
 )
-target_compile_options(dbsc_uuidstring PRIVATE $<$<CONFIG:Debug>:${debugOptions}>)
 target_link_libraries(dbsc_uuidstring PUBLIC stduuid)
 
 add_executable(dbsc_uuidstring.t)
