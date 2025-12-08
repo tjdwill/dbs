@@ -1,18 +1,3 @@
-# Helper Function(s)
-
-function(run_windeployqt targetList)
-  message("ENTERED deploy function with argument ${targetList}")
-  foreach(target ${targetList})
-    add_custom_command(TARGET ${target}
-      POST_BUILD
-      COMMAND ${WINDEPLOY_EXECUTABLE} $<TARGET_FILE:${target}>
-      COMMENT "\nDeploying ${target}"
-      VERBATIM
-    ) 
-  endforeach()
-endfunction()
-
-# ---
 add_compile_definitions(QT_NO_KEYWORDS)
 set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
