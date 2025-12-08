@@ -5,8 +5,8 @@
 #include <dbsc_tomlserializer.h>
 #include <dbsc_transaction.h>
 
-#include <bdldfp_decimal.fwd.h>
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h>
 
 #include <filesystem>
 #include <ranges>
@@ -53,9 +53,9 @@ int main()
   dbsc::saveAccountBook< dbsc::TomlSerializer >( accountBook(), saveFile );
 
   auto const parsedAccountBook = dbsc::loadAccountBook< dbsc::TomlSerializer >( saveFile );
-  assert( parsedAccountBook.owner() == accountBook().owner() );
+  BSLS_ASSERT( parsedAccountBook.owner() == accountBook().owner() );
   for ( auto const& [parsed, groundTruth] : std::views::zip( parsedAccountBook, accountBook() ) ) {
-    assert( parsed == groundTruth );
+    BSLS_ASSERT( parsed == groundTruth );
   }
 
   return 0;

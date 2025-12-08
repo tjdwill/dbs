@@ -6,8 +6,8 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h> // for testing
 
-#include <cassert> // for testing
 #include <chrono>
 #include <string>
 
@@ -24,10 +24,10 @@ static void testDecimalConversion()
   auto roundTripAmount  = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount ) );
   auto roundTripAmount2 = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount2 ) );
 
-  assert( testAmount == roundTripAmount );
-  assert( testAmount2 == roundTripAmount2 );
-  assert( roundTripAmount != testAmount2 );
-  assert( roundTripAmount2 != testAmount );
+  BSLS_ASSERT( testAmount == roundTripAmount );
+  BSLS_ASSERT( testAmount2 == roundTripAmount2 );
+  BSLS_ASSERT( roundTripAmount != testAmount2 );
+  BSLS_ASSERT( roundTripAmount2 != testAmount );
 }
 
 static void testTimeStampConversion()
@@ -35,7 +35,7 @@ static void testTimeStampConversion()
   TimeStamp const time = std::chrono::system_clock::now();
   auto parsedTime      = TransactionUtil::timestampFromString( TransactionUtil::timestampAsString( time ) );
 
-  assert( parsedTime == time );
+  BSLS_ASSERT( parsedTime == time );
 }
 
 static void testGetters()
@@ -49,12 +49,12 @@ static void testGetters()
 
   Transaction const transaction { transactionId, owningPartyId, otherPartyId, transactionAmount, timeStamp, notes };
 
-  assert( transaction.transactionId() == transactionId );
-  assert( transaction.owningPartyId() == owningPartyId );
-  assert( transaction.otherPartyId() == otherPartyId );
-  assert( transaction.amount() == transactionAmount );
-  assert( transaction.timeStamp() == timeStamp );
-  assert( transaction.notes() == notes );
+  BSLS_ASSERT( transaction.transactionId() == transactionId );
+  BSLS_ASSERT( transaction.owningPartyId() == owningPartyId );
+  BSLS_ASSERT( transaction.otherPartyId() == otherPartyId );
+  BSLS_ASSERT( transaction.amount() == transactionAmount );
+  BSLS_ASSERT( transaction.timeStamp() == timeStamp );
+  BSLS_ASSERT( transaction.notes() == notes );
 }
 
 static void testEquality()
@@ -68,11 +68,11 @@ static void testEquality()
   Transaction const t1 { transactionId, accountIdA, accountIdB, transactionAmount, timeStamp, transactionNotes };
   Transaction const t2 { transactionId, accountIdB, accountIdA, -transactionAmount, timeStamp, transactionNotes };
 
-  assert( t1 != t2 );
-  assert( t2 != t1 );
-  assert( t1 == t1 );
-  assert( t2 == t2 );
-  assert( Transaction::isPair( t1, t2 ) );
+  BSLS_ASSERT( t1 != t2 );
+  BSLS_ASSERT( t2 != t1 );
+  BSLS_ASSERT( t1 == t1 );
+  BSLS_ASSERT( t2 == t2 );
+  BSLS_ASSERT( Transaction::isPair( t1, t2 ) );
 }
 } // namespace
 

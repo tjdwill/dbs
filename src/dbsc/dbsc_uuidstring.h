@@ -24,9 +24,9 @@
 ///
 /// ```cpp
 /// dbsc::UuidString randomId = dbsc::UuidStringUtil::generate();
-/// assert(randomId != dbsc::UuidString());
-/// assert(dbsc::UuidStringUtil::isNil(UuidString()));
-/// assert(dbsc::UuidStringUtil::fromString(randomId.toStdString()) ==
+/// BSLS_ASSERT(randomId != dbsc::UuidString());
+/// BSLS_ASSERT(dbsc::UuidStringUtil::isNil(UuidString()));
+/// BSLS_ASSERT(dbsc::UuidStringUtil::fromString(randomId.toStdString()) ==
 ///     randomId);
 ///
 /// std::cout << randomId << "\n";

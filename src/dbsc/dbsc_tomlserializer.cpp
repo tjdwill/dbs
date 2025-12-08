@@ -7,8 +7,8 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h>
 
-#include <cassert>
 #include <format>
 #include <fstream>
 #include <string_view>
@@ -58,7 +58,7 @@ auto TomlSerializer::readAccountBook( std::filesystem::path const& filePath ) ->
       auto accountId = UuidStringUtil::fromString<>( key.str() );
 
       auto* valueTable = tomlValue.as_table();
-      assert( valueTable );
+      BSLS_ASSERT( valueTable );
       accountBook.addParsedAccount( readAccountInternal( *valueTable, accountId ) );
     }
   }
@@ -74,9 +74,9 @@ auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidStrin
   account.openAccount(); // Ensure we can add the previous transactions.
 
   auto* const transactionArrayOfTables = accountTomlTable[kAccountTransactionsKey].as_array();
-  assert( transactionArrayOfTables->is_array_of_tables() );
+  BSLS_ASSERT( transactionArrayOfTables->is_array_of_tables() );
   for ( auto& transactionTableNode : *transactionArrayOfTables ) {
-    assert( transactionTableNode.is_table() );
+    BSLS_ASSERT( transactionTableNode.is_table() );
     auto* transactionTable = transactionTableNode.as_table();
     account.logTransaction( TomlSerializer::readTransactionInternal( *transactionTable, accountId ) );
   }
@@ -142,7 +142,7 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
     TomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );
   }
-  assert( transactionArray.is_array_of_tables() );
+  BSLS_ASSERT( transactionArray.is_array_of_tables() );
   accountTable.insert( kAccountTransactionsKey, std::move( transactionArray ) );
 }
 

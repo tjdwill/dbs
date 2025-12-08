@@ -4,8 +4,8 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h>
 
-#include <cassert>
 #include <chrono>      // for testing
 #include <string>      // for testing
 #include <string_view> // for testing
@@ -43,12 +43,12 @@ dbsc::Transaction const kExampleTransaction { dbsc::UuidStringUtil::generate(), 
 static void testAccountAccessors()
 {
   static_assert( std::is_same_v< decltype( sampleAccount() ), dbsc::Account const& > );
-  assert( &sampleAccount() == &sampleAccountMut() );
+  BSLS_ASSERT( &sampleAccount() == &sampleAccountMut() );
 
-  assert( not dbsc::UuidStringUtil::isNil( sampleAccount().id() ) );
-  assert( sampleAccount().name() == std::string( kAccountName ) );
-  assert( sampleAccount().description() == std::string( kAccountDescription ) );
-  assert( sampleAccount().balance() == "0.0"_d64 );
+  BSLS_ASSERT( not dbsc::UuidStringUtil::isNil( sampleAccount().id() ) );
+  BSLS_ASSERT( sampleAccount().name() == std::string( kAccountName ) );
+  BSLS_ASSERT( sampleAccount().description() == std::string( kAccountDescription ) );
+  BSLS_ASSERT( sampleAccount().balance() == "0.0"_d64 );
 }
 
 int main()
@@ -59,12 +59,12 @@ int main()
   sampleAccountMut().logTransaction( kExampleTransaction );
   dbsc::UuidString transactionId;
   for ( auto const& [id, _] : sampleAccount() ) {
-    assert( sampleAccount().transactionCount() == 1 );
+    BSLS_ASSERT( sampleAccount().transactionCount() == 1 );
     transactionId = id;
   }
   dbsc::Transaction const& transaction = sampleAccount().transaction( transactionId );
-  assert( transaction.amount() == kTransactionAmount );
-  assert( transaction.notes() == kTransactionDescription );
+  BSLS_ASSERT( transaction.amount() == kTransactionAmount );
+  BSLS_ASSERT( transaction.notes() == kTransactionDescription );
 
   // Attempt to add a duplicate transaction.
   try {
@@ -73,9 +73,9 @@ int main()
   }
 
   sampleAccountMut().closeAccount();
-  assert( not sampleAccount().isOpen() );
-  assert( sampleAccount().contains( transactionId ) );
-  assert( sampleAccount() == sampleAccount() );
+  BSLS_ASSERT( not sampleAccount().isOpen() );
+  BSLS_ASSERT( sampleAccount().contains( transactionId ) );
+  BSLS_ASSERT( sampleAccount() == sampleAccount() );
 }
 
 // -----------------------------------------------------------------------------

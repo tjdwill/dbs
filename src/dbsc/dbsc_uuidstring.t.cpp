@@ -2,7 +2,8 @@
 // Test Driver for UuidString and its factory
 #include <dbsc_uuidstring.h>
 
-#include <cassert>
+#include <bsls_assert.h>
+
 #include <iostream> // for testing
 #include <ranges>   // for testing
 
@@ -18,7 +19,7 @@ static void testException()
 static void testGeneration()
 {
   dbsc::UuidString nilUuid {};
-  assert( dbsc::UuidStringUtil::isNil( nilUuid ) );
+  BSLS_ASSERT( dbsc::UuidStringUtil::isNil( nilUuid ) );
 
   // Test the generation functions as well as the conversions to and from
   // std::strings.
@@ -26,10 +27,10 @@ static void testGeneration()
   for ( auto _ : std::views::iota( 0, 1000 ) ) {
     auto generated = dbsc::UuidStringUtil::generate();
     std::cout << generated << "\n";
-    assert( base != generated );
-    assert( nilUuid != generated );
-    assert( generated == dbsc::UuidStringUtil::fromString< std::string_view >( generated.view() ) );
-    assert( generated == dbsc::UuidStringUtil::fromString< std::string >( generated.toStdString() ) );
+    BSLS_ASSERT( base != generated );
+    BSLS_ASSERT( nilUuid != generated );
+    BSLS_ASSERT( generated == dbsc::UuidStringUtil::fromString< std::string_view >( generated.view() ) );
+    BSLS_ASSERT( generated == dbsc::UuidStringUtil::fromString< std::string >( generated.toStdString() ) );
   }
 }
 } // namespace

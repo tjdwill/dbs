@@ -16,7 +16,7 @@ target_link_libraries(dbsc_uuidstring PUBLIC stduuid)
 
 add_executable(dbsc_uuidstring.t)
 target_sources(dbsc_uuidstring.t PRIVATE dbsc_uuidstring.t.cpp)
-target_link_libraries(dbsc_uuidstring.t PRIVATE dbsc_uuidstring)
+target_link_libraries(dbsc_uuidstring.t PRIVATE dbsc_uuidstring bsl)
 add_test(NAME DbscUuidStringTest COMMAND dbsc_uuidstring.t)
 
 # dbsc_transaction
@@ -38,7 +38,7 @@ target_link_libraries(dbsc_transaction
 
 add_executable(dbsc_transaction.t)
 target_sources(dbsc_transaction.t PRIVATE dbsc_transaction.t.cpp)
-target_link_libraries(dbsc_transaction.t PRIVATE dbsc_transaction bdl)
+target_link_libraries(dbsc_transaction.t PRIVATE dbsc_transaction bdl bsl)
 add_test(NAME DbscTransactionTest COMMAND dbsc_transaction.t)
 
 # dbsc_account
@@ -56,6 +56,7 @@ target_link_libraries(dbsc_account
     dbsc_transaction
     dbsc_uuidstring
     bdl
+    bsl
 )
 add_executable(dbsc_account.t)
 target_sources(dbsc_account.t PRIVATE dbsc_account.t.cpp)
@@ -85,6 +86,7 @@ target_link_libraries(dbsc_accountbook.t PRIVATE
   dbsc_accountbook
   dbsc_account
   dbsc_uuidstring
+  bsl
 )
 add_test(NAME DbscAccountBookTest COMMAND dbsc_accountbook.t)
 
@@ -130,5 +132,6 @@ target_link_libraries(dbsc_tomlserializer.t
     dbsc_accountbook
     dbsc_transaction
     dbsc_account
+    bsl
 )
 add_test(NAME DbscTomlSerializerTest COMMAND dbsc_tomlserializer.t)

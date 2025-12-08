@@ -4,8 +4,8 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h>
 
-#include <cassert>
 #include <format>
 
 namespace dbsc {
@@ -16,7 +16,7 @@ Account::Account( UuidString const& accountId, std::string const& name, std::str
   , mDescription( description )
 {
   using namespace BloombergLP::bdldfp::DecimalLiterals;
-  assert( mBalance == "0.0"_d64 );
+  BSLS_ASSERT( mBalance == "0.0"_d64 );
 }
 
 Account::Account( std::string const& name, std::string const& description )

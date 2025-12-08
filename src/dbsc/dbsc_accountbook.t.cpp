@@ -4,8 +4,8 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
+#include <bsls_assert.h> // for testing
 
-#include <cassert> // for testing
 #include <functional>
 #include <string>
 #include <string_view> // for testing
@@ -24,11 +24,11 @@ int main()
   dbsc::AccountBook accountBook { std::string { kOwnerName } };
 
   // Test: adding accounts
-  assert( accountBook.accountCount() == 0 );
+  BSLS_ASSERT( accountBook.accountCount() == 0 );
   auto const accountId = accountBook.createAccount( "TestAccount", "Some Description" );
-  assert( accountBook.accountCount() == 1 );
+  BSLS_ASSERT( accountBook.accountCount() == 1 );
   accountBook.addParsedAccount( dbsc::Account( "SomeOwner", "" ) );
-  assert( accountBook.accountCount() == 2 );
+  BSLS_ASSERT( accountBook.accountCount() == 2 );
 
   // Test accessors
   try {
@@ -36,31 +36,31 @@ int main()
   } catch ( dbsc::NonExistentAccountException const& ) {
   }
 
-  assert( accountBook.owner() == kOwnerName );
-  assert( accountBook.account( accountId ) == accountBook.account( accountId ) );
-  assert( accountBook.cbegin() != accountBook.cend() );
-  assert( accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( accountBook.owner() == kOwnerName );
+  BSLS_ASSERT( accountBook.account( accountId ) == accountBook.account( accountId ) );
+  BSLS_ASSERT( accountBook.cbegin() != accountBook.cend() );
+  BSLS_ASSERT( accountBook.account( accountId ).isOpen() );
 
   // Account ops
   accountBook.closeAccount( accountId );
-  assert( not accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( not accountBook.account( accountId ).isOpen() );
   accountBook.openAccount( accountId );
-  assert( accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( accountBook.account( accountId ).isOpen() );
 
   /// External withdrawal
   auto const kTransactionAmount = "100.00"_d64;
   accountBook.makeTransaction( kTransactionAmount, "transactionNotes", accountId );
-  assert( accountBook.account( accountId ).balance() == kTransactionAmount );
+  BSLS_ASSERT( accountBook.account( accountId ).balance() == kTransactionAmount );
 
   /// Inter-acccount Transaction
   auto const secondAccountId = accountBook.createAccount( "SecondAccount", "Second Description" );
 
   auto const transactionId =
     accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", secondAccountId, accountId );
-  assert( accountBook.account( accountId ).balance() == BloombergLP::bdldfp::Decimal64 {} );
-  assert( accountBook.account( secondAccountId ).balance() == kTransactionAmount );
-  assert( dbsc::Transaction::isPair( accountBook.account( secondAccountId ).transaction( transactionId ),
-                                     accountBook.account( accountId ).transaction( transactionId ) ) );
+  BSLS_ASSERT( accountBook.account( accountId ).balance() == BloombergLP::bdldfp::Decimal64 {} );
+  BSLS_ASSERT( accountBook.account( secondAccountId ).balance() == kTransactionAmount );
+  BSLS_ASSERT( dbsc::Transaction::isPair( accountBook.account( secondAccountId ).transaction( transactionId ),
+                                          accountBook.account( accountId ).transaction( transactionId ) ) );
 
   /// Transaction on closed account
   auto tryMakeTransaction = [&accountBook, kTransactionAmount](
