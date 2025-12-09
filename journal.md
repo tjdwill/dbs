@@ -1,5 +1,29 @@
 # DBS Journal
 
+## 8 December 2025
+
+I fixed that bug (PY). Turns out, `std::chrono::system_clock` duration precision is
+not a guaranteed value, so there was a difference between clang and MSVC. I've
+updated the code to use nanosecond precision, so now the display works as
+expected.
+
+## 7 December 2025
+
+I figured I should get a Windows build up and running to ensure proper behavior,
+and boy am I glad I did. Firstly, the build setup wasn't as long as the EWI
+project, so I've grown (PY!). However, problems arose with CMake. Windows needs
+to use `windeployqt` in order to link the correct Qt libraries to the generated
+executable(s). The process of getting that to happen post-build was...involved.
+CMake's variable handling makes very little sense, and behavior appears to change
+depending on the function. It was very frustrating, and I was up all times of
+the evening hacking away at the issue. 
+
+Definitely need some CMake refreshers in the near future.
+
+After getting the project built, I did some testing. I notice that there is a
+behavioral issue in that the dates don't work as expected. I'll look into this
+later.
+
 ## 6 December 2025
 
 A *ton* of structural changes today, PY. Ideally, the transition to the QTreeWidget representation will be concluded in the near future.
