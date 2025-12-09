@@ -75,9 +75,13 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
         return item->transactionId().toString( QUuid::WithoutBraces );
       case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return item->amount();
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ): {
         /// TODO: Link this logic and the headerData logic via a QSettings entry(?)
-        return item->timeStamp().toLocalTime().toString( "yyyy-MM-dd hh:mm:ss.zzz" );
+        auto const timeStamp         = item->timeStamp();
+        auto const localTime         = timeStamp.toLocalTime();
+        auto const timeDisplayString = localTime.toString( "yyyy-MM-dd hh:mm:ss.zzz" );
+        return timeDisplayString;
+      }
       case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
         return item->otherPartyDisplayName();
       case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
