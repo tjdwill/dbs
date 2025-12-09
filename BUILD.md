@@ -1,7 +1,7 @@
 ## Dependencies
 
 - [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
-- [Qt]() (v6.10.1) 
+- [Qt](https://qt.io) (v6.9.x) by Qt Group (The Qt Company)
 - [bde](https://github.com/bloomberg/bde) by Bloomberg
 - [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer (v3.4.0)
 
@@ -22,6 +22,9 @@ page](https://bloomberg.github.io/bde-tools/bbs/reference/bbs_build_configuratio
 
 After building and installing the library to your desired location, create a symbolic link
 (Linux) to the installation in $dbs/3rdparty
+
+**NOTE**: If building using Windows, one will need to build the debug version of BDE *if* building
+DBS with a Debug build configuration.
 
 ### `stduuid`
 
@@ -45,3 +48,8 @@ This dependency is what is used for serialization (data-persistence).
     stduuid/build$ cmake install --prefix=$dbs/3rdparty/tomlplusplus
     ```
 
+### Qt
+
+I use `aqtinstall` to get a working Qt installation. Those who don't mind making a Qt account can
+download an installation. Building from source is *also* an option, but I haven't been able to get
+that to work.
