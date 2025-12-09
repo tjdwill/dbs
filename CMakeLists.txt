@@ -40,16 +40,17 @@ if (BUILD_TUTORIALS)
 endif()
 add_subdirectory(src)
 
-# Create a symbolic link to point to the correct compile_commands.json directory
-if (CMAKE_HOST_UNIX)
+if( CMAKE_HOST_UNIX )
+  # Create a symbolic link to point to the correct compile_commands.json directory
   execute_process(
     COMMAND       rm ${PROJECT_SOURCE_DIR}/build
     ERROR_FILE    /dev/null
   )
   execute_process(COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build)
-else()
+elseif( CMAKE_HOST_WIN32 )
   add_custom_target(copyCompilationDatabase ALL
     COMMAND powershell "Copy-Item -Path ${CMAKE_BINARY_DIR}/compile_commands.json -Destination ${CMAKE_SOURCE_DIR}/compile_commands.json"
     VERBATIM
   )
+else ()
 endif()
