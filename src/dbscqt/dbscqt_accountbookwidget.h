@@ -10,8 +10,6 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
-#include "dbscqt_accountbooktreewidget.h"
-
 #include <QUuid>
 #include <QWidget>
 
@@ -22,6 +20,8 @@ class AccountBook;
 } // namespace dbsc
 
 namespace dbscqt {
+class AccountItem;
+
 class AccountBookWidget : public QWidget
 {
   Q_OBJECT
