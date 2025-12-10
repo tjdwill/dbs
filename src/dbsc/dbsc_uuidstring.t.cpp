@@ -4,8 +4,8 @@
 
 #include <bsls_assert.h>
 
-#include <iostream> // for testing
-#include <ranges>   // for testing
+#include <iostream>
+#include <ranges>
 
 namespace {
 static void testException()

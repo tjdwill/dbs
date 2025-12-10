@@ -5,9 +5,9 @@
 //@PURPOSE: Provide a wrapper around a string that enforces UUID format.
 //
 //@CLASSES:
-//  dbsc::DuplicateUuidException: error to note that an entity with some Uuid
+//  dbsc::DuplicateUuidException: an error to note that an entity with some Uuid
 //    already exists.
-//  dbsc::InvalidUuidException: error to note that a non-uuid-conforming string
+//  dbsc::InvalidUuidException: an error to note that a non-uuid-conforming string
 //    was provided.
 //  dbsc::UuidString: a non-modifiable string representing a valid
 //    RFC4122 UUID.
@@ -50,7 +50,7 @@ DBSC_REGISTER_EXCEPTION( DuplicateUuidException, "An object with this UUID alrea
 /// Represents a Uuid construction error due to invalid formatting.
 DBSC_REGISTER_EXCEPTION( InvalidUuidException, "Input is not a UUID-conformant string." );
 
-/// This class provides a read-only UUID-compliant string. Note that this class
+/// This class provides a read-only, UUID-compliant string. Note that this class
 /// only guarantees UUID compliance in terms of RFC4122; this class makes no
 /// guarantees that there are no duplicate UUIDs (for example, default
 /// construction will always return the null UUID).
