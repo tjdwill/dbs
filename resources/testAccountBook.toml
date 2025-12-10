@@ -2,7 +2,7 @@ owner = 'tjdwill'
 
 [2c358220-dfb7-47f8-8500-d3e9e1af9538]
 description = 'The second test account in the book'
-isOpen = true
+isActive = true
 name = 'TestAccount2'
 
     [[2c358220-dfb7-47f8-8500-d3e9e1af9538.transactions]]
@@ -84,7 +84,7 @@ name = 'TestAccount2'
 
 [5cbb91d0-f69e-4e22-aefa-e1e7791fc3d5]
 description = 'The first test account in the book'
-isOpen = true
+isActive = true
 name = 'TestAccount1'
 
     [[5cbb91d0-f69e-4e22-aefa-e1e7791fc3d5.transactions]]

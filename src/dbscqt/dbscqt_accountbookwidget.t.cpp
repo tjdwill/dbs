@@ -1,6 +1,6 @@
 // dbscqt_accountbookwidget.t.cpp
 #include <dbsc_accountbook.h>
-#include <dbsc_dbsserializer.h>
+#include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
 
@@ -22,7 +22,7 @@ int main( int argc, char* argv[] )
   QApplication app { argc, argv };
 
   auto accountBook =
-    std::make_shared< dbsc::AccountBook >( dbsc::loadAccountBook< dbsc::TomlSerializer >( kAccountBookPath ) );
+    std::make_shared< dbsc::AccountBook >( dbsc::readAccountBook< dbsc::TomlSerializer >( kAccountBookPath ) );
 
   auto mainWindow     = QScopedPointer( new QMainWindow() );
   auto* centralWidget = new QWidget();

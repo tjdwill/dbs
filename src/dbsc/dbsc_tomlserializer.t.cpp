@@ -1,7 +1,7 @@
 // dbsc_dbstomlserializer.t.cpp
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
-#include <dbsc_dbsserializer.h>
+#include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbsc_transaction.h>
 
@@ -10,7 +10,6 @@
 
 #include <filesystem>
 #include <ranges>
-#include <string_view>
 
 namespace {
 using namespace BloombergLP::bdldfp::DecimalLiterals;
@@ -50,9 +49,9 @@ int main()
 {
   using namespace std::string_view_literals;
   std::filesystem::path const saveFile { "testAccountBook.toml"sv };
-  dbsc::saveAccountBook< dbsc::TomlSerializer >( accountBook(), saveFile );
+  dbsc::writeAccountBook< dbsc::TomlSerializer >( accountBook(), saveFile );
 
-  auto const parsedAccountBook = dbsc::loadAccountBook< dbsc::TomlSerializer >( saveFile );
+  auto const parsedAccountBook = dbsc::readAccountBook< dbsc::TomlSerializer >( saveFile );
   BSLS_ASSERT( parsedAccountBook.owner() == accountBook().owner() );
   for ( auto const& [parsed, groundTruth] : std::views::zip( parsedAccountBook, accountBook() ) ) {
     BSLS_ASSERT( parsed == groundTruth );

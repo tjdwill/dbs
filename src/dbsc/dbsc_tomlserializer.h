@@ -10,7 +10,7 @@
 //@DESCRIPTION: This component defines a specific implementation for
 //  dbsc::DbsSerializer.
 
-#include <dbsc_dbsserializer.h>
+#include <dbsc_dbscserializer.h>
 
 #include <toml++/toml.hpp>
 
@@ -22,8 +22,7 @@ class Account;
 class AccountBook;
 class UuidString;
 
-/// This class adheres to the dbsc::DbsSerializer concept.
-/// It is uncertain if there is a way to enforce this programmatically.
+/// This class adheres to the dbsc::DbscSerializer concept.
 class TomlSerializer
 {
 public:
@@ -31,11 +30,12 @@ public:
   using OutputType = InputType;
 
   [[nodiscard]] static auto readAccountBook( std::filesystem::path const& filePath ) -> AccountBook;
-  [[nodiscard]] static auto readAccountInternal( InputType& io, UuidString const& accountId ) -> Account;
-  [[nodiscard]] static auto readTransactionInternal( InputType& io, UuidString const& owningPartyId ) -> Transaction;
+  [[nodiscard]] static auto readAccountInternal( InputType& inSource, UuidString const& accountId ) -> Account;
+  [[nodiscard]] static auto readTransactionInternal( InputType& inSource, UuidString const& owningPartyId )
+    -> Transaction;
   static void writeAccountBook( AccountBook const& accountBook, std::filesystem::path const& filePath );
-  static void writeAccountInternal( OutputType& io, Account const& account );
-  static void writeTransactionInternal( OutputType& io, Transaction const& transaction );
+  static void writeAccountInternal( OutputType& oDestinationBuf, Account const& account );
+  static void writeTransactionInternal( OutputType& oDestinationBuf, Transaction const& transaction );
 };
 } // namespace dbsc
 

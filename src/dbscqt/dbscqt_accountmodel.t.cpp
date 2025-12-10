@@ -24,7 +24,7 @@ int main( int argc, char* argv[] )
 {
   QApplication app { argc, argv };
 
-  auto const kAccountBook = dbsc::loadAccountBook< dbsc::TomlSerializer >( kAccountBookPath );
+  auto const kAccountBook = dbsc::readAccountBook< dbsc::TomlSerializer >( kAccountBookPath );
   auto const& kAccount    = ( *kAccountBook.cbegin() ).second;
 
   // NOLINTBEGIN(cppcoreguidelines-owning-memory)

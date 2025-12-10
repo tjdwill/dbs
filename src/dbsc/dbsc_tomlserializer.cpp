@@ -22,7 +22,7 @@ namespace {
   constexpr auto kAccountNameKey { "name"sv };
   constexpr auto kAccountDescriptionKey { "description"sv };
   constexpr auto kAccountTransactionsKey { "transactions"sv };
-  constexpr auto kAccountOpenStatusKey { "isOpen"sv };
+  constexpr auto kAccountActiveStatusKey { "isActive"sv };
   constexpr auto kTransactionIdKey { "transactionId"sv };
   constexpr auto kTransactionOtherPartyIdKey { "otherPartyId"sv };
   constexpr auto kTransactionTimeStampKey { "timeStamp"sv };
@@ -38,28 +38,28 @@ auto TomlSerializer::readAccountBook( std::filesystem::path const& filePath ) ->
 
   // Assume a valid TOML file.
   if ( filePath.extension() != kTomlExtension ) {
-    throw DbsSerializationException( std::format( "Invalid file extension. Expected {}. Got {}",
-                                                  filePath.filename().replace_extension( kTomlExtension ).string(),
-                                                  filePath.filename().string() ) );
+    throw DbscSerializationException( std::format( "Invalid file extension. Expected {}. Got {}",
+                                                   filePath.filename().replace_extension( kTomlExtension ).string(),
+                                                   filePath.filename().string() ) );
   }
-  InputType parsedFile  = toml::parse_file( filePath.c_str() );
-  auto accountBookOwner = parsedFile.at( kAccountBookOwnerKey ).value< std::string >();
+  InputType parsedTomlTable = toml::parse_file( filePath.c_str() );
+  auto accountBookOwner     = parsedTomlTable.at( kAccountBookOwnerKey ).value< std::string >();
   {
     if ( !accountBookOwner.has_value() ) {
-      throw DbsSerializationException( std::format( "Incorrect type for key '{}'", kAccountBookOwnerKey ) );
+      throw DbscSerializationException( std::format( "Incorrect type for key '{}'", kAccountBookOwnerKey ) );
     }
     /// Remove the account owner key so it can be ignored during iteration.
-    parsedFile.erase( kAccountBookOwnerKey );
+    parsedTomlTable.erase( kAccountBookOwnerKey );
   }
   AccountBook accountBook { accountBookOwner.value() };
 
-  for ( auto& [key, tomlValue] : parsedFile ) {
+  for ( auto& [key, tomlValue] : parsedTomlTable ) {
     if ( tomlValue.is_table() ) {
-      auto accountId = UuidStringUtil::fromString<>( key.str() );
+      auto accountId = UuidStringUtil::fromString( key.str() );
 
-      auto* valueTable = tomlValue.as_table();
-      BSLS_ASSERT( valueTable );
-      accountBook.addParsedAccount( readAccountInternal( *valueTable, accountId ) );
+      auto* accountTable = tomlValue.as_table();
+      BSLS_ASSERT( accountTable );
+      accountBook.addParsedAccount( readAccountInternal( *accountTable, accountId ) );
     }
   }
 
@@ -81,8 +81,8 @@ auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidStrin
     account.logTransaction( TomlSerializer::readTransactionInternal( *transactionTable, accountId ) );
   }
 
-  auto const accountIsOpen = accountTomlTable[kAccountOpenStatusKey].value< bool >().value();
-  if ( !accountIsOpen ) {
+  auto const accountIsActive = accountTomlTable[kAccountActiveStatusKey].value< bool >().value();
+  if ( !accountIsActive ) {
     account.deactivate();
   }
 
@@ -93,9 +93,9 @@ auto TomlSerializer::readTransactionInternal( InputType& transactionTable, UuidS
   -> Transaction
 {
   auto const transactionId =
-    UuidStringUtil::fromString<>( transactionTable[kTransactionIdKey].value< std::string_view >().value() );
+    UuidStringUtil::fromString( transactionTable[kTransactionIdKey].value< std::string_view >().value() );
   auto const otherPartyId =
-    UuidStringUtil::fromString<>( transactionTable[kTransactionOtherPartyIdKey].value< std::string_view >().value() );
+    UuidStringUtil::fromString( transactionTable[kTransactionOtherPartyIdKey].value< std::string_view >().value() );
 
   auto const amountString = transactionTable[kTransactionAmountKey].value< TomlCurrencyType >().value();
   BloombergLP::bdldfp::Decimal64 transactionAmount = TransactionUtil::currencyFromString( amountString );
@@ -122,7 +122,7 @@ void TomlSerializer::writeAccountBook( AccountBook const& accountBook, std::file
 
   std::ofstream ofs { filePath };
   if ( !ofs ) {
-    throw DbsSerializationException( std::format( "Could not write to file '{}'.", filePath.string() ) );
+    throw DbscSerializationException( std::format( "Could not write to file '{}'.", filePath.string() ) );
   }
   ofs << topLevelTable << "\n";
 }
@@ -131,10 +131,10 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
 {
   toml::value< std::string > const accountName { account.name() };
   toml::value< std::string > const accountDescription { account.description() };
-  toml::value< bool > accountIsOpen { account.isActive() };
+  toml::value< bool > accountIsActive { account.isActive() };
   accountTable.insert( kAccountNameKey, accountName );
   accountTable.insert( kAccountDescriptionKey, accountDescription );
-  accountTable.insert( kAccountOpenStatusKey, accountIsOpen );
+  accountTable.insert( kAccountActiveStatusKey, accountIsActive );
 
   toml::array transactionArray {};
   for ( auto const& [_, transaction] : account ) {
