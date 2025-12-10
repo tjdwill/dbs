@@ -14,9 +14,9 @@ struct DbscqtQObjectDeleteTestSuite
   {
     OrphanDeleteTest()
     {
-      auto someParent     = QScopedPointer< QObject >( new QObject() );
-      auto orphanedObject = QPointer< QObject >( new QObject );
-      auto childObject    = QPointer< QObject >( new QObject( someParent.get() ) );
+      auto someParent     = QScopedPointer( new QObject() );
+      auto orphanedObject = QPointer( new QObject );
+      auto childObject    = QPointer( new QObject( someParent.get() ) );
 
       BSLS_ASSERT( orphanedObject && childObject && someParent );
       dbscqt::QObjectDeleteUtil::deleteOrphaned( childObject );
@@ -32,14 +32,14 @@ struct DbscqtQObjectDeleteTestSuite
   {
     UnconditionalDeleteTest()
     {
-      auto orphanedObject = QPointer< QObject >( new QObject() );
-      auto childObject    = QPointer< QObject >( new QObject() );
+      auto orphanedObject = QPointer( new QObject() );
+      auto childObject    = QPointer( new QObject() );
 
       BSLS_ASSERT( orphanedObject && childObject );
       dbscqt::QObjectDeleteUtil::deleteUnchecked( childObject );
       dbscqt::QObjectDeleteUtil::deleteUnchecked( orphanedObject );
       BSLS_ASSERT( !orphanedObject && !childObject );
-      //
+
       // Ensure nullptr delete doesn't crash
       dbscqt::QObjectDeleteUtil::deleteUnchecked( nullptr );
     }

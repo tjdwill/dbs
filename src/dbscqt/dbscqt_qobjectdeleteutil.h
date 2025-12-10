@@ -1,6 +1,7 @@
 // dbscqt_qobjectdeleteutil.h
 #ifndef INCLUDED_DBSCQT_QOBJECTDELETEUTIL
 #define INCLUDED_DBSCQT_QOBJECTDELETEUTIL
+
 //@PURPOSE: Define useful QObject deleter functions for convenience.
 //
 //@CLASSES:
@@ -41,16 +42,15 @@ struct QObjectDeleteUtil
   template< typename DeletionPolicy >
     requires std::invocable< DeletionPolicy, QObject* >
   static void deleteQObjectLike( QObject* handle, DeletionPolicy deleter )
-
   {
     deleter( handle );
   }
 
   /// Delete QObject that does not have a parent.
-  static void deleteOrphaned( QObject* handle ) { deleteQObjectLike( handle, OrphanDeleterPrivate {} ); }
+  static void deleteOrphaned( QObject* handle ) { deleteQObjectLike( handle, OrphanDeleterPrivate() ); }
 
   /// Unconditionally delete the QObject.
-  static void deleteUnchecked( QObject* handle ) { deleteQObjectLike( handle, UnconditionalDeleterPrivate {} ); }
+  static void deleteUnchecked( QObject* handle ) { deleteQObjectLike( handle, UnconditionalDeleterPrivate() ); }
 };
 
 } // namespace dbscqt
