@@ -1,14 +1,14 @@
 // dbscqt_displayutil.h
 #ifndef INCLUDED_DBSCQT_DISPLAYUTIL
 #define INCLUDED_DBSCQT_DISPLAYUTIL
-//@PURPOSE: Provide types and/or factory methods for creation of Qt representations of dbsc
+
+//@PURPOSE: Provide factory methods for creation of Qt representations of dbsc
 //   classes. Necessary for interfacing with Qt widgets.
 //
 //@CLASSES:
 //  dbscqt::DisplayUtil: Stores the methods for facilitating the display of dbsc data.
 //
-//@DESCRIPTION: This component defines Qt-versions of dbsc types and functions to create
-//  them.
+//@DESCRIPTION: This component defines functions for easy type dbsc<->Qt conversions.
 
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
