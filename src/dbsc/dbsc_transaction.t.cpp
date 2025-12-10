@@ -4,7 +4,7 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
-#include <bsls_assert.h> // for testing
+#include <bsls_assert.h>
 
 #include <chrono>
 #include <string>
@@ -19,8 +19,8 @@ static void testDecimalConversion()
 {
   BloombergLP::bdldfp::Decimal64 testAmount  = "12398570.234"_d64;
   BloombergLP::bdldfp::Decimal64 testAmount2 = "-12398570.234"_d64;
-  auto roundTripAmount  = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount ) );
-  auto roundTripAmount2 = TransactionUtil::currencyFromString( TransactionUtil::currencyAsString( testAmount2 ) );
+  auto roundTripAmount  = TransactionUtil::currencyFromString( TransactionUtil::currencyToString( testAmount ) );
+  auto roundTripAmount2 = TransactionUtil::currencyFromString( TransactionUtil::currencyToString( testAmount2 ) );
 
   BSLS_ASSERT( testAmount == roundTripAmount );
   BSLS_ASSERT( testAmount2 == roundTripAmount2 );
@@ -31,7 +31,7 @@ static void testDecimalConversion()
 static void testTimeStampConversion()
 {
   TimeStamp const time = std::chrono::system_clock::now();
-  auto parsedTime      = TransactionUtil::timestampFromString( TransactionUtil::timestampAsString( time ) );
+  auto parsedTime      = TransactionUtil::timestampFromString( TransactionUtil::timestampToString( time ) );
 
   BSLS_ASSERT( parsedTime == time );
 }
@@ -51,7 +51,7 @@ static void testGetters()
   BSLS_ASSERT( transaction.owningPartyId() == owningPartyId );
   BSLS_ASSERT( transaction.otherPartyId() == otherPartyId );
   BSLS_ASSERT( transaction.amount() == transactionAmount );
-  BSLS_ASSERT( transaction.timeStamp() == timeStamp );
+  BSLS_ASSERT( transaction.timestamp() == timeStamp );
   BSLS_ASSERT( transaction.notes() == notes );
 }
 

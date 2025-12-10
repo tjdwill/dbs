@@ -13,6 +13,7 @@ namespace dbsc {
 namespace {
   using namespace std::string_view_literals;
   constexpr std::string_view kTimeStampConversionFormat { "%F %T%z"sv };
+  constexpr std::string_view kTimestampConversionStdFormatString { "{0:%F} {0:%T%z}"sv };
 } // namespace
 
 Transaction::Transaction( UuidString const& transactionId,
@@ -55,19 +56,19 @@ auto Transaction::transactionId() const -> UuidString const&
   return mTransactionId;
 }
 
-auto Transaction::timeStamp() const -> TimeStamp
+auto Transaction::timestamp() const -> TimeStamp
 {
   return mTimeStamp;
 }
 
 auto Transaction::isPair( Transaction const& a, Transaction const& b ) -> bool
 {
-  return ( a.amount() == -b.amount() && a.notes() == b.notes() && a.otherPartyId() == b.owningPartyId()
-           && a.owningPartyId() == b.otherPartyId() && a.transactionId() == b.transactionId()
-           && a.timeStamp() == b.timeStamp() );
+  return ( a.amount() == -b.amount() ) && ( a.notes() == b.notes() ) && ( a.otherPartyId() == b.owningPartyId() )
+      && ( a.owningPartyId() == b.otherPartyId() ) && ( a.transactionId() == b.transactionId() )
+      && ( a.timestamp() == b.timestamp() );
 }
 
-auto TransactionUtil::currencyAsString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string
+auto TransactionUtil::currencyToString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string
 {
   bsl::ostringstream oss {};
   oss << amount;
@@ -86,10 +87,10 @@ auto constexpr TransactionUtil::timestampConversionFormat() -> std::string_view
   return kTimeStampConversionFormat;
 }
 
-auto TransactionUtil::timestampAsString( TimeStamp const& timestamp ) -> std::string
+auto TransactionUtil::timestampToString( TimeStamp const& timestamp ) -> std::string
 {
   std::ostringstream oss {};
-  oss << std::format( "{0:%F} {0:%T%z}", timestamp );
+  oss << std::format( kTimestampConversionStdFormatString, timestamp );
   return oss.str();
 }
 

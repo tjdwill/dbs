@@ -150,8 +150,8 @@ void TomlSerializer::writeTransactionInternal( OutputType& transactionTable, Tra
 {
   toml::value< std::string > const transactionId { transaction.transactionId().view() };
   toml::value< std::string > const otherPartyId { transaction.otherPartyId().view() };
-  toml::value< TomlCurrencyType > const transactionAmount { TransactionUtil::currencyAsString( transaction.amount() ) };
-  toml::value< TomlDateTimeType > const dateTime { TransactionUtil::timestampAsString( transaction.timeStamp() ) };
+  toml::value< TomlCurrencyType > const transactionAmount { TransactionUtil::currencyToString( transaction.amount() ) };
+  toml::value< TomlDateTimeType > const dateTime { TransactionUtil::timestampToString( transaction.timestamp() ) };
   toml::value< std::string > const notes { transaction.notes() };
 
   transactionTable.insert( kTransactionIdKey, std::move( transactionId ) );

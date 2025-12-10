@@ -65,7 +65,7 @@ auto dbscqt::createTransactionItemData( dbsc::Transaction const& transaction, db
   -> dbscqt::TransactionItemData
 {
 
-  QDateTime const timestamp       = dbscqt::DisplayUtil::toQDateTime( transaction.timeStamp() );
+  QDateTime const timestamp       = dbscqt::DisplayUtil::toQDateTime( transaction.timestamp() );
   QString const transactionAmount = dbscqt::DisplayUtil::toDecimalQString( transaction.amount() );
   QUuid const otherPartyId        = dbscqt::DisplayUtil::toQUuid( transaction.otherPartyId() );
   QString const otherPartyAccountName =
@@ -90,7 +90,7 @@ auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::Account
     | std::ranges::to< std::vector >();
   std::ranges::sort( transactionsSortedByDescendingDate, std::greater<>(), []( auto&& item ) -> dbsc::TimeStamp {
     auto const& [_, transaction] = item.get();
-    return transaction.timeStamp();
+    return transaction.timestamp();
   } );
 
   std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;

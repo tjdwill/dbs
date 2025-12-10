@@ -6,7 +6,7 @@
 //
 //@CLASSES:
 //  dbsc::Transaction: in-memory representation of an account transaction.
-//  dbsc::TransactionUtil: Prooovide conversion utils to strings
+//  dbsc::TransactionUtil: Provide conversion utils to strings
 //
 //@DESCRIPTION: This component defines the representation of a transaction in
 // DBS. Required data are:
@@ -31,7 +31,7 @@ using TimeStamp =
   std::chrono::time_point< std::chrono::system_clock, std::chrono::duration< std::int64_t, std::nano > >;
 
 /// Represents a transaction between two entities. A negative amount implies the
-/// account to which this object belongs had a withdrawl. A positive amount
+/// account to which this object belongs had a withdrawal. A positive amount
 /// indicates a deposit. If the otherPartyID is nil (see UuidString), the
 /// otherParty is some unspecified external source (ex. payment from a source of
 /// income.). Generally, dbsc::Transactions are intended to be made in pairs.
@@ -51,14 +51,14 @@ public:
   [[nodiscard]] auto notes() const -> std::string const&;
   [[nodiscard]] auto owningPartyId() const -> UuidString const&;
   [[nodiscard]] auto otherPartyId() const -> UuidString const&;
-  [[nodiscard]] auto timeStamp() const -> TimeStamp;
+  [[nodiscard]] auto timestamp() const -> TimeStamp;
   [[nodiscard]] auto transactionId() const -> UuidString const&;
 
-  friend auto operator==( dbsc::Transaction const& t1, dbsc::Transaction const& t2 ) -> bool = default;
+  [[nodiscard]] friend auto operator==( dbsc::Transaction const& t1, dbsc::Transaction const& t2 ) -> bool = default;
 
   /// Determine if two Transaction objects represent opposing perspectives of a
   /// single transaction.
-  static auto isPair( Transaction const& a, Transaction const& b ) -> bool;
+  [[nodiscard]] static auto isPair( Transaction const& a, Transaction const& b ) -> bool;
 
 private:
   UuidString mTransactionId;
@@ -73,9 +73,9 @@ private:
 
 struct TransactionUtil
 {
-  [[nodiscard]] static auto currencyAsString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
+  [[nodiscard]] static auto currencyToString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
   [[nodiscard]] static auto currencyFromString( std::string_view borrowedStr ) -> BloombergLP::bdldfp::Decimal64;
-  [[nodiscard]] static auto timestampAsString( TimeStamp const& timestamp ) -> std::string;
+  [[nodiscard]] static auto timestampToString( TimeStamp const& timestamp ) -> std::string;
   [[nodiscard]] static auto timestampFromString( std::string_view borrowedStr ) -> TimeStamp;
   [[nodiscard]] static constexpr auto timestampConversionFormat() -> std::string_view;
 };

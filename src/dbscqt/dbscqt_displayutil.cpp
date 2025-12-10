@@ -23,7 +23,7 @@ auto dbscqt::DisplayUtil::toQDateTime( dbsc::TimeStamp const& timestamp ) -> QDa
 
 auto dbscqt::DisplayUtil::toDecimalQString( BloombergLP::bdldfp::Decimal64 amount ) -> QString
 {
-  return QString::fromStdString( dbsc::TransactionUtil::currencyAsString( amount ) );
+  return QString::fromStdString( dbsc::TransactionUtil::currencyToString( amount ) );
 }
 
 auto dbscqt::DisplayUtil::toDecimal64( QString const& decimalString ) -> BloombergLP::bdldfp::Decimal64
