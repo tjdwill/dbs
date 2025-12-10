@@ -85,17 +85,17 @@ auto dbscqt::createTransactionItemData( dbsc::Transaction const& transaction, db
 auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
 {
-  auto transactionsSortedByDescendingDate =
+  auto transactionsSortedByAscendingDate =
     account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
     | std::ranges::to< std::vector >();
-  std::ranges::sort( transactionsSortedByDescendingDate, std::greater<>(), []( auto&& item ) -> dbsc::TimeStamp {
+  std::ranges::sort( transactionsSortedByAscendingDate, std::less<>(), []( auto&& item ) -> dbsc::TimeStamp {
     auto const& [_, transaction] = item.get();
     return transaction.timestamp();
   } );
 
   std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
   items.reserve( account.transactionCount() );
-  for ( auto const& item : transactionsSortedByDescendingDate ) {
+  for ( auto const& item : transactionsSortedByAscendingDate ) {
     auto const& [id, transaction] = item.get();
     items.push_back(
       std::make_unique< dbscqt::TransactionItem >( dbscqt::createTransactionItemData( transaction, accountBook ) ) );

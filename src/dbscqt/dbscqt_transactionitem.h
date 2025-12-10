@@ -37,8 +37,10 @@ struct TransactionItemData
 class TransactionItem
 {
 public:
-  /// @note @param transactionAmount is a QString due to its representation in dbsc
-  /// (bdlfp::Decimal64). A double is not a good representation.
+  /// @note @param transactionAmount is a QString due to its representation in
+  /// dbsc (bdlfp::Decimal64). A double is not a good representation due to
+  /// decimal accuracy issues (see
+  /// https://bloomberg.github.io/bde/articles/binary_decimal_conversion.html).
   explicit TransactionItem( TransactionItemData const& transactionData );
   ~TransactionItem();
   TransactionItem( TransactionItem const& )                    = delete;
@@ -62,7 +64,7 @@ private:
 
 [[nodiscard]] auto createTransactionItemData( dbsc::Transaction const& transaction,
                                               dbsc::AccountBook const& accountBook ) -> dbscqt::TransactionItemData;
-/// @return a sequence of transaction items sorted in descending date order.
+/// @return a sequence of transaction items sorted in ascending date order.
 [[nodiscard]] auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >;
 } // namespace dbscqt

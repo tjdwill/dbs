@@ -76,6 +76,7 @@ target_link_libraries(dbscqt_accountmodel
   PRIVATE
     dbsutl_helpers
     dbscqt_transactionitem
+    bsl
   PUBLIC 
     Qt::Core
     Qt::Gui

@@ -28,8 +28,6 @@ namespace dbscqt {
 class TransactionItem;
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
-/// Given the header inclusion order issue between Qt and BDE, no dbsc code can actually be
-/// included, so AccountModel doesn't actually take any dbsc objects directly.
 class AccountModel : public QAbstractTableModel
 {
   Q_OBJECT
@@ -47,7 +45,7 @@ public:
 
   /// @note Assumes validation has been done on this transaction before adding to the
   /// model. Takes ownership of the incoming transaction item.
-  void addTransactionItem( TransactionItem* const transactionData );
+  void addTransactionItem( TransactionItem* const transactionItemPtr );
 
 public Q_SLOTS:
   //  /// Implement sorting by a given column

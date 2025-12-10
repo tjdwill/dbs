@@ -4,9 +4,10 @@
 #include <dbscqt_transactionitem.h>
 #include <dbsutl_helpers.h>
 
+#include <bsls_assert.h>
+
 #include <QTimeZone>
 
-#include <algorithm>
 #include <memory>
 #include <stdexcept>
 
@@ -69,14 +70,16 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
   }
 
   if ( role == Qt::DisplayRole ) {
-    auto const& item = mImp->mItems.at( row );
+    // The items vector is sorted such that the most recent transaction is at the back.
+    // We present items such that the most recent is listed first.
+    int const itemIndex = ( rowCount() - 1 ) - row;
+    auto const& item    = mImp->mItems.at( itemIndex );
     switch ( column ) {
       case dbsutl::enumAsIntegral( AccountModelColumnType::kTransactionId ):
         return item->transactionId().toString( QUuid::WithoutBraces );
       case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return item->amount();
       case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ): {
-        /// TODO: Link this logic and the headerData logic via a QSettings entry(?)
         auto const timeStamp         = item->timeStamp();
         auto const localTime         = timeStamp.toLocalTime();
         auto const timeDisplayString = localTime.toString( "yyyy-MM-dd hh:mm:ss.zzz" );
@@ -101,8 +104,10 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
         return "Transaction Id";
       case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
         return "Amount ($)";
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ):
-        return QString( "Time (%1)" ).arg( QTimeZone::systemTimeZone().displayName( QDateTime::currentDateTime() ) );
+      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ): {
+        auto const timezoneString = QTimeZone::systemTimeZone().displayName( QDateTime::currentDateTime() );
+        return QString( "Time (%1)" ).arg( timezoneString );
+      }
       case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
         return "Other Party";
       case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
@@ -114,16 +119,16 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-void dbscqt::AccountModel::addTransactionItem( dbscqt::TransactionItem* const transactionData )
+void dbscqt::AccountModel::addTransactionItem( dbscqt::TransactionItem* const transactionItemPtr )
 {
-  std::unique_ptr< TransactionItem > transactionItem { transactionData };
-  auto const insertionIter = std::ranges::upper_bound(
-    mImp->mItems, transactionItem, []( auto&& transactionItemPtr, auto&& containerElement ) -> bool {
-      return transactionItemPtr->timeStamp() < containerElement->timeStamp();
-    } );
-  // Insert latest transaction at top
+  // Check greater than or equal to in case the timestamps are truncated to the
+  // same value when converting from nanosecond precision to millisecond.
+  BSLS_ASSERT( ( rowCount() > 0 ? transactionItemPtr->timeStamp() >= mImp->mItems.back()->timeStamp() : true ) );
+
   beginInsertRows( QModelIndex(), 0, 0 );
-  mImp->mItems.insert( insertionIter, std::move( transactionItem ) );
+  {
+    mImp->mItems.emplace_back( transactionItemPtr );
+  }
   endInsertRows();
 }
 
