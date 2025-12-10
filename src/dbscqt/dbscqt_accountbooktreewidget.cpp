@@ -15,8 +15,8 @@
 namespace dbscqt {
 
 namespace {
-  QString const kOpenAccountsCategoryLabel   = "Active";
-  QString const kClosedAccountsCategoryLabel = "Inactive";
+  QString const kActiveAccountsCategoryLabel   = "Active";
+  QString const kInactiveAccountsCategoryLabel = "Inactive";
 } // namespace
 
 class AccountItem::Private
@@ -54,7 +54,7 @@ auto dbscqt::createAccountItemData( dbsc::Account const& account ) -> dbscqt::Ac
     .mDescription = QString::fromStdString( account.description() ),
     .mBalance     = QString::fromStdString( dbsc::TransactionUtil::currencyToString( account.balance() ) ),
     .mId          = QUuid::fromString( account.id().view() ),
-    .mIsOpen      = account.isActive(),
+    .mIsActive    = account.isActive(),
   };
 }
 
@@ -104,13 +104,13 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
   setHeaderLabel( "Accounts" );
   // Create categorization items. Open accounts should be listed first, so use a name
   // beginning with 'A'.
-  mImp->mActiveAccountsCategoryItem   = new QTreeWidgetItem( this, { dbscqt::kOpenAccountsCategoryLabel } );
-  mImp->mInactiveAccountsCategoryItem = new QTreeWidgetItem( this, { dbscqt::kClosedAccountsCategoryLabel } );
+  mImp->mActiveAccountsCategoryItem   = new QTreeWidgetItem( this, { dbscqt::kActiveAccountsCategoryLabel } );
+  mImp->mInactiveAccountsCategoryItem = new QTreeWidgetItem( this, { dbscqt::kInactiveAccountsCategoryLabel } );
 
   auto const& accountBook = *accountBookHandle;
   for ( auto const& [accountId, account] : accountBook ) {
     auto* accountItem = createAccountItem( account, accountBook );
-    if ( accountItem->accountItemData().mIsOpen ) {
+    if ( accountItem->accountItemData().mIsActive ) {
       mImp->mActiveAccountsCategoryItem->addChild( accountItem );
     } else {
       mImp->mInactiveAccountsCategoryItem->addChild( accountItem );
@@ -174,12 +174,12 @@ void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
   }
 }
 
-void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isOpen )
+void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isActive )
 {
-  auto* accountItemHandle                         = accountItem( accountId );
-  accountItemHandle->accountItemDataMut().mIsOpen = isOpen;
+  auto* accountItemHandle                           = accountItem( accountId );
+  accountItemHandle->accountItemDataMut().mIsActive = isActive;
   accountItemHandle->parent()->removeChild( accountItemHandle );
-  categoryItem( isOpen )->addChild( accountItemHandle );
+  categoryItem( isActive )->addChild( accountItemHandle );
 }
 
 void dbscqt::AccountBookTreeWidget::handleTransactionMade( QUuid const accountId,

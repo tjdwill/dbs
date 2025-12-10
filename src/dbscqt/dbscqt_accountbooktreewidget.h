@@ -11,6 +11,7 @@
 //
 //@DESCRIPTION: This component defines a tree widget for the account book for use in the
 //  GUI display.
+
 #include <dbscqt_transactionitem.h>
 
 #include <QString>
@@ -35,7 +36,7 @@ struct AccountItemData
   QString mDescription;
   QString mBalance;
   QUuid mId;
-  bool mIsOpen;
+  bool mIsActive { true };
 };
 
 [[nodiscard]] auto createAccountItemData( dbsc::Account const& account ) -> dbscqt::AccountItemData;
@@ -43,7 +44,7 @@ struct AccountItemData
 class AccountItem : public QTreeWidgetItem
 {
 public:
-  // Since AccountItems are classified according to account open/close status, there will never be
+  // Since AccountItems are classified according to account active/inactive status, there will never be
   // a top-level AccountItem in an AccountBookTreeWidget. Therefore, the constructor with a
   // dbscqt::AccountBookTreeWidget parent item is omitted.
 
@@ -88,14 +89,14 @@ public:
 
 Q_SIGNALS:
   void accountSelected( AccountItem* );
-  /// Signal that some display should reset itself.
+  /// Signal that some connected display should reset itself.
   void accountCleared();
 
 public Q_SLOTS:
   /// @pre The new account has already been created and added to the current dbsc::AccountBook.
   void handleAccountCreated( QUuid accountId );
+  void handleAccountStatusUpdated( QUuid accountId, bool isActive );
 
-  void handleAccountStatusUpdated( QUuid accountId, bool isOpen );
   /// Adds transaction data to the relevant model.
   void handleTransactionMade( QUuid accountId, TransactionItem* transactionData );
 
@@ -104,6 +105,8 @@ private:
   [[nodiscard]] auto isAccountItemInThisTree( QTreeWidgetItem* itemCandidate ) -> bool;
   [[nodiscard]] auto createAccountItem( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
     -> AccountItem*;
+
+  /// @return one of the top-level categorization items.
   [[nodiscard]] auto categoryItem( bool accountIsActive ) const -> QTreeWidgetItem*;
 
   class Private;

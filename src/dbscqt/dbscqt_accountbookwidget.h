@@ -1,6 +1,7 @@
 // dbscqt_accountbookwidget.h
 #ifndef INCLUDED_DBSCQT_ACCOUNTBOOKWIDGET
 #define INCLUDED_DBSCQT_ACCOUNTBOOKWIDGET
+
 //@PURPOSE: Define a widget representing a dbsc::AccountBook
 //
 //@CLASSES:
