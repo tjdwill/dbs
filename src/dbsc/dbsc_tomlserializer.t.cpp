@@ -28,8 +28,8 @@ auto createAccountBook() -> dbsc::AccountBook
   auto accountId1 = book.createAccount( "TestAccount1", "The first test account in the book" );
   auto accountId2 = book.createAccount( "TestAccount2", "The second test account in the book" );
 
-  book.makeTransaction( "5000.00"_d64, "Initial Deposit", accountId1 );
-  book.makeTransaction( "2000.00"_d64, "Initial Deposit", accountId2 );
+  book.makeTransaction( "5000.00"_d64, "Initial Deposit", accountId1, std::nullopt );
+  book.makeTransaction( "2000.00"_d64, "Initial Deposit", accountId2, std::nullopt );
 
   for ( auto const count : std::views::iota( 1, kTransactionCount + 1 ) ) {
     book.makeTransaction( transactionAmount(), std::format( "Transaction #{}", count ), accountId1, accountId2 );

@@ -4,11 +4,11 @@
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
-#include <bsls_assert.h> // for testing
+#include <bsls_assert.h>
 
 #include <functional>
 #include <string>
-#include <string_view> // for testing
+#include <string_view>
 
 namespace {
 
@@ -33,6 +33,7 @@ int main()
   // Test accessors
   try {
     auto const badAccountAccess = accountBook.account( {} );
+    BSLS_ASSERT( false ); // Should never be reached.
   } catch ( dbsc::NonExistentAccountException const& ) {
   }
 
@@ -41,15 +42,15 @@ int main()
   BSLS_ASSERT( accountBook.cbegin() != accountBook.cend() );
   BSLS_ASSERT( accountBook.account( accountId ).isActive() );
 
-  // Account ops
-  accountBook.closeAccount( accountId );
+  // Account operations
+  accountBook.deactivate( accountId );
   BSLS_ASSERT( not accountBook.account( accountId ).isActive() );
-  accountBook.openAccount( accountId );
+  accountBook.activate( accountId );
   BSLS_ASSERT( accountBook.account( accountId ).isActive() );
 
-  /// External withdrawal
+  /// External deposit
   auto const kTransactionAmount = "100.00"_d64;
-  accountBook.makeTransaction( kTransactionAmount, "transactionNotes", accountId );
+  accountBook.makeTransaction( kTransactionAmount, "transactionNotes", accountId, std::nullopt );
   BSLS_ASSERT( accountBook.account( accountId ).balance() == kTransactionAmount );
 
   /// Inter-acccount Transaction
@@ -57,7 +58,7 @@ int main()
 
   auto const transactionId =
     accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", secondAccountId, accountId );
-  BSLS_ASSERT( accountBook.account( accountId ).balance() == BloombergLP::bdldfp::Decimal64 {} );
+  BSLS_ASSERT( accountBook.account( accountId ).balance() == BloombergLP::bdldfp::Decimal64() );
   BSLS_ASSERT( accountBook.account( secondAccountId ).balance() == kTransactionAmount );
   BSLS_ASSERT( dbsc::Transaction::isPair( accountBook.account( secondAccountId ).transaction( transactionId ),
                                           accountBook.account( accountId ).transaction( transactionId ) ) );
@@ -66,12 +67,13 @@ int main()
   auto tryMakeTransaction = [&accountBook, kTransactionAmount](
                               dbsc::UuidString const& accountId,
                               std::optional< std::reference_wrapper< dbsc::UuidString const > > otherPartyId ) {
-    accountBook.closeAccount( accountId );
+    accountBook.deactivate( accountId );
     try {
       accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", accountId, otherPartyId );
+      BSLS_ASSERT( false );
     } catch ( dbsc::InactiveAccountException const& ) {
     }
-    accountBook.openAccount( accountId );
+    accountBook.activate( accountId );
   };
   tryMakeTransaction( secondAccountId, std::nullopt );
   tryMakeTransaction( accountId, std::nullopt );

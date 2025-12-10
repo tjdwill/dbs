@@ -1,6 +1,7 @@
 // dbsc_accountbook.h
 #ifndef INCLUDED_DBSC_ACCOUNTBOOK
 #define INCLUDED_DBSC_ACCOUNTBOOK
+
 //@PURPOSE: Provide a container for multiple accounts belonging to a user.
 //
 //@CLASSES:
@@ -31,7 +32,7 @@ DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 /// A collection of Accounts for a given user. This class allows for iteration
 /// over its Accounts by way of key-value pairs [AccountId, Account]. It is
 /// also responsible for recording transactions and can open new accounts as
-/// well as toggle the status of an existing status (opened/closed).
+/// well as toggle the status of an existing status (active/closed).
 class AccountBook
 
 {
@@ -64,39 +65,41 @@ public:
   /// account's Id.
   auto createAccount( std::string const& accountName, std::string const& description ) -> UuidString;
 
-  /// Record the transaction for the provided accountId and amounts. Returns the
-  /// transaction Id.
-  /// The @param otherPartyId parameter is optional to allow transactions from
-  /// external sources. As a result,
-  /// it is assumed that if @param accountId and @param otherPartyId are valid Ids, they
-  /// correspond to accounts that currently exist in the account book. If this is not the case,
-  /// @c dbsc::NonExistentAccountException is thrown. If either account is closed,
-  /// @c dbsc::ClosedAccountException is thrown
+  /// @brief Record the transaction for the provided accountId and amounts.
   ///
-  /// To represent a deposit into @param accountId, @param amount should be positive.
-  /// Negative values represent withdrawls. If @param otherPartyId is provided, both
+  /// The @p internalSecondPartyIdOpt parameter is optional to allow transactions from
+  /// external sources. As a result,
+  /// it is assumed that if @p firstPartyId and @p internalSecondPartyIdOpt are valid Ids, they
+  /// correspond to accounts that currently exist in the account book. If this is not the case,
+  /// @c dbsc::NonExistentAccountException is thrown. If either account is inactive,
+  /// @c dbsc::InactiveAccountException is thrown.
+  ///
+  /// To represent a deposit into @p firstPartyId, @p amount should be positive.
+  /// Negative values represent withdrawals. If @p internalSecondPartyIdOpt is non-null, both
   /// accounts will share the same TimeStamp and transaction Id for their
   /// respective copies.
+  ///
+  /// @return the transaction id
   auto makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
                         std::string const& transactionNotes,
-                        UuidString const& accountId,
-                        std::optional< std::reference_wrapper< UuidString const > > otherPartyId = std::nullopt )
+                        UuidString const& firstPartyId,
+                        std::optional< std::reference_wrapper< UuidString const > > internalSecondPartyIdOpt )
     -> UuidString;
 
   /// Modify the writability of a given account.
   /// @throw @c dbsc::NonExistentAccount if account does not exist.
-  void closeAccount( UuidString const& accountId );
-  void openAccount( UuidString const& accountId );
+  void deactivate( UuidString const& accountId );
+  void activate( UuidString const& accountId );
 
-  /// Insert the account into the collection. This function is intended for
-  /// de-serialization purposes.
+  /// Insert the account into the collection.
+  /// @note This function is intended for de-serialization purposes.
   void addParsedAccount( Account account );
 
 private:
   auto accountMut( UuidString const& accountId ) -> Account&;
 
   std::string mOwner {};
-  std::map< UuidString, Account > mAccounts {};
+  std::map< UuidString, Account > mAccountsMap {};
 };
 } // namespace dbsc
 
