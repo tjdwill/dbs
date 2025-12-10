@@ -7,7 +7,7 @@
 //@CLASSES:
 //  dbsc::Account: an entity that tracks a monetary balance over multiple
 //    transactions.
-//  dbsc::ClosedAccountException: an error that signals an illegal transaction.
+//  dbsc::InactiveAccountException: an error that denotes an illegal transaction.
 //
 //@DESCRIPTION: This component defines the Account, which is essentially the
 //  backbone of the budgeting system. Accounts store Transactions, keeps track
@@ -25,14 +25,14 @@
 
 namespace dbsc {
 
-/// Signals that a caller attempted to add a Transaction to a closed Account.
-DBSC_REGISTER_EXCEPTION( ClosedAccountException, "Attempted to modify a closed account." );
+/// Signals that a caller attempted to add a Transaction to an inactive Account.
+DBSC_REGISTER_EXCEPTION( InactiveAccountException, "Attempted to modify an inactive account." );
 
 /// The basis of the application, this class stores multiple transactions,
 /// allowing one to track the balance of money at a given moment. Accounts have
-/// two states, "open" and "closed," which is the way this program disables
+/// two states, "active" and "inactive," which is the way this program disables
 /// modifying the Account further without actually deleting the data (someone
-/// may wish to re-open at a future date).
+/// may wish to reactivate at a future date).
 class Account
 {
 public:
@@ -52,23 +52,23 @@ public:
   [[nodiscard]] auto id() const -> UuidString const&;
   [[nodiscard]] auto name() const -> std::string const&;
   [[nodiscard]] auto transactionCount() const -> int;
-  auto begin() -> iterator;
-  auto begin() const -> const_iterator;
-  auto cbegin() const noexcept -> const_iterator;
-  auto end() -> iterator;
-  auto end() const -> const_iterator;
-  auto cend() const noexcept -> const_iterator;
+  [[nodiscard]] auto begin() -> iterator;
+  [[nodiscard]] auto begin() const -> const_iterator;
+  [[nodiscard]] auto cbegin() const noexcept -> const_iterator;
+  [[nodiscard]] auto end() -> iterator;
+  [[nodiscard]] auto end() const -> const_iterator;
+  [[nodiscard]] auto cend() const noexcept -> const_iterator;
 
   /// Query if this account has a transaction with the provided Id.
-  auto contains( UuidString const& transactionId ) const -> bool;
+  [[nodiscard]] auto contains( UuidString const& transactionId ) const -> bool;
 
   /// Retrieve the transaction data associated with the input transactionID.
-  /// Propagates the `std::out_of_range` error if the transaction doesn't exist
+  /// Propagates the @c std::out_of_range error if the transaction doesn't exist
   /// for the account.
   [[nodiscard]] auto transaction( UuidString const& transactionId ) const -> Transaction const&;
 
   /// Queries if the account is open for making new transactions.
-  [[nodiscard]] auto isOpen() const -> bool;
+  [[nodiscard]] auto isActive() const -> bool;
 
   // Manipulators
 
@@ -80,13 +80,13 @@ public:
 
   /// Sets this account's status to "read-only". No further transactions can be
   /// added.
-  void closeAccount();
+  void deactivate();
 
   /// Sets this account's status to "writeable", meaning it can store new
   /// transactions.
-  void openAccount();
+  void activate();
 
-  friend auto operator==( Account const& a, Account const& b ) -> bool = default;
+  [[nodiscard]] friend auto operator==( Account const& a, Account const& b ) -> bool = default;
 
 private:
   UuidString mId;
@@ -94,7 +94,7 @@ private:
   std::string mDescription {};
   BloombergLP::bdldfp::Decimal64 mBalance {};
   std::map< UuidString, Transaction > mTransactions {};
-  bool mIsOpen { true };
+  bool mIsActive { true };
 };
 
 } // namespace dbsc

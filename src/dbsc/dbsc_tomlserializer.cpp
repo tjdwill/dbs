@@ -71,7 +71,7 @@ auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidStrin
   auto const accountName        = accountTomlTable[kAccountNameKey].value< std::string >().value();
   auto const accountDescription = accountTomlTable[kAccountDescriptionKey].value< std::string >().value();
   Account account { accountId, accountName, accountDescription };
-  account.openAccount(); // Ensure we can add the previous transactions.
+  account.activate(); // Ensure we can add the previous transactions.
 
   auto* const transactionArrayOfTables = accountTomlTable[kAccountTransactionsKey].as_array();
   BSLS_ASSERT( transactionArrayOfTables->is_array_of_tables() );
@@ -83,7 +83,7 @@ auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidStrin
 
   auto const accountIsOpen = accountTomlTable[kAccountOpenStatusKey].value< bool >().value();
   if ( !accountIsOpen ) {
-    account.closeAccount();
+    account.deactivate();
   }
 
   return account;
@@ -131,7 +131,7 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
 {
   toml::value< std::string > const accountName { account.name() };
   toml::value< std::string > const accountDescription { account.description() };
-  toml::value< bool > accountIsOpen { account.isOpen() };
+  toml::value< bool > accountIsOpen { account.isActive() };
   accountTable.insert( kAccountNameKey, accountName );
   accountTable.insert( kAccountDescriptionKey, accountDescription );
   accountTable.insert( kAccountOpenStatusKey, accountIsOpen );

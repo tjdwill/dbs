@@ -39,13 +39,13 @@ int main()
   BSLS_ASSERT( accountBook.owner() == kOwnerName );
   BSLS_ASSERT( accountBook.account( accountId ) == accountBook.account( accountId ) );
   BSLS_ASSERT( accountBook.cbegin() != accountBook.cend() );
-  BSLS_ASSERT( accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( accountBook.account( accountId ).isActive() );
 
   // Account ops
   accountBook.closeAccount( accountId );
-  BSLS_ASSERT( not accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( not accountBook.account( accountId ).isActive() );
   accountBook.openAccount( accountId );
-  BSLS_ASSERT( accountBook.account( accountId ).isOpen() );
+  BSLS_ASSERT( accountBook.account( accountId ).isActive() );
 
   /// External withdrawal
   auto const kTransactionAmount = "100.00"_d64;
@@ -69,7 +69,7 @@ int main()
     accountBook.closeAccount( accountId );
     try {
       accountBook.makeTransaction( kTransactionAmount, "Internal account transactions", accountId, otherPartyId );
-    } catch ( dbsc::ClosedAccountException const& ) {
+    } catch ( dbsc::InactiveAccountException const& ) {
     }
     accountBook.openAccount( accountId );
   };

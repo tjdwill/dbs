@@ -102,8 +102,8 @@ auto AccountBook::makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
   -> UuidString
 {
 
-  if ( !account( accountId ).isOpen() || ( otherPartyId && !account( *otherPartyId ).isOpen() ) ) {
-    throw ClosedAccountException( "Attempted to make a transaction on a closed account." );
+  if ( !account( accountId ).isActive() || ( otherPartyId && !account( *otherPartyId ).isActive() ) ) {
+    throw InactiveAccountException( "Attempted to make a transaction on a closed account." );
   }
 
   auto loopGenerateId = [&accountId, &otherPartyId, this]() {
@@ -135,12 +135,12 @@ auto AccountBook::makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
 
 void AccountBook::closeAccount( UuidString const& accountId )
 {
-  accountMut( accountId ).closeAccount();
+  accountMut( accountId ).deactivate();
 }
 
 void AccountBook::openAccount( UuidString const& accountId )
 {
-  accountMut( accountId ).openAccount();
+  accountMut( accountId ).activate();
 }
 
 void AccountBook::addParsedAccount( Account account )

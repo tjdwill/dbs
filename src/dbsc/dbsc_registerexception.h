@@ -1,6 +1,7 @@
 // dbsc_registerexception.h
 #ifndef INCLUDED_DBSC_REGISTEREXCEPTION
 #define INCLUDED_DBSC_REGISTEREXCEPTION
+
 //@PURPOSE: Provide a macro for creating new exceptions.
 //
 //@CLASSES:
@@ -36,8 +37,8 @@
 
 /// Include necesary headers for exceptions. This is so other components using this macro
 /// have the necessary components "for free".
-#include <exception> // NOLINT
-#include <string>    // NOLINT
+#include <exception>
+#include <string>
 /// @param EXCEPTION_NAME: the name of the exception class
 /// @param DEFAULT_MESSAGE: the message that is passed to the default constructor.
 ///     @note This argument should always be enclosed in quotation marks, just like
@@ -55,10 +56,7 @@
     {                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto what() const noexcept -> char const*                                                            \
-    {                                                                                                                  \
-      return mMessage.c_str();                                                                                         \
-    }                                                                                                                  \
+    [[nodiscard]] auto what() const noexcept -> char const* { return mMessage.c_str(); }                               \
                                                                                                                        \
   private:                                                                                                             \
     std::string mMessage;                                                                                              \

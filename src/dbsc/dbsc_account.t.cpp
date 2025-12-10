@@ -6,10 +6,10 @@
 #include <bdldfp_decimal.h>
 #include <bsls_assert.h>
 
-#include <chrono>      // for testing
-#include <string>      // for testing
-#include <string_view> // for testing
-#include <type_traits> // for testing
+#include <chrono>
+#include <string>
+#include <string_view>
+#include <type_traits>
 
 using namespace BloombergLP;
 using namespace bdldfp::DecimalLiterals;
@@ -72,8 +72,8 @@ int main()
   } catch ( dbsc::DuplicateUuidException const& ) {
   }
 
-  sampleAccountMut().closeAccount();
-  BSLS_ASSERT( not sampleAccount().isOpen() );
+  sampleAccountMut().deactivate();
+  BSLS_ASSERT( not sampleAccount().isActive() );
   BSLS_ASSERT( sampleAccount().contains( transactionId ) );
   BSLS_ASSERT( sampleAccount() == sampleAccount() );
 }

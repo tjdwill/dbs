@@ -49,9 +49,9 @@ auto Account::transactionCount() const -> int
   return static_cast< int >( mTransactions.size() );
 }
 
-auto Account::isOpen() const -> bool
+auto Account::isActive() const -> bool
 {
-  return mIsOpen;
+  return mIsActive;
 }
 
 auto Account::begin() -> iterator
@@ -106,14 +106,14 @@ void Account::logTransaction( Transaction const& transaction )
   mBalance += mTransactions.at( transactionId ).amount();
 }
 
-void Account::closeAccount()
+void Account::deactivate()
 {
-  mIsOpen = false;
+  mIsActive = false;
 }
 
-void Account::openAccount()
+void Account::activate()
 {
-  mIsOpen = true;
+  mIsActive = true;
 }
 
 } // namespace dbsc

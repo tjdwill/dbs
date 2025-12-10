@@ -54,7 +54,7 @@ auto dbscqt::createAccountItemData( dbsc::Account const& account ) -> dbscqt::Ac
     .mDescription = QString::fromStdString( account.description() ),
     .mBalance     = QString::fromStdString( dbsc::TransactionUtil::currencyToString( account.balance() ) ),
     .mId          = QUuid::fromString( account.id().view() ),
-    .mIsOpen      = account.isOpen(),
+    .mIsOpen      = account.isActive(),
   };
 }
 
