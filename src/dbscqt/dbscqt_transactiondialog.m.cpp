@@ -30,12 +30,11 @@ int main( int argc, char* argv[] )
     activeAccounts.push_back( { id, dbscqt::DisplayUtil::accountNameWithShortenedUuid( id, accountName ) } );
   }
 
-  QScopedPointer mainWidget { new dbscqt::TransactionDialog(
-    dbscqt::TransactionDialog::ConstructorArgs { .mExternalAccountId          = externalId,
-                                                 .mExternalAccountDisplayName = externalDisplayName,
-                                                 .mPrimaryPartyId             = primaryPartyId,
-                                                 .mPrimaryPartyDisplayName    = primaryDisplayName,
-                                                 .mActiveAccountData          = std::move( activeAccounts ) } ) };
+  QScopedPointer mainWidget { new dbscqt::TransactionDialog( { .mExternalAccountId          = externalId,
+                                                               .mExternalAccountDisplayName = externalDisplayName,
+                                                               .mPrimaryPartyId             = primaryPartyId,
+                                                               .mPrimaryPartyDisplayName    = primaryDisplayName,
+                                                               .mActiveAccountData = std::move( activeAccounts ) } ) };
   mainWidget->show();
 
   return app.exec();
