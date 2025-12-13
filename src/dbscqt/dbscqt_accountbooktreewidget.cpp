@@ -109,14 +109,9 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
 
   auto const& accountBook = *accountBookHandle;
   for ( auto const& [accountId, account] : accountBook ) {
-    auto* accountItem = createAccountItem( account, accountBook );
-    if ( accountItem->accountItemData().mIsActive ) {
-      mImp->mActiveAccountsCategoryItem->addChild( accountItem );
-    } else {
-      mImp->mInactiveAccountsCategoryItem->addChild( accountItem );
-    }
-
-    mImp->mAccountItems.insert( { dbscqt::DisplayUtil::toQUuid( accountId ), accountItem } );
+    auto* accountItemToAdd       = createAccountItem( account, accountBook );
+    auto const successfullyAdded = addAccountItem( accountItemToAdd );
+    BSLS_ASSERT( successfullyAdded );
   }
   mImp->mActiveAccountsCategoryItem->setExpanded( true );
   mImp->mInactiveAccountsCategoryItem->setExpanded( false );
@@ -161,6 +156,9 @@ auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCand
   auto [_, insertSuccessful] =
     mImp->mAccountItems.insert( { accountItemCandidate->accountId(), accountItemCandidate } );
 
+  // Add item to GUI element
+  categoryItem( accountItemCandidate->accountItemData().mIsActive )->addChild( accountItemCandidate );
+
   return insertSuccessful;
 }
 
@@ -204,12 +202,12 @@ auto dbscqt::AccountBookTreeWidget::createAccountItem( dbsc::Account const& acco
   auto accountItemData = dbscqt::createAccountItemData( account );
   auto* accountModel   = new dbscqt::AccountModel( dbscqt::createTransactionItems( account, accountBook ) );
 
-  auto* accountItem = new AccountItem { std::move( accountItemData ), accountModel, nullptr };
-  accountItem->setText( 0,
-                        dbscqt::DisplayUtil::accountNameWithShortenedUuid( accountItem->accountId(),
-                                                                           accountItem->accountItemData().mName ) );
+  auto* createdAccountItem = new AccountItem { std::move( accountItemData ), accountModel, nullptr };
+  createdAccountItem->setText( 0,
+                               dbscqt::DisplayUtil::accountNameWithShortenedUuid(
+                                 createdAccountItem->accountId(), createdAccountItem->accountItemData().mName ) );
 
-  return accountItem;
+  return createdAccountItem;
 }
 
 auto dbscqt::AccountBookTreeWidget::categoryItem( bool const accountIsActive ) const -> QTreeWidgetItem*
