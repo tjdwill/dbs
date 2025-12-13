@@ -1,46 +1,38 @@
-// dbscqt_accountmodel.t.cpp
-#include <dbsc_account.h>
+// dbscqt_accountbookwidget.m.cpp
 #include <dbsc_accountbook.h>
+#include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
-#include <dbscqt_accountmodel.h>
-#include <dbscqt_transactionitem.h>
+#include <dbscqt_accountbookwidget.h>
 
 #include <QApplication>
-#include <QHeaderView>
+#include <QBoxLayout>
 #include <QMainWindow>
-#include <QTableView>
-#include <QVBoxLayout>
+#include <QScopedPointer>
 #include <QWidget>
 
 #include <filesystem>
+#include <memory>
 
 namespace {
-
 std::filesystem::path const kAccountBookPath { std::filesystem::path( DBS_RESOURCES_DIR ) / "testAccountBook.toml" };
-
 } // namespace
 
 int main( int argc, char* argv[] )
 {
   QApplication app { argc, argv };
 
-  auto const kAccountBook = dbsc::readAccountBook< dbsc::TomlSerializer >( kAccountBookPath );
-  auto const& kAccount    = ( *kAccountBook.cbegin() ).second;
+  auto accountBook =
+    std::make_shared< dbsc::AccountBook >( dbsc::readAccountBook< dbsc::TomlSerializer >( kAccountBookPath ) );
 
-  // NOLINTBEGIN(cppcoreguidelines-owning-memory)
-  auto* mainWindow    = new QMainWindow();
+  auto mainWindow     = QScopedPointer( new QMainWindow() );
   auto* centralWidget = new QWidget();
   {
     mainWindow->setCentralWidget( centralWidget );
-    auto* widgetLayout = new QVBoxLayout( centralWidget );
-    auto* tableView    = new QTableView();
-    auto* tableModel   = new dbscqt::AccountModel( dbscqt::createTransactionItems( kAccount, kAccountBook ), nullptr );
-    tableView->setModel( tableModel );
-    tableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
-    widgetLayout->addWidget( tableView );
+    auto* centralWidgetLayout = new QHBoxLayout( centralWidget );
+    centralWidgetLayout->addWidget( new dbscqt::AccountBookWidget( accountBook ) );
   }
-  // NOLINTEND(cppcoreguidelines-owning-memory)
-  mainWindow->showMaximized();
+  mainWindow->show();
+
   return app.exec();
 }
 

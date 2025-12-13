@@ -1,6 +1,8 @@
 // dbscqt_accountbooktreewidget.cpp
 #include "dbscqt_accountbooktreewidget.h"
 
+#include "Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h"
+
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
@@ -178,6 +180,9 @@ void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const acco
   accountItemHandle->accountItemDataMut().mIsActive = isActive;
   accountItemHandle->parent()->removeChild( accountItemHandle );
   categoryItem( isActive )->addChild( accountItemHandle );
+
+  mImp->mActiveAccountsCategoryItem->sortChildren( 0, Qt::AscendingOrder );
+  mImp->mInactiveAccountsCategoryItem->sortChildren( 0, Qt::AscendingOrder );
 }
 
 void dbscqt::AccountBookTreeWidget::handleTransactionMade( QUuid const accountId,

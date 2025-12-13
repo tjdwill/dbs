@@ -82,10 +82,10 @@ target_link_libraries(dbscqt_accountmodel
     Qt::Gui
     Qt::Widgets
 ) 
-add_executable(dbscqt_accountmodel.t dbscqt_accountmodel.t.cpp)
-target_sources(dbscqt_accountmodel.t PRIVATE dbscqt_accountmodel.t.cpp)
-target_compile_definitions(dbscqt_accountmodel.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
-target_link_libraries(dbscqt_accountmodel.t 
+add_executable(dbscqt_accountmodel.m dbscqt_accountmodel.m.cpp)
+target_sources(dbscqt_accountmodel.m PRIVATE dbscqt_accountmodel.m.cpp)
+target_compile_definitions(dbscqt_accountmodel.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+target_link_libraries(dbscqt_accountmodel.m 
   PRIVATE
     dbscqt_transactionitem
     dbscqt_accountmodel
@@ -116,6 +116,21 @@ target_link_libraries(dbscqt_accountbooktreewidget
  PUBLIC
   dbscqt_transactionitem
 )
+add_executable(dbscqt_accountbooktreewidget.m dbscqt_accountbooktreewidget.m.cpp)
+target_link_libraries(dbscqt_accountbooktreewidget.m
+  PRIVATE
+    dbscqt_accountbooktreewidget
+    dbscqt_accountmodel
+    dbscqt_displayutil
+    dbscqt_transactionitem
+    dbsc_accountbook
+    dbsc_account
+    bdl
+    bsl
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+)
 
 add_library(dbscqt_accountbookwidget)
 target_sources(dbscqt_accountbookwidget
@@ -141,22 +156,22 @@ target_link_libraries(dbscqt_accountbookwidget
   PUBLIC
     Qt::Widgets
 )
-add_executable(dbscqt_accountbookwidget.t)
-target_sources(dbscqt_accountbookwidget.t PRIVATE dbscqt_accountbookwidget.t.cpp)
-target_link_libraries(dbscqt_accountbookwidget.t 
+add_executable(dbscqt_accountbookwidget.m)
+target_sources(dbscqt_accountbookwidget.m PRIVATE dbscqt_accountbookwidget.m.cpp)
+target_link_libraries(dbscqt_accountbookwidget.m 
   PRIVATE
     dbscqt_accountbookwidget
     dbsc_tomlserializer
 )
-target_compile_definitions(dbscqt_accountbookwidget.t PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
   set(deployable_targets 
     dbscqt_qobjectdeleteutil.t
     dbscqt_displayutil.t
-    #dbscqt_accountbooktreewidget.t
-    dbscqt_accountbookwidget.t
+    dbscqt_accountbooktreewidget.m
+    dbscqt_accountbookwidget.m
   )
   function(retrieve_target_artifacts targetList oList)
     foreach(target IN LISTS targetList)
