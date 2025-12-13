@@ -62,6 +62,7 @@ AccountBookTreeWidgetTester::AccountBookTreeWidgetTester( QWidget* parent )
   {
     mainLayout->addWidget( accountOperationsWidget );
     auto* accountOperationsLayout = new QGridLayout( accountOperationsWidget );
+    accountOperationsLayout->setContentsMargins( {} );
 
     mAccountBookTreeWidget = QPointer( new dbscqt::AccountBookTreeWidget( mAccountBookHandle ) );
     {

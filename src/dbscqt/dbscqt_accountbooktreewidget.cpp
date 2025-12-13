@@ -1,8 +1,6 @@
 // dbscqt_accountbooktreewidget.cpp
 #include "dbscqt_accountbooktreewidget.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h"
-
 #include <dbsc_account.h>
 #include <dbsc_accountbook.h>
 #include <dbsc_transaction.h>
