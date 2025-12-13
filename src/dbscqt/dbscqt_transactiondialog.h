@@ -28,7 +28,7 @@ class TransactionDialog;
 namespace dbscqt {
 
 /// This dialog's getter methods only return valid values if the dialog was
-/// accepted.
+/// accepted. Connect to this widget's `accepted` signal
 class TransactionDialog : public QDialog
 {
   Q_OBJECT
@@ -51,11 +51,11 @@ public:
   /// @return the amount of money exchanged in the transaction *from the primary
   ///   party's perspective*.
   /// @note Currently assumes the American dollar as the currency.
-  [[nodiscard]] auto amount() const -> QString;
+  [[nodiscard]] auto amount() const -> QString const&;
 
   [[nodiscard]] auto primaryPartyId() const -> QUuid;
   [[nodiscard]] auto otherPartyId() const -> QUuid;
-  [[nodiscard]] auto notes() const -> QString;
+  [[nodiscard]] auto notes() const -> QString const&;
 
 public Q_SLOTS:
   void handleAccepted();

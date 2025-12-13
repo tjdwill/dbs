@@ -36,6 +36,7 @@ dbscqt::TransactionDialog::TransactionDialog( dbscqt::TransactionDialog::Constru
     auto* okButton = mUi->mButtonBox->button( QDialogButtonBox::Ok );
     okButton->setEnabled( mUi->mTransactionAmountEdit->hasAcceptableInput() );
   } );
+  QObject::connect( this, &QDialog::accepted, this, &dbscqt::TransactionDialog::handleAccepted );
 
   // Set initial widget state.
   mUi->mButtonBox->button( QDialogButtonBox::Ok )->setEnabled( false );
@@ -46,6 +47,26 @@ void dbscqt::TransactionDialog::handleAccepted()
   mOtherPartyId      = mUi->mOtherPartySelectionBox->currentData().toUuid();
   mTransactionAmount = mUi->mTransactionAmountEdit->text();
   mTransactionNotes  = mUi->mNotesEdit->toPlainText();
+}
+
+auto dbscqt::TransactionDialog::amount() const -> QString const&
+{
+  return mTransactionAmount;
+}
+
+auto dbscqt::TransactionDialog::notes() const -> QString const&
+{
+  return mTransactionNotes;
+}
+
+auto dbscqt::TransactionDialog::otherPartyId() const -> QUuid
+{
+  return mOtherPartyId;
+}
+
+auto dbscqt::TransactionDialog::primaryPartyId() const -> QUuid
+{
+  return mPrimaryPartyId;
 }
 
 // -----------------------------------------------------------------------------

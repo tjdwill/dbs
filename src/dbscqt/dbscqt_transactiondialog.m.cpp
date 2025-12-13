@@ -6,6 +6,7 @@
 #include <QtCore/QString>
 #include <QtCore/QUuid>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 
 #include <utility>
 #include <vector>
@@ -35,7 +36,16 @@ int main( int argc, char* argv[] )
                                                                .mPrimaryPartyId             = primaryPartyId,
                                                                .mPrimaryPartyDisplayName    = primaryDisplayName,
                                                                .mActiveAccountData = std::move( activeAccounts ) } ) };
+  mainWidget->setModal( true );
   mainWidget->show();
+  QObject::connect( mainWidget.get(), &QDialog::accepted, [&mainWidget]() {
+    auto const message = QString( "Transaction made between %1 and %2 to the tune of $%3.\n\nNotes: %4" )
+                           .arg( mainWidget->primaryPartyId().toString() )
+                           .arg( mainWidget->otherPartyId().toString() )
+                           .arg( mainWidget->amount() )
+                           .arg( mainWidget->notes() );
+    QMessageBox::information( nullptr, "Transaction Recorded", message );
+  } );
 
   return app.exec();
 }
