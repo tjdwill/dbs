@@ -88,7 +88,7 @@ auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::Account
   auto transactionsSortedByAscendingDate =
     account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
     | std::ranges::to< std::vector >();
-  std::ranges::sort( transactionsSortedByAscendingDate, std::less<>(), []( auto&& item ) -> dbsc::TimeStamp {
+  std::ranges::sort( transactionsSortedByAscendingDate, std::less(), []( auto&& item ) -> dbsc::TimeStamp {
     auto const& [_, transaction] = item.get();
     return transaction.timestamp();
   } );

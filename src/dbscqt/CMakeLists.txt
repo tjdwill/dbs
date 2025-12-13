@@ -1,7 +1,6 @@
 add_compile_definitions(QT_NO_KEYWORDS)
 set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
-
 add_library(dbscqt_qobjectdeleteutil)
 target_sources(dbscqt_qobjectdeleteutil
   PRIVATE
@@ -25,6 +24,7 @@ target_link_options(dbscqt_qobjectdeleteutil.t PRIVATE "$<${isAsanEligible}:-fsa
 target_link_libraries(dbscqt_qobjectdeleteutil.t PRIVATE dbscqt_qobjectdeleteutil bsl)
 add_test(NAME DbscqtQObjectDeleteUtilTest COMMAND dbscqt_qobjectdeleteutil.t)
 
+
 add_library(dbscqt_displayutil)
 target_sources(dbscqt_displayutil
   PRIVATE
@@ -45,6 +45,25 @@ add_executable(dbscqt_displayutil.t dbscqt_displayutil.t.cpp)
 target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil bdl bsl Qt::Core)
 add_test(NAME DbscqtDisplayUtilTest COMMAND dbscqt_displayutil.t)
 
+
+add_library(dbscqt_transactiondialog)
+target_sources(dbscqt_transactiondialog
+  PRIVATE
+    dbscqt_transactiondialog.cpp
+  PUBLIC
+    dbscqt_transactiondialog.ui
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_transactiondialog.h
+)
+target_link_libraries(dbscqt_transactiondialog
+  PUBLIC
+    Qt::Core
+    Qt::Widgets
+)
+
+
 add_library(dbscqt_transactionitem)
 target_sources(dbscqt_transactionitem
   PRIVATE 
@@ -62,6 +81,7 @@ target_link_libraries(dbscqt_transactionitem
   PUBLIC 
     Qt::Core
 )
+
 
 add_library(dbscqt_accountmodel dbscqt_accountmodel.cpp)
 target_sources(dbscqt_accountmodel 
@@ -94,6 +114,7 @@ target_link_libraries(dbscqt_accountmodel.m
     dbsc_transaction
     dbsc_tomlserializer
 )
+
 
 add_library(dbscqt_accountbooktreewidget)
 target_sources(dbscqt_accountbooktreewidget
@@ -132,6 +153,7 @@ target_link_libraries(dbscqt_accountbooktreewidget.m
     Qt::Widgets
 )
 
+
 add_library(dbscqt_accountbookwidget)
 target_sources(dbscqt_accountbookwidget
   PRIVATE
@@ -164,6 +186,7 @@ target_link_libraries(dbscqt_accountbookwidget.m
     dbsc_tomlserializer
 )
 target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
