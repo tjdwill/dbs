@@ -1,5 +1,12 @@
 # DBS Journal
 
+## 12 December 2025
+
+- Add test driver application for dbscqt_accountbooktreewidget
+- Made tweaks to dbscqt_accountbooktreewidget
+    - Sorts items on account status change.
+    - Adds added item to the tree widget.
+
 ## 8 December 2025
 
 I fixed that bug (PY). Turns out, `std::chrono::system_clock` duration precision is
