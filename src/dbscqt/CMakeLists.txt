@@ -1,6 +1,21 @@
 add_compile_definitions(QT_NO_KEYWORDS)
 set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
 
+# -- Helpers
+# Add target to list of targets that need to be linked via windeployqt 
+macro(register_deployable_target target_name)
+  list(APPEND dbscqt_deployable_targets ${target_name})
+endmacro()
+
+function(retrieve_target_artifacts targetList oList)
+  foreach(target IN LISTS targetList)
+    list(APPEND targets "$<TARGET_FILE:${target}>")
+    #message("${targets}")
+  endforeach()
+  set(${oList} "${targets}" PARENT_SCOPE)
+endfunction()
+# -- Targets
+
 add_library(dbscqt_qobjectdeleteutil)
 target_sources(dbscqt_qobjectdeleteutil
   PRIVATE
@@ -42,6 +57,7 @@ target_link_libraries(dbscqt_displayutil
     Qt::Core
 )
 add_executable(dbscqt_displayutil.t dbscqt_displayutil.t.cpp)
+register_deployable_target(dbscqt_displayutil.t)
 target_link_libraries(dbscqt_displayutil.t PRIVATE dbscqt_displayutil bdl bsl Qt::Core)
 add_test(NAME DbscqtDisplayUtilTest COMMAND dbscqt_displayutil.t)
 
@@ -62,6 +78,16 @@ target_link_libraries(dbscqt_transactiondialog
     Qt::Core
     Qt::Widgets
 )
+add_executable(dbscqt_transactiondialog.m dbscqt_transactiondialog.m.cpp)
+register_deployable_target(dbscqt_transactiondialog.m)
+target_link_libraries(dbscqt_transactiondialog.m 
+  PRIVATE
+    Qt::Core
+    Qt::Widgets
+    dbscqt_transactiondialog
+    dbscqt_displayutil  
+)
+
 
 
 add_library(dbscqt_transactionitem)
@@ -103,6 +129,7 @@ target_link_libraries(dbscqt_accountmodel
     Qt::Widgets
 ) 
 add_executable(dbscqt_accountmodel.m dbscqt_accountmodel.m.cpp)
+register_deployable_target(dbscqt_accountmodel.m)
 target_sources(dbscqt_accountmodel.m PRIVATE dbscqt_accountmodel.m.cpp)
 target_compile_definitions(dbscqt_accountmodel.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
 target_link_libraries(dbscqt_accountmodel.m 
@@ -138,6 +165,7 @@ target_link_libraries(dbscqt_accountbooktreewidget
   dbscqt_transactionitem
 )
 add_executable(dbscqt_accountbooktreewidget.m dbscqt_accountbooktreewidget.m.cpp)
+register_deployable_target(dbscqt_accountbooktreewidget.m)
 target_link_libraries(dbscqt_accountbooktreewidget.m
   PRIVATE
     dbscqt_accountbooktreewidget
@@ -179,6 +207,7 @@ target_link_libraries(dbscqt_accountbookwidget
     Qt::Widgets
 )
 add_executable(dbscqt_accountbookwidget.m)
+register_deployable_target(dbscqt_accountbookwidget.m)
 target_sources(dbscqt_accountbookwidget.m PRIVATE dbscqt_accountbookwidget.m.cpp)
 target_link_libraries(dbscqt_accountbookwidget.m 
   PRIVATE
@@ -190,21 +219,7 @@ target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
-  set(deployable_targets 
-    dbscqt_qobjectdeleteutil.t
-    dbscqt_displayutil.t
-    dbscqt_accountbooktreewidget.m
-    dbscqt_accountbookwidget.m
-  )
-  function(retrieve_target_artifacts targetList oList)
-    foreach(target IN LISTS targetList)
-      list(APPEND targets "$<TARGET_FILE:${target}>")
-      #message("${targets}")
-    endforeach()
-    set(${oList} "${targets}" PARENT_SCOPE)
-  endfunction()
-  
-  retrieve_target_artifacts("${deployable_targets}" windeployqt_args)
+  retrieve_target_artifacts("${dbscqt_deployable_targets}" windeployqt_args)
 
   set(deploy_command_args ${WINDEPLOYQT_EXECUTABLE}) 
   list(APPEND deploy_command_args "${windeployqt_args}")

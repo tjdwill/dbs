@@ -4,47 +4,48 @@
 #include <QtGui/QDoubleValidator>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QPushButton>
+#include <ui_dbscqt_transactiondialog.h>
 
 #include <algorithm>
 #include <functional>
 
 dbscqt::TransactionDialog::TransactionDialog( dbscqt::TransactionDialog::ConstructorArgs args, QWidget* parent )
   : QDialog( parent )
+  , mUi( std::make_shared< ::Ui::TransactionDialog >() )
   , mPrimaryPartyId( args.mPrimaryPartyId )
 {
-  mUi.setupUi( this );
-  mUi.mPrimaryPartyDisplay->setText( args.mPrimaryPartyDisplayName );
-  mUi.mOtherPartySelectionBox->addItem( args.mExternalAccountDisplayName, args.mExternalAccountId );
+  mUi->setupUi( this );
+  mUi->mPrimaryPartyDisplay->setText( args.mPrimaryPartyDisplayName );
+  mUi->mOtherPartySelectionBox->addItem( args.mExternalAccountDisplayName, args.mExternalAccountId );
 
   std::ranges::sort( args.mActiveAccountData, std::less(), []( auto const& idDisplayNamePair ) -> QString const& {
     return idDisplayNamePair.second;
   } );
   for ( auto const& [activeAccountId, displayName] : args.mActiveAccountData ) {
     if ( activeAccountId != mPrimaryPartyId ) {
-      mUi.mOtherPartySelectionBox->addItem( displayName, activeAccountId );
+      mUi->mOtherPartySelectionBox->addItem( displayName, activeAccountId );
     }
   }
 
-  auto* currencyValidator = new QDoubleValidator( mUi.mTransactionAmountEdit );
+  auto* currencyValidator = new QDoubleValidator( mUi->mTransactionAmountEdit );
   currencyValidator->setDecimals( 2 );
   currencyValidator->setNotation( QDoubleValidator::StandardNotation );
-  mUi.mTransactionAmountEdit->setValidator( currencyValidator );
+  mUi->mTransactionAmountEdit->setValidator( currencyValidator );
 
-  QObject::connect( mUi.mTransactionAmountEdit, &QLineEdit::textEdited, [this]() {
-    auto* okButton               = mUi.mButtonBox->button( QDialogButtonBox::Ok );
-    bool const okButtonIsEnabled = okButton->isEnabled();
-    okButton->setEnabled( okButtonIsEnabled && mUi.mTransactionAmountEdit->hasAcceptableInput() );
+  QObject::connect( mUi->mTransactionAmountEdit, &QLineEdit::textEdited, [this]() {
+    auto* okButton = mUi->mButtonBox->button( QDialogButtonBox::Ok );
+    okButton->setEnabled( mUi->mTransactionAmountEdit->hasAcceptableInput() );
   } );
 
   // Set initial widget state.
-  mUi.mButtonBox->button( QDialogButtonBox::Ok )->setEnabled( false );
+  mUi->mButtonBox->button( QDialogButtonBox::Ok )->setEnabled( false );
 }
 
 void dbscqt::TransactionDialog::handleAccepted()
 {
-  mOtherPartyId      = mUi.mOtherPartySelectionBox->currentData().toUuid();
-  mTransactionAmount = mUi.mTransactionAmountEdit->text();
-  mTransactionNotes  = mUi.mNotesEdit->toPlainText();
+  mOtherPartyId      = mUi->mOtherPartySelectionBox->currentData().toUuid();
+  mTransactionAmount = mUi->mTransactionAmountEdit->text();
+  mTransactionNotes  = mUi->mNotesEdit->toPlainText();
 }
 
 // -----------------------------------------------------------------------------

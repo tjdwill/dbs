@@ -15,10 +15,15 @@
 #include <QtCore/QString>
 #include <QtCore/QUuid>
 #include <QtWidgets/QDialog>
-#include <ui_dbscqt_transactiondialog.h>
 
+#include <memory>
 #include <utility>
 #include <vector>
+
+namespace Ui // NOLINT
+{
+class TransactionDialog;
+} // namespace Ui
 
 namespace dbscqt {
 
@@ -56,7 +61,7 @@ public Q_SLOTS:
   void handleAccepted();
 
 private:
-  ::Ui::TransactionDialog mUi {};
+  std::shared_ptr< ::Ui::TransactionDialog > mUi {};
   QUuid mPrimaryPartyId;
   QUuid mOtherPartyId;
   QString mTransactionAmount;
