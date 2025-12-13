@@ -212,6 +212,7 @@ int main( int argc, char* argv[] )
 }
 
 #include <dbscqt_accountbooktreewidget.m.moc>
+
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
 //
