@@ -219,6 +219,9 @@ target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
+  set_target_properties(${dbscqt_deployable_targets}
+    PROPERTIES WIN32_EXECUTABLE TRUE
+  )
   retrieve_target_artifacts("${dbscqt_deployable_targets}" windeployqt_args)
 
   set(deploy_command_args ${WINDEPLOYQT_EXECUTABLE}) 
