@@ -69,6 +69,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
     splitter->setStretchFactor( splitter->indexOf( mImp->mUi.mAccountDisplayWidget ), 1 );
   }
 
+  QObject::connect(
+    mImp->mUi.mToggleStatusButton, &QPushButton::clicked, this, &dbscqt::AccountBookWidget::toggleAccountStatus );
+
   // Set initial widget state
   clearDisplay();
   handleAccountBookSet( accountBookHandle );
@@ -105,6 +108,24 @@ void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* sele
   }
 }
 
+void dbscqt::AccountBookWidget::toggleAccountStatus()
+{
+  auto* currentItem = mImp->mTreeWidgetHandle->currentAccountItem();
+  BSLS_ASSERT( currentItem );
+
+  // Update backend
+  QUuid const accountId = currentItem->accountItemData().mId;
+  bool const isActive   = currentItem->accountItemData().mIsActive;
+  if ( isActive ) {
+    mImp->mAccountBookHandle->deactivate( dbscqt::DisplayUtil::toDbscUuidString( accountId ) );
+  } else {
+    mImp->mAccountBookHandle->activate( dbscqt::DisplayUtil::toDbscUuidString( accountId ) );
+  }
+
+  // Update GUI
+  Q_EMIT accountStatusToggled( accountId, !isActive );
+}
+
 void dbscqt::AccountBookWidget::clearDisplay()
 {
   mImp->mAccountTableView->setModel( nullptr );
@@ -119,15 +140,20 @@ void dbscqt::AccountBookWidget::createAndInitializeAccountBookTreeWidget()
 {
   mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
   mImp->mUi.mAccountTreeWidgetContainer->layout()->addWidget( mImp->mTreeWidgetHandle );
-  connect( mImp->mTreeWidgetHandle,
-           &dbscqt::AccountBookTreeWidget::accountCleared,
-           this,
-           &dbscqt::AccountBookWidget::clearDisplay );
+  QObject::connect( mImp->mTreeWidgetHandle,
+                    &dbscqt::AccountBookTreeWidget::accountCleared,
+                    this,
+                    &dbscqt::AccountBookWidget::clearDisplay );
 
-  connect( mImp->mTreeWidgetHandle,
-           &dbscqt::AccountBookTreeWidget::accountSelected,
-           this,
-           &dbscqt::AccountBookWidget::handleAccountSelected );
+  QObject::connect( mImp->mTreeWidgetHandle,
+                    &dbscqt::AccountBookTreeWidget::accountSelected,
+                    this,
+                    &dbscqt::AccountBookWidget::handleAccountSelected );
+
+  QObject::connect( this,
+                    &dbscqt::AccountBookWidget::accountStatusToggled,
+                    mImp->mTreeWidgetHandle,
+                    &dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated );
 }
 
 // -----------------------------------------------------------------------------

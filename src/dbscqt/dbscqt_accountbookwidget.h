@@ -33,9 +33,15 @@ public:
   auto operator=( AccountBookWidget const& ) -> AccountBookWidget&     = delete;
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
+Q_SIGNALS:
+  void accountStatusToggled( QUuid accountId, bool isActive );
+
 public Q_SLOTS:
   void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
   void handleAccountSelected( AccountItem* );
+  // Toggles the status of the account associated with the currently-focused
+  // account item.
+  void toggleAccountStatus();
 
 private:
   void clearDisplay();
