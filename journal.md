@@ -7,7 +7,7 @@ transactions, and update the accounts' active/inactive status.
 
 TODO:
 - [ ] Add "add transaction" button to dbscqt_accountmodel.m.cpp for feature completeness.
-- [ ] dbscqt_accountbookwidget: Add logic for creating accounts.
+- [x] dbscqt_accountbookwidget: Add logic for creating accounts.
 - [ ] Add button icons.
 - [ ] MainWindow 
 

@@ -37,12 +37,15 @@ public:
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
 Q_SIGNALS:
+  void accountCreated( QUuid accountId );
   void accountStatusToggled( QUuid accountId, bool isNowActive );
 
   /// Send data necessary to update underlying Qt account model.
   void transactionComplete( QUuid accountId, TransactionItemData const& transactionItem );
 
 public Q_SLOTS:
+  void createAccount();
+
   /// Pop up a dialog window and collect information for a transaction.
   /// Writes the transaction to the underlying account book and oversees
   /// GUI updates.

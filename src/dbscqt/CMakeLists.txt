@@ -214,6 +214,7 @@ target_link_libraries(dbscqt_accountbookwidget
     dbscqt_accountbooktreewidget
     dbscqt_accountmodel
     dbscqt_displayutil
+    dbscqt_openaccountdialog
     dbscqt_qobjectdeleteutil
     dbscqt_transactiondialog
     dbsc_account
