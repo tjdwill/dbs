@@ -100,12 +100,9 @@ void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* sele
   }
 
   mImp->mUi.mTransactionButton->show();
+  mImp->mUi.mTransactionButton->setEnabled( accountItemData.mIsActive );
   mImp->mUi.mToggleStatusButton->show();
-  if ( accountItemData.mIsActive ) {
-    mImp->mUi.mToggleStatusButton->setText( "Deactivate Account" );
-  } else {
-    mImp->mUi.mToggleStatusButton->setText( "Activate Account" );
-  }
+  mImp->mUi.mToggleStatusButton->setText( accountItemData.mIsActive ? "Deactivate Account" : "Activate Account" );
 }
 
 void dbscqt::AccountBookWidget::toggleAccountStatus()
