@@ -80,7 +80,8 @@ public:
   auto operator=( AccountBookTreeWidget const& ) -> AccountBookTreeWidget&     = delete;
   auto operator=( AccountBookTreeWidget&& ) noexcept -> AccountBookTreeWidget& = delete;
 
-  [[nodiscard]] auto accountItem( QUuid accountId ) const -> AccountItem*;
+  [[nodiscard]] auto currentAccountItem() const -> AccountItem*;
+  [[nodiscard]] auto accountItemFromId( QUuid accountId ) const -> AccountItem*;
   [[nodiscard]] auto accountItemData( QUuid accountId ) const -> dbscqt::AccountItemData const&;
   [[nodiscard]] auto accountModel( QUuid accountId ) const -> AccountModel*;
 

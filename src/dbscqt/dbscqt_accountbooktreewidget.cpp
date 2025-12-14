@@ -128,7 +128,12 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
 
 dbscqt::AccountBookTreeWidget::~AccountBookTreeWidget() = default;
 
-auto dbscqt::AccountBookTreeWidget::accountItem( QUuid const accountId ) const -> dbscqt::AccountItem*
+auto dbscqt::AccountBookTreeWidget::currentAccountItem() const -> AccountItem*
+{
+  return dynamic_cast< dbscqt::AccountItem* >( QTreeWidget::currentItem() );
+}
+
+auto dbscqt::AccountBookTreeWidget::accountItemFromId( QUuid const accountId ) const -> dbscqt::AccountItem*
 {
   return mImp->mAccountItems.at( accountId );
 }
@@ -174,7 +179,7 @@ void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
 
 void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isActive )
 {
-  auto* accountItemHandle                           = accountItem( accountId );
+  auto* accountItemHandle                           = accountItemFromId( accountId );
   accountItemHandle->accountItemDataMut().mIsActive = isActive;
   accountItemHandle->parent()->removeChild( accountItemHandle );
   categoryItem( isActive )->addChild( accountItemHandle );
