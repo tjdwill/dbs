@@ -104,11 +104,14 @@ public Q_SLOTS:
 private:
   [[nodiscard]] auto isMemberOfThisTree( QTreeWidgetItem* ) -> bool;
   [[nodiscard]] auto isAccountItemInThisTree( QTreeWidgetItem* itemCandidate ) -> bool;
-  [[nodiscard]] auto createAccountItem( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+  [[nodiscard]] static auto createAccountItem( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
     -> AccountItem*;
 
   /// @return one of the top-level categorization items.
   [[nodiscard]] auto categoryItem( bool accountIsActive ) const -> QTreeWidgetItem*;
+
+  // Sort the current items in the tree (Ascending order)
+  void sortItems();
 
   class Private;
   std::unique_ptr< Private > mImp;

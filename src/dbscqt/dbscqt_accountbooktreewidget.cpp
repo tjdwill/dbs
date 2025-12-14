@@ -17,6 +17,7 @@ namespace dbscqt {
 namespace {
   QString const kActiveAccountsCategoryLabel   = "Active";
   QString const kInactiveAccountsCategoryLabel = "Inactive";
+  auto const kItemSortOrder                    = Qt::AscendingOrder;
 } // namespace
 
 class AccountItem::Private
@@ -109,7 +110,7 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
 
   auto const& accountBook = *accountBookHandle;
   for ( auto const& [accountId, account] : accountBook ) {
-    auto* accountItemToAdd       = createAccountItem( account, accountBook );
+    auto* accountItemToAdd       = dbscqt::AccountBookTreeWidget::createAccountItem( account, accountBook );
     auto const successfullyAdded = addAccountItem( accountItemToAdd );
     BSLS_ASSERT( successfullyAdded );
   }
@@ -161,9 +162,11 @@ auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCand
   auto [_, insertSuccessful] =
     mImp->mAccountItems.insert( { accountItemCandidate->accountId(), accountItemCandidate } );
 
-  // Add item to GUI element
-  categoryItem( accountItemCandidate->accountItemData().mIsActive )->addChild( accountItemCandidate );
-
+  if ( insertSuccessful ) {
+    // Add item to GUI element
+    categoryItem( accountItemCandidate->accountItemData().mIsActive )->addChild( accountItemCandidate );
+    sortItems();
+  }
   return insertSuccessful;
 }
 
@@ -171,7 +174,7 @@ void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
 {
   auto accountBookHandle = mImp->mAccountBookHandle.lock();
   BSLS_ASSERT( accountBookHandle );
-  if ( !addAccountItem( createAccountItem(
+  if ( !addAccountItem( dbscqt::AccountBookTreeWidget::createAccountItem(
          accountBookHandle->account( dbscqt::DisplayUtil::toDbscUuidString( accountId ) ), *accountBookHandle ) ) ) {
     throw std::runtime_error( "Could not create the account." );
   }
@@ -184,8 +187,7 @@ void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const acco
   accountItemHandle->parent()->removeChild( accountItemHandle );
   categoryItem( isActive )->addChild( accountItemHandle );
 
-  mImp->mActiveAccountsCategoryItem->sortChildren( 0, Qt::AscendingOrder );
-  mImp->mInactiveAccountsCategoryItem->sortChildren( 0, Qt::AscendingOrder );
+  sortItems();
 }
 
 void dbscqt::AccountBookTreeWidget::handleTransactionMade( QUuid const accountId,
@@ -223,6 +225,12 @@ auto dbscqt::AccountBookTreeWidget::categoryItem( bool const accountIsActive ) c
   auto* item = accountIsActive ? mImp->mActiveAccountsCategoryItem : mImp->mInactiveAccountsCategoryItem;
 
   return item;
+}
+
+void dbscqt::AccountBookTreeWidget::sortItems()
+{
+  mImp->mActiveAccountsCategoryItem->sortChildren( 0, kItemSortOrder );
+  mImp->mInactiveAccountsCategoryItem->sortChildren( 0, kItemSortOrder );
 }
 
 // -----------------------------------------------------------------------------
