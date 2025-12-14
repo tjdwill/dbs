@@ -7,7 +7,7 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
-#include <dbscqt_transactionitem.h>
+#include <dbscqt_transactiondialog.h>
 
 #include <bsls_assert.h>
 
@@ -19,6 +19,7 @@
 #include <ui_dbscqt_accountbookwidget.h>
 
 #include <memory>
+#include <optional>
 
 namespace {
 
@@ -71,6 +72,8 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
 
   QObject::connect(
     mImp->mUi.mToggleStatusButton, &QPushButton::clicked, this, &dbscqt::AccountBookWidget::toggleAccountStatus );
+  QObject::connect(
+    mImp->mUi.mTransactionButton, &QPushButton::clicked, this, &dbscqt::AccountBookWidget::createTransaction );
 
   // Set initial widget state
   clearDisplay();
@@ -78,6 +81,72 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
 }
 
 dbscqt::AccountBookWidget::~AccountBookWidget() = default;
+
+void dbscqt::AccountBookWidget::createTransaction()
+{
+  auto* currentItem = mImp->mTreeWidgetHandle->currentAccountItem();
+  BSLS_ASSERT( currentItem );
+
+  std::vector< std::pair< QUuid, QString > > activeAccountData;
+  activeAccountData.reserve( mImp->mAccountBookHandle->accountCount() );
+  for ( auto* activeItem : mImp->mTreeWidgetHandle->activeAccountItems() ) {
+    activeAccountData.push_back( { activeItem->accountId(), activeItem->text( 0 ) } );
+  }
+
+  auto* transactionDialog =
+    new dbscqt::TransactionDialog( { .mExternalAccountId          = dbscqt::DisplayUtil::externalPartyId(),
+                                     .mExternalAccountDisplayName = dbscqt::DisplayUtil::externalPartyLabel(),
+                                     .mPrimaryPartyId             = currentItem->accountId(),
+                                     .mPrimaryPartyDisplayName    = currentItem->text( 0 ),
+                                     .mActiveAccountData          = std::move( activeAccountData ) },
+                                   this );
+  QObject::connect( transactionDialog, &QDialog::accepted, [this, transactionDialog]() {
+    auto const otherPartyId      = transactionDialog->otherPartyId();
+    auto const primaryPartyId    = transactionDialog->primaryPartyId();
+    auto const transactionAmount = transactionDialog->amount();
+    auto const transactionNotes  = transactionDialog->notes();
+
+    // Set up backend information
+    bool const isExternalParty = otherPartyId == dbscqt::DisplayUtil::externalPartyId();
+    auto const dbscOtherPartyIdOpt =
+      isExternalParty ? std::nullopt
+                      : std::optional< dbsc::UuidString >( dbscqt::DisplayUtil::toDbscUuidString( otherPartyId ) );
+    auto const dbscPrimaryPartyId = dbscqt::DisplayUtil::toDbscUuidString( primaryPartyId );
+    auto const transactionId =
+      mImp->mAccountBookHandle->makeTransaction( dbscqt::DisplayUtil::toDecimal64( transactionAmount ),
+                                                 transactionNotes.toStdString(),
+                                                 dbscPrimaryPartyId,
+                                                 dbscOtherPartyIdOpt );
+
+    // Update GUI
+    auto const& primaryPartyTransaction =
+      mImp->mAccountBookHandle->account( dbscPrimaryPartyId ).transaction( transactionId );
+
+    auto const primaryPartyTransactionItemData =
+      dbscqt::createTransactionItemData( primaryPartyTransaction, *mImp->mAccountBookHandle );
+
+    Q_EMIT transactionComplete( primaryPartyId, primaryPartyTransactionItemData );
+
+    // Update other party in GUI
+    if ( !isExternalParty ) {
+      auto const& otherPartyTransaction =
+        mImp->mAccountBookHandle->account( dbscOtherPartyIdOpt.value() ).transaction( transactionId );
+
+      auto otherPartyTransactionItemData =
+        dbscqt::createTransactionItemData( otherPartyTransaction, *mImp->mAccountBookHandle );
+
+      Q_EMIT transactionComplete( otherPartyId, otherPartyTransactionItemData );
+    }
+
+    // Update displayed account balance
+    handleAccountSelected( mImp->mTreeWidgetHandle->currentAccountItem() );
+
+    // Clean up dialog
+    transactionDialog->deleteLater();
+  } );
+  transactionDialog->setModal( true );
+  transactionDialog->show();
+}
 
 void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
@@ -91,6 +160,7 @@ void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::Acc
 
 void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* selectedItem )
 {
+  BSLS_ASSERT( selectedItem );
   auto const& accountItemData = selectedItem->accountItemData();
   mImp->mUi.mBalanceDisplay->setText( truncateDecimalString( accountItemData.mBalance ) );
   mImp->mUi.mDescriptionDisplay->setText( accountItemData.mDescription );
@@ -151,6 +221,10 @@ void dbscqt::AccountBookWidget::createAndInitializeAccountBookTreeWidget()
                     &dbscqt::AccountBookWidget::accountStatusToggled,
                     mImp->mTreeWidgetHandle,
                     &dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated );
+  QObject::connect( this,
+                    &dbscqt::AccountBookWidget::transactionComplete,
+                    mImp->mTreeWidgetHandle,
+                    &dbscqt::AccountBookTreeWidget::handleTransactionMade );
 }
 
 // -----------------------------------------------------------------------------

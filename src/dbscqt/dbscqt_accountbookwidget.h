@@ -10,6 +10,8 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
+#include <dbscqt_transactionitem.h>
+
 #include <QUuid>
 #include <QWidget>
 
@@ -21,6 +23,7 @@ class AccountBook;
 
 namespace dbscqt {
 class AccountItem;
+class TransactionItem;
 
 class AccountBookWidget : public QWidget
 {
@@ -34,17 +37,29 @@ public:
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
 Q_SIGNALS:
-  void accountStatusToggled( QUuid accountId, bool isActive );
+  void accountStatusToggled( QUuid accountId, bool isNowActive );
+
+  /// Send data necessary to update underlying Qt account model.
+  void transactionComplete( QUuid accountId, TransactionItemData const& transactionItem );
 
 public Q_SLOTS:
+  /// Pop up a dialog window and collect information for a transaction.
+  /// Writes the transaction to the underlying account book and oversees
+  /// GUI updates.
+  void createTransaction();
+
   void handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > );
   void handleAccountSelected( AccountItem* );
+
   // Toggles the status of the account associated with the currently-focused
   // account item.
   void toggleAccountStatus();
 
 private:
   void clearDisplay();
+
+  /// Creates the relevant tree widget item and performs requisite layout and
+  /// signal/slot configuration.
   void createAndInitializeAccountBookTreeWidget();
 
   class Private;

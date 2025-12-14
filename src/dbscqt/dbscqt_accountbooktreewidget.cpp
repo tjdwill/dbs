@@ -10,6 +10,8 @@
 
 #include <bsls_assert.h>
 
+#include <QtWidgets/QMessageBox>
+
 #include <stdexcept>
 
 namespace dbscqt {
@@ -117,7 +119,7 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
   mImp->mActiveAccountsCategoryItem->setExpanded( true );
   mImp->mInactiveAccountsCategoryItem->setExpanded( false );
 
-  connect(
+  QObject::connect(
     this, &QTreeWidget::currentItemChanged, this, [this]( QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/ ) {
       if ( isAccountItemInThisTree( current ) ) {
         Q_EMIT accountSelected( dynamic_cast< dbscqt::AccountItem* >( current ) );
@@ -147,6 +149,22 @@ auto dbscqt::AccountBookTreeWidget::accountItemData( QUuid const accountId ) con
 auto dbscqt::AccountBookTreeWidget::accountModel( QUuid const accountId ) const -> dbscqt::AccountModel*
 {
   return mImp->mAccountItems.at( accountId )->accountModel();
+}
+
+auto dbscqt::AccountBookTreeWidget::activeAccountItems() const -> std::vector< dbscqt::AccountItem* >
+{
+  auto const* const activeCategoryItem = categoryItem( true );
+  int const activeAccountItemCount     = activeCategoryItem->childCount();
+  std::vector< dbscqt::AccountItem* > activeAccountItems;
+  activeAccountItems.reserve( activeAccountItemCount );
+
+  for ( int activeItemIndex = 0; activeItemIndex < activeAccountItemCount; ++activeItemIndex ) {
+    auto* accountItem = dynamic_cast< dbscqt::AccountItem* >( activeCategoryItem->child( activeItemIndex ) );
+    BSLS_ASSERT( accountItem );
+    activeAccountItems.push_back( accountItem );
+  }
+
+  return activeAccountItems;
 }
 
 auto dbscqt::AccountBookTreeWidget::accountItemDataMut( QUuid const accountId ) -> dbscqt::AccountItemData&
@@ -180,20 +198,31 @@ void dbscqt::AccountBookTreeWidget::handleAccountCreated( QUuid accountId )
   }
 }
 
-void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isActive )
+void dbscqt::AccountBookTreeWidget::handleAccountStatusUpdated( QUuid const accountId, bool const isNowActive )
 {
   auto* accountItemHandle                           = accountItemFromId( accountId );
-  accountItemHandle->accountItemDataMut().mIsActive = isActive;
+  accountItemHandle->accountItemDataMut().mIsActive = isNowActive;
   accountItemHandle->parent()->removeChild( accountItemHandle );
-  categoryItem( isActive )->addChild( accountItemHandle );
+  categoryItem( isNowActive )->addChild( accountItemHandle );
 
   sortItems();
 }
 
 void dbscqt::AccountBookTreeWidget::handleTransactionMade( QUuid const accountId,
-                                                           dbscqt::TransactionItem* const transactionItem )
+                                                           dbscqt::TransactionItemData const& transactionItemData )
 {
-  accountModel( accountId )->addTransactionItem( transactionItem );
+  std::unique_ptr< dbscqt::TransactionItem > transactionItem =
+    std::make_unique< dbscqt::TransactionItem >( transactionItemData );
+  accountModel( accountId )->addTransactionItem( std::move( transactionItem ) );
+
+  // Update accountItem balance
+  if ( auto const accountBook = mImp->mAccountBookHandle.lock() ) {
+    accountItemDataMut( accountId ).mBalance = dbscqt::DisplayUtil::toDecimalQString(
+      accountBook->account( dbscqt::DisplayUtil::toDbscUuidString( accountId ) ).balance() );
+  } else {
+    QMessageBox::warning(
+      this, "Account Warning", "Could not update account balance. No account book currently loaded." );
+  }
 }
 
 auto dbscqt::AccountBookTreeWidget::isMemberOfThisTree( QTreeWidgetItem* itemCandidate ) -> bool

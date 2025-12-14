@@ -45,7 +45,7 @@ public:
 
   /// @note Assumes validation has been done on this transaction before adding to the
   /// model. Takes ownership of the incoming transaction item.
-  void addTransactionItem( TransactionItem* const transactionItemPtr );
+  void addTransactionItem( std::unique_ptr< TransactionItem > transactionItemPtr );
 
 public Q_SLOTS:
   //  /// Implement sorting by a given column

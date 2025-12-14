@@ -178,6 +178,7 @@ target_link_libraries(dbscqt_accountbooktreewidget
   dbsc_transaction
   bsl
  PUBLIC
+  Qt::Widgets
   dbscqt_transactionitem
 )
 add_executable(dbscqt_accountbooktreewidget.m dbscqt_accountbooktreewidget.m.cpp)
@@ -214,12 +215,13 @@ target_link_libraries(dbscqt_accountbookwidget
     dbscqt_accountmodel
     dbscqt_displayutil
     dbscqt_qobjectdeleteutil
-    dbscqt_transactionitem
+    dbscqt_transactiondialog
     dbsc_account
     dbsc_accountbook
     dbsc_transaction
     bsl
   PUBLIC
+    dbscqt_transactionitem
     Qt::Widgets
 )
 add_executable(dbscqt_accountbookwidget.m)

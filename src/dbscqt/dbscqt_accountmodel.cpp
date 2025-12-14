@@ -119,7 +119,7 @@ auto dbscqt::AccountModel::headerData( int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-void dbscqt::AccountModel::addTransactionItem( dbscqt::TransactionItem* const transactionItemPtr )
+void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::TransactionItem > transactionItemPtr )
 {
   // Check greater than or equal to in case the timestamps are truncated to the
   // same value when converting from nanosecond precision to millisecond.
@@ -127,7 +127,7 @@ void dbscqt::AccountModel::addTransactionItem( dbscqt::TransactionItem* const tr
 
   beginInsertRows( QModelIndex(), 0, 0 );
   {
-    mImp->mItems.emplace_back( transactionItemPtr );
+    mImp->mItems.push_back( std::move( transactionItemPtr ) );
   }
   endInsertRows();
 }

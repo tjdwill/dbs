@@ -29,6 +29,7 @@ class Account;
 namespace dbscqt {
 class AccountBookTreeWidget;
 class AccountModel;
+class TransactionItemData;
 
 struct AccountItemData
 {
@@ -84,6 +85,7 @@ public:
   [[nodiscard]] auto accountItemFromId( QUuid accountId ) const -> AccountItem*;
   [[nodiscard]] auto accountItemData( QUuid accountId ) const -> dbscqt::AccountItemData const&;
   [[nodiscard]] auto accountModel( QUuid accountId ) const -> AccountModel*;
+  [[nodiscard]] auto activeAccountItems() const -> std::vector< AccountItem* >;
 
   [[nodiscard]] auto accountItemDataMut( QUuid accountId ) -> dbscqt::AccountItemData&;
   [[nodiscard]] auto addAccountItem( AccountItem* ) -> bool;
@@ -96,10 +98,10 @@ Q_SIGNALS:
 public Q_SLOTS:
   /// @pre The new account has already been created and added to the current dbsc::AccountBook.
   void handleAccountCreated( QUuid accountId );
-  void handleAccountStatusUpdated( QUuid accountId, bool isActive );
+  void handleAccountStatusUpdated( QUuid accountId, bool isNowActive );
 
   /// Adds transaction data to the relevant model.
-  void handleTransactionMade( QUuid accountId, TransactionItem* transactionData );
+  void handleTransactionMade( QUuid accountId, TransactionItemData const& transactionData );
 
 private:
   [[nodiscard]] auto isMemberOfThisTree( QTreeWidgetItem* ) -> bool;

@@ -38,7 +38,7 @@ Q_SIGNALS:
 
   void accountCreated( QUuid accountId );
   void accountStatusUpdated( QUuid accountId, bool isActive );
-  void transactionMade( QUuid accountId, dbscqt::TransactionItem* transactionData );
+  void transactionMade( QUuid accountId, dbscqt::TransactionItemData const& transactionData );
 
 private:
   void createAccount();
@@ -196,8 +196,8 @@ void AccountBookTreeWidgetTester::transact( QUuid accountId )
   // (Assuming two accounts).
   Q_EMIT transactionMade(
     accountId,
-    new dbscqt::TransactionItem( dbscqt::createTransactionItemData(
-      mAccountBookHandle->account( dbscUuid ).transaction( dbscTransactionId ), *mAccountBookHandle ) ) );
+    dbscqt::createTransactionItemData( mAccountBookHandle->account( dbscUuid ).transaction( dbscTransactionId ),
+                                       *mAccountBookHandle ) );
 }
 } // namespace
 

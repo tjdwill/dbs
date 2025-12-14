@@ -1,5 +1,16 @@
 # DBS Journal
 
+## 13 December 2025
+
+I now have a working widget that can load accounts, display information, make
+transactions, and update the accounts' active/inactive status.
+
+TODO:
+- [ ] Add "add transaction" button to dbscqt_accountmodel.m.cpp for feature completeness.
+- [ ] dbscqt_accountbookwidget: Add logic for creating accounts.
+- [ ] Add button icons.
+- [ ] MainWindow 
+
 ## 12 December 2025
 
 - Add test driver application for dbscqt_accountbooktreewidget
