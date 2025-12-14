@@ -26,7 +26,7 @@ auto dbscqt::OpenAccountDialog::accountName() const -> QString
 
 auto dbscqt::OpenAccountDialog::accountDescription() const -> QString
 {
-  return mUi->mDescriptionEdit->toPlainText();
+  return mUi->mDescriptionEdit->text();
 }
 
 // -----------------------------------------------------------------------------
