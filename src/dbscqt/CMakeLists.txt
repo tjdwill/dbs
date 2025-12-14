@@ -89,6 +89,22 @@ target_link_libraries(dbscqt_transactiondialog.m
 )
 
 
+add_library(dbscqt_openaccountdialog)
+target_sources(dbscqt_openaccountdialog
+  PRIVATE
+    dbscqt_openaccountdialog.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_openaccountdialog.h
+      dbscqt_openaccountdialog.ui
+)
+target_link_libraries(dbscqt_openaccountdialog
+  PUBLIC
+    Qt::Core
+    Qt::Widgets
+)
+
 
 add_library(dbscqt_transactionitem)
 target_sources(dbscqt_transactionitem
