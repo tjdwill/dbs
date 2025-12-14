@@ -23,7 +23,9 @@ auto dbscqt::DisplayUtil::toQDateTime( dbsc::TimeStamp const& timestamp ) -> QDa
 
 auto dbscqt::DisplayUtil::toDecimalQString( BloombergLP::bdldfp::Decimal64 amount ) -> QString
 {
-  return QString::fromStdString( dbsc::TransactionUtil::currencyToString( amount ) );
+  return amount == BloombergLP::bdldfp::Decimal64 {}
+         ? "0.00" // by default, the returned string was 0e-398 on my machine.
+         : QString::fromStdString( dbsc::TransactionUtil::currencyToString( amount ) );
 }
 
 auto dbscqt::DisplayUtil::toDecimal64( QString const& decimalString ) -> BloombergLP::bdldfp::Decimal64
