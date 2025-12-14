@@ -64,6 +64,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
     mImp->mAccountTableView = QPointer( new QTableView() );
     mImp->mUi.mAccountTableViewContainer->layout()->addWidget( mImp->mAccountTableView );
     mImp->mUi.mAccountTreeWidgetContainer->layout()->setContentsMargins( {} );
+
+    auto* splitter = mImp->mUi.mSplitter;
+    splitter->setStretchFactor( splitter->indexOf( mImp->mUi.mAccountDisplayWidget ), 1 );
   }
 
   // Set initial widget state
@@ -92,6 +95,14 @@ void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* sele
   {
     mImp->mAccountTableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
   }
+
+  mImp->mUi.mTransactionButton->show();
+  mImp->mUi.mToggleStatusButton->show();
+  if ( accountItemData.mIsActive ) {
+    mImp->mUi.mToggleStatusButton->setText( "Deactivate Account" );
+  } else {
+    mImp->mUi.mToggleStatusButton->setText( "Activate Account" );
+  }
 }
 
 void dbscqt::AccountBookWidget::clearDisplay()
@@ -99,6 +110,9 @@ void dbscqt::AccountBookWidget::clearDisplay()
   mImp->mAccountTableView->setModel( nullptr );
   mImp->mUi.mBalanceDisplay->clear();
   mImp->mUi.mDescriptionDisplay->clear();
+
+  mImp->mUi.mToggleStatusButton->hide();
+  mImp->mUi.mTransactionButton->hide();
 }
 
 void dbscqt::AccountBookWidget::createAndInitializeAccountBookTreeWidget()
