@@ -11,11 +11,11 @@
 
 #include <bsls_assert.h>
 
-#include <QHeaderView>
-#include <QPointer>
-#include <QSignalBlocker>
-#include <QTableView>
-#include <QUuid>
+#include <QtCore/QPointer>
+#include <QtCore/QSignalBlocker>
+#include <QtCore/QUuid>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QTableView>
 #include <ui_dbscqt_accountbookwidget.h>
 
 #include <memory>
