@@ -31,7 +31,7 @@ int main( int argc, char* argv[] )
     auto* centralWidgetLayout = new QHBoxLayout( centralWidget );
     centralWidgetLayout->addWidget( new dbscqt::AccountBookWidget( accountBook ) );
   }
-  mainWindow->show();
+  mainWindow->showMaximized();
 
   return app.exec();
 }

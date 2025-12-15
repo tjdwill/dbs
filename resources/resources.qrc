@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/icons8-account-100.png</file>
+        <file>icons/icons8-dollar-sign-100.png</file>
+        <file>icons/icons8-exchange-100.png</file>
+        <file>icons/icons8-ledger-100.png</file>
+        <file>icons/icons8-toggle-indeterminate-100.png</file>
+        <file>icons/icons8-plus-100.png</file>
+        <!-- <file>icons/icons8-minus-100.png</file> -->
+    </qresource>
+</RCC>

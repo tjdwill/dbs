@@ -1,7 +1,11 @@
 add_compile_definitions(QT_NO_KEYWORDS)
-set(DBS_RESOURCES_DIR "\"${PROJECT_SOURCE_DIR}/resources\"")
+set(DBS_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/resources") # Used for CMake
+set(DBS_RESOURCES_DIR_MACRO "\"${PROJECT_SOURCE_DIR}/resources\"") # Used for C++ programs
 
 # -- Helpers
+
+set(qtResourcesFile "${DBS_RESOURCES_DIR}/resources.qrc")
+
 # Add target to list of targets that need to be linked via windeployqt 
 macro(register_deployable_target target_name)
   list(APPEND dbscqt_deployable_targets ${target_name})
@@ -147,7 +151,7 @@ target_link_libraries(dbscqt_accountmodel
 add_executable(dbscqt_accountmodel.m dbscqt_accountmodel.m.cpp)
 register_deployable_target(dbscqt_accountmodel.m)
 target_sources(dbscqt_accountmodel.m PRIVATE dbscqt_accountmodel.m.cpp)
-target_compile_definitions(dbscqt_accountmodel.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+target_compile_definitions(dbscqt_accountmodel.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR_MACRO})
 target_link_libraries(dbscqt_accountmodel.m 
   PRIVATE
     dbscqt_transactionitem
@@ -205,6 +209,8 @@ target_sources(dbscqt_accountbookwidget
     dbscqt_accountbookwidget.cpp
     dbscqt_accountbookwidget.ui
   PUBLIC
+    ${qtResourcesFile}
+  PUBLIC
     FILE_SET HEADERS
     FILES 
       dbscqt_accountbookwidget.h
@@ -233,7 +239,7 @@ target_link_libraries(dbscqt_accountbookwidget.m
     dbscqt_accountbookwidget
     dbsc_tomlserializer
 )
-target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR})
+target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR_MACRO})
 
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.

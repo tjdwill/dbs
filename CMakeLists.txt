@@ -21,6 +21,7 @@ message("Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 # Qt imports
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_standard_project_setup()
+set(CMAKE_AUTORCC ON)
 
 find_package(tomlplusplus REQUIRED)
 find_package(stduuid REQUIRED)
