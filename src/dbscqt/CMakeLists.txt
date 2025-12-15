@@ -115,6 +115,8 @@ target_sources(dbscqt_transactionitem
   PRIVATE 
     dbscqt_transactionitem.cpp
   PUBLIC
+    ${qtResourcesFile}
+  PUBLIC
     FILE_SET HEADERS
     FILES
       dbscqt_transactionitem.h
