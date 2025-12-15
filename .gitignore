@@ -1,4 +1,4 @@
-resources/icons
+*.png
 .clangd
 .cache
 build*
