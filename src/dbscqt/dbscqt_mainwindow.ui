@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Digital Budgeting System (DBS)</string>
+  </property>
+  <widget class="QWidget" name="mCentralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QStackedWidget" name="mStackedWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="mWelcomePage">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>238</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>235</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Please create or load an account book.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>234</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>237</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="dbscqt::accountbookwidget" name="mAccountBookDisplayPage"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="mMenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="mFileMenu">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="mNewAction"/>
+    <addaction name="mOpenAction"/>
+    <addaction name="mSaveAction"/>
+    <addaction name="mCloseAction"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="mHelpMenu">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="mAboutAction"/>
+    <addaction name="mAboutQtAction"/>
+   </widget>
+   <addaction name="mFileMenu"/>
+   <addaction name="mHelpMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="mStatusBar"/>
+  <action name="mAboutAction">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="mAboutQtAction">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+  </action>
+  <action name="mNewAction">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="mOpenAction">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="mSaveAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/icons8-save-100.png</normaloff>:/icons/icons8-save-100.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="mCloseAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Close Account Book</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>dbscqt::accountbookwidget</class>
+   <extends>QWidget</extends>
+   <header>dbscqt_accountbookwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

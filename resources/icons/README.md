@@ -37,3 +37,7 @@ Teal color: #20C997
   ```html
   <a target="_blank" href="https://icons8.com/icon/1504/minus">Minus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   ```
+- Save
+  ```html
+  <a target="_blank" href="https://icons8.com/icon/18765/save">Save</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  ```

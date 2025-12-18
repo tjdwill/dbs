@@ -1,5 +1,10 @@
 # DBS Journal
 
+## 17 December 2025
+
+Today, I began editing the main window's interface. I am not sure how this will evolve, so
+my present goal is to create something functional.
+
 ## 13 December 2025
 
 I now have a working widget that can load accounts, display information, make
@@ -8,7 +13,7 @@ transactions, and update the accounts' active/inactive status.
 TODO:
 - [ ] Add "add transaction" button to dbscqt_accountmodel.m.cpp for feature completeness.
 - [x] dbscqt_accountbookwidget: Add logic for creating accounts.
-- [ ] Add button icons.
+- [x] Add button icons.
 - [ ] MainWindow 
 
 ## 12 December 2025
