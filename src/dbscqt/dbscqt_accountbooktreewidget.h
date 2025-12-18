@@ -29,7 +29,7 @@ class Account;
 namespace dbscqt {
 class AccountBookTreeWidget;
 class AccountModel;
-class TransactionItemData;
+struct TransactionItemData;
 
 struct AccountItemData
 {
