@@ -37,6 +37,7 @@ public:
   auto operator=( AccountBookWidget&& ) noexcept -> AccountBookWidget& = delete;
 
 Q_SIGNALS:
+  void accountBookModified();
   void accountCreated( QUuid accountId );
   void accountStatusToggled( QUuid accountId, bool isNowActive );
 

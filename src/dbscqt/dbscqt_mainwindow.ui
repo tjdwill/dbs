@@ -83,7 +83,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="dbscqt::accountbookwidget" name="mAccountBookDisplayPage"/>
+      <widget class="QWidget" name="mAccountBookDisplayPage"/>
      </widget>
     </item>
    </layout>
@@ -106,7 +106,7 @@
     <addaction name="mSaveAction"/>
     <addaction name="mCloseAction"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="mExitAction"/>
    </widget>
    <widget class="QMenu" name="mHelpMenu">
     <property name="title">
@@ -160,20 +160,12 @@
     <string>Close Account Book</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="mExitAction">
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>dbscqt::accountbookwidget</class>
-   <extends>QWidget</extends>
-   <header>dbscqt_accountbookwidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>

@@ -95,6 +95,7 @@ void dbscqt::AccountBookWidget::createAccount()
       auto const accountId          = mImp->mAccountBookHandle->createAccount( accountName, accountDescription );
 
       Q_EMIT accountCreated( dbscqt::DisplayUtil::toQUuid( accountId ) );
+      Q_EMIT accountBookModified();
     }
     // Clean up dialog
     accountCreationDialog->deleteLater();
@@ -163,6 +164,8 @@ void dbscqt::AccountBookWidget::createTransaction()
 
       // Update displayed account balance
       handleAccountSelected( mImp->mTreeWidgetHandle->currentAccountItem() );
+
+      Q_EMIT accountBookModified();
     }
 
     // Clean up dialog
@@ -215,6 +218,7 @@ void dbscqt::AccountBookWidget::toggleAccountStatus()
 
   // Update GUI
   Q_EMIT accountStatusToggled( accountId, !isActive );
+  Q_EMIT accountBookModified();
 }
 
 void dbscqt::AccountBookWidget::clearDisplay()
