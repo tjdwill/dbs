@@ -1,19 +1,19 @@
 // dbscqt_mainwindow.cpp
 #include "dbscqt_mainwindow.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h"
-
 #include <dbsc_accountbook.h>
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
 
+#include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 #include <QtCore/QSettings>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
+#include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QInputDialog>
 #include <QtWidgets/QMessageBox>
