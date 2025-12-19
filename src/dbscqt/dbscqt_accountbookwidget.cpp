@@ -80,7 +80,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
 
   // Set initial widget state
   clearDisplay();
-  handleAccountBookSet( accountBookHandle );
+  if ( accountBookHandle ) {
+    handleAccountBookSet( accountBookHandle );
+  }
 }
 
 dbscqt::AccountBookWidget::~AccountBookWidget() = default;
@@ -177,12 +179,14 @@ void dbscqt::AccountBookWidget::createTransaction()
 
 void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
-  BSLS_ASSERT( mImp->mAccountBookHandle && accountBookPtr );
   mImp->mAccountBookHandle = std::move( accountBookPtr );
   if ( mImp->mTreeWidgetHandle ) {
     mImp->mTreeWidgetHandle.get()->deleteLater();
   }
-  createAndInitializeAccountBookTreeWidget();
+
+  if ( mImp->mAccountBookHandle ) {
+    createAndInitializeAccountBookTreeWidget();
+  }
 }
 
 void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* selectedItem )
@@ -233,6 +237,7 @@ void dbscqt::AccountBookWidget::clearDisplay()
 
 void dbscqt::AccountBookWidget::createAndInitializeAccountBookTreeWidget()
 {
+  BSLS_ASSERT( mImp->mAccountBookHandle );
   mImp->mTreeWidgetHandle = QPointer( new dbscqt::AccountBookTreeWidget( mImp->mAccountBookHandle, this ) );
   mImp->mUi.mAccountTreeWidgetContainer->layout()->addWidget( mImp->mTreeWidgetHandle );
   QObject::connect( mImp->mTreeWidgetHandle,

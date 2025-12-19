@@ -12,13 +12,10 @@
 
 #include <QtWidgets/QMainWindow>
 
+#include <filesystem>
 #include <memory>
 
 class QWidget;
-
-namespace Ui { // NOLINT
-class MainWindow;
-} // namespace Ui
 
 namespace dbsc {
 class AccountBook;
@@ -37,12 +34,13 @@ public:
   auto operator=( MainWindow&& ) noexcept -> MainWindow& = delete;
 
 Q_SIGNALS:
-  void accountBookLoaded( std::shared_ptr< dbsc::AccountBook > const& accountBookHandle );
+  void accountBookLoaded( std::shared_ptr< dbsc::AccountBook > accountBookHandle );
 
 public Q_SLOTS:
   /// Closes the currently-loaded account book. If the account is in a modified
   /// state, this function prompts the user to save.
-  void closeAccountBook();
+  /// @returns true if the account book was actually closed.
+  auto closeAccountBook() -> bool;
 
   /// Create a new account book, prompting the user for a place to save it.
   void createNewAccountBook();
@@ -52,12 +50,12 @@ public Q_SLOTS:
 
   /// Change the display and window state to communicate the account book is in an unsaved
   /// state.
-  void handleAccountBookModified();
+  void handleAccountBookModified( bool isModified );
 
   /// Loads the account book selected by the user. If no account book is selected, or the
   /// account book cannot be found, this function displays the welcome screen (after a
   /// popup message in the latter case).
-  void loadAccountBook();
+  void handleOpenAccountBookTriggered();
 
   /// Write the current account book to file.
   void saveAccountBook();
@@ -66,6 +64,11 @@ public Q_SLOTS:
   void showAboutQtPage();
 
 private:
+  void loadAccountBookInternal( std::filesystem::path const& );
+  /// Update internal handle and set modified to false.
+  void updateAccountBookHandle( std::shared_ptr< dbsc::AccountBook > );
+  void updateWindowTitle( bool accountBookIsModified );
+
   class Private;
   std::unique_ptr< Private > mImp;
 };

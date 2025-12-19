@@ -243,6 +243,29 @@ target_link_libraries(dbscqt_accountbookwidget.m
 )
 target_compile_definitions(dbscqt_accountbookwidget.m PRIVATE DBS_RESOURCES_DIR=${DBS_RESOURCES_DIR_MACRO})
 
+add_library(dbscqt_mainwindow)
+target_sources(dbscqt_mainwindow
+  PRIVATE
+    dbscqt_mainwindow.cpp
+    dbscqt_mainwindow.ui
+  PUBLIC
+    "${qtResourcesFile}"
+  PUBLIC
+    FILE_SET HEADERS
+    FILES
+      dbscqt_mainwindow.h
+)
+target_link_libraries(dbscqt_mainwindow
+  PRIVATE
+    dbsc_tomlserializer
+    dbsc_dbscserializer
+    dbsc_accountbook
+    dbscqt_accountbookwidget
+  PUBLIC
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+)
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)

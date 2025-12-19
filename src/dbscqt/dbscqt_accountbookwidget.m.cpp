@@ -29,7 +29,9 @@ int main( int argc, char* argv[] )
   {
     mainWindow->setCentralWidget( centralWidget );
     auto* centralWidgetLayout = new QHBoxLayout( centralWidget );
-    centralWidgetLayout->addWidget( new dbscqt::AccountBookWidget( accountBook ) );
+    auto* accountBookWidget   = new dbscqt::AccountBookWidget( {} );
+    centralWidgetLayout->addWidget( accountBookWidget );
+    accountBookWidget->handleAccountBookSet( accountBook );
   }
   mainWindow->showMaximized();
 
