@@ -81,12 +81,12 @@ private:
   /// loading an account.
   void loadAccountBook( std::filesystem::path const& );
 
-  /// @return
-  /// std::nullopt: If the user never needs to be prompted in the first place.
+  /// @return Information regarding the user's interaction with the save prompt
+  /// and the subsequent save operation.
   ///
-  /// Otherwise:
-  /// Information regarding the user's interaction with the save prompt and the
-  /// subsequent save operation. The values should be interpreted as follows:
+  /// - std::nullopt: If the user never needs to be prompted in the first place.
+  ///
+  /// Otherwise, the values should be interpreted as follows:
   ///
   /// userProceededWithSaveOperation (first):
   ///   - std::nullopt: Canceled the save operation
