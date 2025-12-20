@@ -74,7 +74,7 @@ auto TomlSerializer::readAccountInternal( InputType& accountTomlTable, UuidStrin
   account.activate(); // Ensure we can add the previous transactions.
 
   auto* const transactionArrayOfTables = accountTomlTable[kAccountTransactionsKey].as_array();
-  BSLS_ASSERT( transactionArrayOfTables->is_array_of_tables() );
+  BSLS_ASSERT( transactionArrayOfTables->empty() || transactionArrayOfTables->is_array_of_tables() );
   for ( auto& transactionTableNode : *transactionArrayOfTables ) {
     BSLS_ASSERT( transactionTableNode.is_table() );
     auto* transactionTable = transactionTableNode.as_table();
@@ -142,7 +142,7 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
     TomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );
   }
-  BSLS_ASSERT( transactionArray.is_array_of_tables() );
+  BSLS_ASSERT( transactionArray.empty() || transactionArray.is_array_of_tables() );
   accountTable.insert( kAccountTransactionsKey, std::move( transactionArray ) );
 }
 
