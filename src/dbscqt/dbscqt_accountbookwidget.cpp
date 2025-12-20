@@ -13,6 +13,7 @@
 #include <bsls_assert.h>
 
 #include <QtCore/QPointer>
+#include <QtCore/QSettings>
 #include <QtCore/QSignalBlocker>
 #include <QtCore/QUuid>
 #include <QtWidgets/QHeaderView>
@@ -22,24 +23,27 @@
 #include <memory>
 #include <optional>
 
+namespace dbscqt {
 namespace {
+  static QString const kSplitterStateKey { "state/AccountBookWidgetSplitter" };
 
-/// @return a copy of the input string truncated to two decimal places.
-auto truncateDecimalString( QString const& decimalString ) -> QString
-{
-  int const decimalOffset    = 3; // Not 2; See documentation of QString::first().
-  auto const decimalPosition = decimalString.indexOf( '.' );
-  QString truncatedString;
-  if ( decimalPosition != -1 ) {
-    BSLS_ASSERT( decimalPosition + decimalOffset <= decimalString.size() );
-    truncatedString = decimalString.first( decimalPosition + decimalOffset );
-  } else {
-    truncatedString = decimalString;
+  /// @return a copy of the input string truncated to two decimal places.
+  auto truncateDecimalString( QString const& decimalString ) -> QString
+  {
+    int const decimalOffset    = 3; // Not 2; See documentation of QString::first().
+    auto const decimalPosition = decimalString.indexOf( '.' );
+    QString truncatedString;
+    if ( decimalPosition != -1 ) {
+      BSLS_ASSERT( decimalPosition + decimalOffset <= decimalString.size() );
+      truncatedString = decimalString.first( decimalPosition + decimalOffset );
+    } else {
+      truncatedString = decimalString;
+    }
+    return truncatedString;
   }
-  return truncatedString;
-}
 
 } // namespace
+} // namespace dbscqt
 
 class dbscqt::AccountBookWidget::Private
 {
@@ -69,6 +73,9 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
 
     auto* splitter = mImp->mUi.mSplitter;
     splitter->setStretchFactor( splitter->indexOf( mImp->mUi.mAccountDisplayWidget ), 1 );
+    QObject::connect( splitter, &QSplitter::splitterMoved, [this]( int const pos, int const index ) {
+      qInfo() << QString( "Splitter Moved (pos, idx): (%1, %2)" ).arg( pos ).arg( index );
+    } );
   }
 
   QObject::connect(
@@ -79,13 +86,17 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
     mImp->mUi.mCreateAccountButton, &QPushButton::clicked, this, &dbscqt::AccountBookWidget::createAccount );
 
   // Set initial widget state
+  mImp->mUi.mSplitter->restoreState( QSettings().value( dbscqt::kSplitterStateKey ).toByteArray() );
   clearDisplay();
   if ( accountBookHandle ) {
     handleAccountBookSet( accountBookHandle );
   }
 }
 
-dbscqt::AccountBookWidget::~AccountBookWidget() = default;
+dbscqt::AccountBookWidget::~AccountBookWidget()
+{
+  QSettings().setValue( dbscqt::kSplitterStateKey, mImp->mUi.mSplitter->saveState() );
+}
 
 void dbscqt::AccountBookWidget::createAccount()
 {
@@ -193,7 +204,7 @@ void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* sele
 {
   BSLS_ASSERT( selectedItem );
   auto const& accountItemData = selectedItem->accountItemData();
-  mImp->mUi.mBalanceDisplay->setText( truncateDecimalString( accountItemData.mBalance ) );
+  mImp->mUi.mBalanceDisplay->setText( dbscqt::truncateDecimalString( accountItemData.mBalance ) );
   mImp->mUi.mDescriptionDisplay->setText( accountItemData.mDescription );
   mImp->mAccountTableView->setModel( selectedItem->accountModel() );
   {
