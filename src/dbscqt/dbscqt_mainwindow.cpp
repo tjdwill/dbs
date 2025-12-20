@@ -35,6 +35,7 @@ namespace {
   /// Used to detect if the program shutdown via crash.
   QString const kAccountBookIsCurrentlyModified { "state/AccountBookUpToDate" };
   QString const kWindowGeometryKey { "window/Geometry" };
+  QString const kWindowStateKey { "window/State" };
   QString const kLastAccountBookFileDirectoryKey { "state/LastAccountBookFileDirectory" };
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
@@ -55,7 +56,25 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   : QMainWindow( parent )
   , mImp( std::make_unique< dbscqt::MainWindow::Private >() )
 {
+  // Set action connections
+  QObject::connect( mImp->mUi.mCloseAction, &QAction::triggered, this, &dbscqt::MainWindow::closeAccountBook );
+  QObject::connect( mImp->mUi.mNewAction, &QAction::triggered, this, &dbscqt::MainWindow::createNewAccountBook );
+  QObject::connect(
+    mImp->mUi.mOpenAction, &QAction::triggered, this, &dbscqt::MainWindow::handleOpenAccountBookTriggered );
+  QObject::connect( mImp->mUi.mSaveAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBook );
+  QObject::connect( mImp->mUi.mExitAction, &QAction::triggered, this, &dbscqt::MainWindow::exitProgram );
+  // QObject::connect( mImp->mUi.mAboutAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutPage );
+  QObject::connect( mImp->mUi.mAboutQtAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutQtPage );
+  QObject::connect(
+    this, &dbscqt::MainWindow::accountBookLoaded, [this]( std::shared_ptr< dbsc::AccountBook > accountBookHandle ) {
+      bool const accountBookIsLoaded = static_cast< bool >( accountBookHandle );
+      mImp->mUi.mSaveAction->setEnabled( accountBookIsLoaded );
+      mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
+    } );
+
   // Attempt to load the most recently-used account book
+  /// TODO: Add a check to determine if the program shutdown properly in the previous
+  /// session.
   auto const mostRecentAccountBookPath = QSettings().value( dbscqt::kRecentAccountBookPathKey, QString() ).toString();
   mImp->mPathToAccountBookFileOpt      = mostRecentAccountBookPath.isEmpty()
                                          ? std::nullopt
@@ -81,6 +100,8 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   }
 
   // Window's initial state.
+  restoreGeometry( QSettings().value( dbscqt::kWindowGeometryKey ).toByteArray() );
+  restoreState( QSettings().value( dbscqt::kWindowStateKey ).toByteArray() );
 }
 
 dbscqt::MainWindow::~MainWindow() = default;
@@ -135,6 +156,7 @@ void dbscqt::MainWindow::exitProgram()
   }
 
   QSettings().setValue( dbscqt::kWindowGeometryKey, saveGeometry() );
+  QSettings().setValue( dbscqt::kWindowStateKey, saveState() );
   Q_EMIT shutdownInitiated();
 }
 
@@ -204,6 +226,13 @@ auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
   }
 
   return saveWasSuccessful;
+}
+
+void dbscqt::MainWindow::showAboutPage() {}
+
+void dbscqt::MainWindow::showAboutQtPage()
+{
+  QMessageBox::aboutQt( this, "About Qt" );
 }
 
 auto dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& accountBookFile )
