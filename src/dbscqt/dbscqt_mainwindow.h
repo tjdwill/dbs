@@ -39,9 +39,12 @@ public:
 
 Q_SIGNALS:
   void accountBookLoaded( std::shared_ptr< dbsc::AccountBook > accountBookHandle );
-  void shutdownInitiated();
 
 public Q_SLOTS:
+  /// Attempts to close the entire program, closing the current account book in
+  /// the process.
+  auto attemptExitProgram() -> bool;
+
   /// Closes the currently-loaded account book. If the account is in a modified
   /// state, this function prompts the user to save.
   /// @returns true if the account book was actually closed.
@@ -50,23 +53,22 @@ public Q_SLOTS:
   /// Create a new account book, prompting the user for a place to save it.
   void createNewAccountBook();
 
-  /// Closes the entire program, closing the current account book in the process.
-  auto attemptExitProgram() -> bool;
-
-  /// Change the display and window state to communicate the account book is in an unsaved
-  /// state.
+  /// Change the display and window state to communicate the account book's
+  /// current state (saved/unsaved).
   void handleAccountBookModified( bool isModified );
 
-  /// Loads the account book selected by the user. If no account book is selected, or the
-  /// account book cannot be found, this function displays the welcome screen (after a
-  /// popup message in the latter case).
+  /// Loads the account book selected by the user. If no account book is
+  /// selected or the account book cannot be found, this function is a no-op.
   void handleOpenAccountBookTriggered();
 
   /// Write the current account book to file.
+  ///
   /// @pre An account book is loaded. Does not have to be in a modified state.
+  ///
   /// @return
-  ///   - std::nullopt: The user canceled creating a file name for the account book that didn't have a
-  ///       previously-determined path (ex. an account book that was recently created but not saved).
+  ///   - std::nullopt: The user canceled specifying a save path for an account
+  ///       book that didn't have a previously-determined path (ex. an account
+  ///       book that was recently created but has not been saved).
   ///   - true: save was successful.
   ///   - false: save was unsuccessful
   auto saveAccountBook() -> std::optional< bool >;
@@ -75,23 +77,25 @@ public Q_SLOTS:
   void showAboutQtPage();
 
 private:
-  auto loadAccountBookInternal( std::filesystem::path const& ) -> std::shared_ptr< dbsc::AccountBook >;
+  /// Initiates account loading and handles the Ui updating associated with
+  /// loading an account.
+  void loadAccountBook( std::filesystem::path const& );
 
   /// @return
   /// std::nullopt: If the user never needs to be prompted in the first place.
   ///
   /// Otherwise:
-  /// Information regarding the user's interaction with the save prompt and
-  /// the subsequent save operation. The values should be interpreted as follows:
+  /// Information regarding the user's interaction with the save prompt and the
+  /// subsequent save operation. The values should be interpreted as follows:
   ///
-  /// userProceededWithSaveAttempt (first):
+  /// userProceededWithSaveOperation (first):
   ///   - std::nullopt: Canceled the save operation
   ///   - true: The user attempted to save the current account book.
   ///   - false: The user decided to proceed without saving
-  /// saveSuccessfulResult:
-  ///   - std::nullopt: The user canceled creating a file name for the account book that didn't have a
-  ///   previously-determined path (ex. an account book that was recently
-  ///       created but not saved).
+  /// saveSuccessfulResult (second):
+  ///   - std::nullopt: The user canceled creating a file name for the account
+  ///       book that didn't have a previously-determined path (ex. an account
+  ///       book that was recently created but not saved).
   ///   - true: save was successful.
   ///   - false: save was unsuccessful
   auto promptUserToSaveIfAccountBookIsCurrentlyModified()
@@ -106,8 +110,10 @@ private:
   /// calling this function should be aborted.
   auto shouldAbortOperation() -> bool;
 
-  /// Update internal handle and set modified to false.
   void updateAccountBookHandle( std::shared_ptr< dbsc::AccountBook > );
+
+  /// @note if the account book has changed, ensure updateAccountBookHandle is
+  /// called *before* calling this function.
   void updateWindowTitle( bool accountBookIsModified );
 
   class Private;

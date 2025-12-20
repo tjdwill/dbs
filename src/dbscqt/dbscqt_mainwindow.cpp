@@ -38,7 +38,7 @@ namespace {
   QString const kLastAccountBookFileDirectoryKey { "state/LastAccountBookFileDirectory" };
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
-  QString const kBaseWindowTitle { "Digital Budgeting System (DBS)" };
+  QString const kBaseWindowTitle { QObject::tr( "Digital Budgeting System (DBS)" ) };
 } // namespace
 
 class MainWindow::Private
@@ -48,8 +48,7 @@ public:
   std::shared_ptr< dbsc::AccountBook > mCurrentAccountBookHandle {};
   std::optional< std::filesystem::path > mPathToAccountBookFileOpt {};
   bool mCurrentAccountBookIsModified { false };
-  /// Track if the window is currently closing.
-  bool mIsClosing { false };
+  bool mMainWindowIsClosing { false };
 };
 
 } // namespace dbscqt
@@ -76,6 +75,7 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
         mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
       } );
   }
+
   // Attempt to load the most recently-used account book
   /// TODO: Add a check to determine if the program shutdown properly in the previous
   /// session.
@@ -84,27 +84,27 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
                                     ? std::nullopt
                                     : std::optional< std::filesystem::path >( mostRecentAccountBookPath.toStdString() );
   if ( mImp->mPathToAccountBookFileOpt.has_value() ) {
-    auto const loadedAccountBook = loadAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
-    if ( loadedAccountBook ) {
-      QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
-                            QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
-      updateAccountBookHandle( loadedAccountBook );
-      handleAccountBookModified( false );
-      mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
-    }
+    loadAccountBook( mImp->mPathToAccountBookFileOpt.value() );
   }
 
-  // Configure the account book widget
+  // Configure the account book widget. This is done after the most
+  // recently-used book is loaded to take advantage of the AccountBookWidget's
+  // constructor that takes a shared_ptr to the account book to initialize
+  // itself and its children.
   auto* accountBookWidget = new dbscqt::AccountBookWidget( mImp->mCurrentAccountBookHandle );
-  QObject::connect(
-    this, &dbscqt::MainWindow::accountBookLoaded, accountBookWidget, &dbscqt::AccountBookWidget::handleAccountBookSet );
-  QObject::connect( accountBookWidget, &dbscqt::AccountBookWidget::accountBookModified, this, [this]() {
-    handleAccountBookModified( true );
-  } );
+  {
+    QObject::connect( this,
+                      &dbscqt::MainWindow::accountBookLoaded,
+                      accountBookWidget,
+                      &dbscqt::AccountBookWidget::handleAccountBookSet );
+    QObject::connect( accountBookWidget, &dbscqt::AccountBookWidget::accountBookModified, this, [this]() {
+      handleAccountBookModified( true );
+    } );
 
-  auto* accountBookDisplayLayout = new QVBoxLayout( mImp->mUi.mAccountBookDisplayPage );
-  accountBookDisplayLayout->setContentsMargins( {} );
-  accountBookDisplayLayout->addWidget( accountBookWidget );
+    auto* accountBookDisplayLayout = new QVBoxLayout( mImp->mUi.mAccountBookDisplayPage );
+    accountBookDisplayLayout->setContentsMargins( {} );
+    accountBookDisplayLayout->addWidget( accountBookWidget );
+  }
 
   // Window's initial state.
   restoreGeometry( QSettings().value( dbscqt::kWindowGeometryKey ).toByteArray() );
@@ -121,9 +121,22 @@ dbscqt::MainWindow::~MainWindow() = default;
 void dbscqt::MainWindow::closeEvent( QCloseEvent* event )
 {
   /// Intercept the close event to execute save logic.
-  if ( !mImp->mIsClosing && !attemptExitProgram() ) {
+  if ( !mImp->mMainWindowIsClosing && !attemptExitProgram() ) {
     event->ignore();
   }
+}
+
+auto dbscqt::MainWindow::attemptExitProgram() -> bool
+{
+  if ( shouldAbortOperation() ) {
+    return false;
+  }
+
+  QSettings().setValue( dbscqt::kWindowGeometryKey, saveGeometry() );
+  QSettings().setValue( dbscqt::kWindowStateKey, saveState() );
+  mImp->mMainWindowIsClosing = true;
+  close();
+  return true;
 }
 
 auto dbscqt::MainWindow::closeAccountBook() -> bool
@@ -158,19 +171,6 @@ void dbscqt::MainWindow::createNewAccountBook()
   }
 }
 
-auto dbscqt::MainWindow::attemptExitProgram() -> bool
-{
-  if ( shouldAbortOperation() ) {
-    return false;
-  }
-
-  QSettings().setValue( dbscqt::kWindowGeometryKey, saveGeometry() );
-  QSettings().setValue( dbscqt::kWindowStateKey, saveState() );
-  mImp->mIsClosing = true;
-  close();
-  return true;
-}
-
 void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
 {
   mImp->mCurrentAccountBookIsModified = isModified;
@@ -197,18 +197,10 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 
     QFileInfo const fileInfo { userSelectedFilePath };
     QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey, fileInfo.canonicalPath() );
-    auto const loadedAccountBook = loadAccountBookInternal( filePathOpt.value() );
+    loadAccountBook( filePathOpt.value() );
 
-    if ( loadedAccountBook ) {
-      mImp->mPathToAccountBookFileOpt = filePathOpt;
-      QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
-                            QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
-      handleAccountBookModified( false );
-      updateAccountBookHandle( loadedAccountBook );
-      mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
-    }
   } else {
-    // The user pressed cancel when selecting a file. No op.
+    // The user pressed cancel when selecting a file. No-op.
   }
 }
 
@@ -236,6 +228,23 @@ auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
   return saveWasSuccessful;
 }
 
+auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool
+{
+  BSLS_ASSERT( mImp->mCurrentAccountBookHandle );
+
+  bool operationSuccessful = true;
+
+  try {
+    dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
+  } catch ( dbsc::DbscSerializationException const& error ) {
+    QMessageBox::warning(
+      this, "Error saving file", QString( "Could not save the current account book. Reason: %1" ).arg( error.what() ) );
+    operationSuccessful = false;
+  }
+
+  return operationSuccessful;
+}
+
 void dbscqt::MainWindow::showAboutPage() {}
 
 void dbscqt::MainWindow::showAboutQtPage()
@@ -243,16 +252,29 @@ void dbscqt::MainWindow::showAboutQtPage()
   QMessageBox::aboutQt( this, "About Qt" );
 }
 
-auto dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& accountBookFile )
-  -> std::shared_ptr< dbsc::AccountBook >
+void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBookFile )
 {
-  try {
-    return std::make_shared< dbsc::AccountBook >( dbsc::readAccountBook< dbsc::TomlSerializer >( accountBookFile ) );
-  } catch ( dbsc::DbscSerializationException const& error ) {
-    auto const errorMessage =
-      QString( "Could not load the account book due to the following error: %1" ).arg( error.what() );
-    QMessageBox::warning( this, "File load error", errorMessage );
-    return nullptr;
+  auto const loadAccountBookInternal =
+    [this]( std::filesystem::path const& accountBookFilePath ) -> std::shared_ptr< dbsc::AccountBook > {
+    try {
+      return std::make_shared< dbsc::AccountBook >(
+        dbsc::readAccountBook< dbsc::TomlSerializer >( accountBookFilePath ) );
+    } catch ( dbsc::DbscSerializationException const& error ) {
+      auto const errorMessage =
+        QString( "Could not load the account book due to the following error: %1" ).arg( error.what() );
+      QMessageBox::warning( this, "File load error", errorMessage );
+      return nullptr;
+    }
+  };
+  auto const loadedAccountBook = loadAccountBookInternal( accountBookFile );
+
+  if ( loadedAccountBook ) {
+    mImp->mPathToAccountBookFileOpt = accountBookFile;
+    QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
+                          QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
+    updateAccountBookHandle( loadedAccountBook );
+    handleAccountBookModified( false );
+    mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
   }
 }
 
@@ -291,23 +313,6 @@ auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
     };
   }
   return std::nullopt;
-}
-
-auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool
-{
-  BSLS_ASSERT( mImp->mCurrentAccountBookHandle );
-
-  bool operationSuccessful = true;
-
-  try {
-    dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
-  } catch ( dbsc::DbscSerializationException const& error ) {
-    QMessageBox::warning(
-      this, "Error saving file", QString( "Could not save the current account book. Reason: %1" ).arg( error.what() ) );
-    operationSuccessful = false;
-  }
-
-  return operationSuccessful;
 }
 
 auto dbscqt::MainWindow::shouldAbortOperation() -> bool
