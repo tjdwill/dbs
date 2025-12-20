@@ -261,6 +261,8 @@ auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
   bool const saveWasSuccessful = saveAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
   if ( saveWasSuccessful ) {
     handleAccountBookModified( false );
+    QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
+                          QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
   }
 
   return saveWasSuccessful;
