@@ -12,32 +12,13 @@ consists of:
     about the website's licensing.
 
 Teal color: #20C997
-- U.S. Dollar Sign: https://icons8.com/icon/7172/us-dollar-circled
-- Ledger: https://icons8.com/icon/65613/ledger
-- Summary List: https://icons8.com/icon/48622/summary-list
-- Transaction: https://icons8.com/icon/61743/exchange
-- Toggle Indeterminate: https://img.icons8.com/ios-filled/50/toggle-indeterminate.png
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/123425/toggle-indeterminate">Toggle Indeterminate</
-  a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
-- Envelope
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/63598/envelope">Envelope</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
-- Account
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/7820/profile">Account</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
-- Plus
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/1501/plus">Plus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
-- Minus
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/1504/minus">Minus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
-- Save
-  ```html
-  <a target="_blank" href="https://icons8.com/icon/18765/save">Save</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-  ```
+  - [Account](https://icons8.com/icon/7820/profile) icon by [Icons8](https://icons8.com) 
+  - [Envelope](https://icons8.com/icon/63598/envelope) icon by [Icons8](https://icons8.com) 
+  - [Exchange](https://icons8.com/icon/61743/exchange) icon by [Icons8](https://icons8.com) 
+  - [Ledger](https://icons8.com/icon/65613/ledger) icon by [Icons8](https://icons8.com) 
+  - [Minus](https://icons8.com/icon/1504/minus) icon by [Icons8](https://icons8.com) 
+  - [Plus](https://icons8.com/icon/1501/plus) icon by [Icons8](https://icons8.com) 
+  - [Save](https://icons8.com/icon/18765/save) icon by [Icons8](https://icons8.com) 
+  - [Summary List](https://icons8.com/icon/48622/summary-list) icon by [Icons8](https://icons8.com) 
+  - [Toggle Indeterminate](https://icons8.com/icon/123425/toggle-indeterminate) icon by [Icons8](https://icons8.com) 
+  - [U.S. Dollar Sign](https://icons8.com/icon/7172/us-dollar-circled) icon by [Icons8](https://icons8.com) 

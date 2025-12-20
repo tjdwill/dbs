@@ -13,6 +13,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QSettings>
 #include <QtCore/QString>
+#include <QtCore/QTextStream>
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtGui/QCloseEvent>
@@ -20,6 +21,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QInputDialog>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QTextBrowser>
 #include <ui_dbscqt_mainwindow.h>
 
 #include <memory>
@@ -245,7 +247,50 @@ auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& f
   return operationSuccessful;
 }
 
-void dbscqt::MainWindow::showAboutPage() {}
+void dbscqt::MainWindow::showAboutPage()
+{
+
+  auto aboutPage       = QPointer( new QDialog() );
+  auto aboutPageLayout = QPointer( new QVBoxLayout( aboutPage ) );
+  QObject::connect( aboutPage, &QDialog::finished, [aboutPage]() { aboutPage->deleteLater(); } );
+
+  QString markdownText {};
+  QTextStream tss { &markdownText };
+  tss << R"(
+  # Digital Budgeting System
+  
+  &nbsp;
+
+  ## Libraries
+
+  The following libraries are used in this application:
+
+  - [bde](https://github.com/bloomberg/bde) by Bloomberg
+  - [Qt](https://qt.io) (v6.9.x) by Qt Group (The Qt Company)
+  - [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
+  - [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer (v3.4.0)
+
+  ## Icons
+
+  - [Exchange](https://icons8.com/icon/61743/exchange) icon by [Icons8](https://icons8.com) 
+  - [Plus](https://icons8.com/icon/1501/plus) icon by [Icons8](https://icons8.com) 
+  - [Save](https://icons8.com/icon/18765/save) icon by [Icons8](https://icons8.com) 
+  - [Toggle Indeterminate](https://icons8.com/icon/123425/toggle-indeterminate) icon by [Icons8](https://icons8.com) 
+  - [U.S. Dollar Sign](https://icons8.com/icon/7172/us-dollar-circled) icon by [Icons8](https://icons8.com) 
+
+  )";
+  auto aboutPageTextDisplay = QPointer( new QTextBrowser() );
+  aboutPageTextDisplay->setOpenLinks( false );
+  // aboutPageTextDisplay->setOpenExternalLinks( true );
+  aboutPageTextDisplay->setMarkdown( markdownText );
+  aboutPageTextDisplay->setReadOnly( true );
+  aboutPageLayout->addWidget( aboutPageTextDisplay );
+  constexpr int kMinHeight { 600 };
+  constexpr int kMinWidth { 800 };
+  aboutPage->setMinimumSize( { kMinWidth, kMinHeight } );
+
+  aboutPage->open();
+}
 
 void dbscqt::MainWindow::showAboutQtPage()
 {
