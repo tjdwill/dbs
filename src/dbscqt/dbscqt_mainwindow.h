@@ -16,6 +16,7 @@
 #include <memory>
 
 class QWidget;
+class QCloseEvent;
 
 namespace dbsc {
 class AccountBook;
@@ -33,6 +34,8 @@ public:
   auto operator=( MainWindow const& ) -> MainWindow&     = delete;
   auto operator=( MainWindow&& ) noexcept -> MainWindow& = delete;
 
+  void closeEvent( QCloseEvent* event ) final;
+
 Q_SIGNALS:
   void accountBookLoaded( std::shared_ptr< dbsc::AccountBook > accountBookHandle );
   void shutdownInitiated();
@@ -47,7 +50,7 @@ public Q_SLOTS:
   void createNewAccountBook();
 
   /// Closes the entire program, closing the current account book in the process.
-  void exitProgram();
+  auto attemptExitProgram() -> bool;
 
   /// Change the display and window state to communicate the account book is in an unsaved
   /// state.
