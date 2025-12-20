@@ -1,5 +1,17 @@
 # DBS Journal
 
+## 19 December 2025
+
+I completed the draft of the DBS application. I'm not too ecstatic with how some
+of the logic in dbscqt_mainwindow has panned out thus far, but the application
+does work, PY. I plan to continue to refine the application, especially since
+the "About" page still needs to implemented. I intend to figure out deployment
+via CMake as well. 
+
+## 18 December 2025
+
+Skeleton implementations of the MainWindow menu actions.
+
 ## 17 December 2025
 
 Today, I began editing the main window's interface. I am not sure how this will evolve, so
