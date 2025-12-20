@@ -39,7 +39,7 @@ auto UuidStringUtil::generate() -> UuidString
     auto seedData = std::array< int, std::mt19937::state_size > {};
     std::generate( std::begin( seedData ), std::end( seedData ), std::ref( rd ) );
     std::seed_seq seq( std::begin( seedData ), std::end( seedData ) );
-    std::mt19937 generator { seq };
+    sGenerator            = std::mt19937 { seq };
     sGeneratorInitialized = true;
   }
   static uuids::uuid_random_generator sUuidGenerator { sGenerator };
