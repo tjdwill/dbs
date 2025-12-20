@@ -144,6 +144,7 @@ auto dbscqt::MainWindow::closeAccountBook() -> bool
   updateAccountBookHandle( nullptr );
   handleAccountBookModified( false );
   mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
+  QSettings().setValue( dbscqt::kRecentAccountBookPathKey, QString() );
   return true;
 }
 
