@@ -35,6 +35,7 @@ public:
 
 Q_SIGNALS:
   void accountBookLoaded( std::shared_ptr< dbsc::AccountBook > accountBookHandle );
+  void shutdownInitiated();
 
 public Q_SLOTS:
   /// Closes the currently-loaded account book. If the account is in a modified
@@ -59,16 +60,35 @@ public Q_SLOTS:
 
   /// Write the current account book to file.
   /// @pre An account book is loaded. Does not have to be in a modified state.
-  auto saveAccountBook() -> bool;
+  /// @return
+  ///   - std::nullopt: The user canceled creating a file name for the account book that didn't have a
+  ///       previously-determined path (ex. an account book that was recently created but not saved).
+  ///   - true: save was successful.
+  ///   - false: save was unsuccessful
+  auto saveAccountBook() -> std::optional< bool >;
 
   void showAboutPage();
   void showAboutQtPage();
 
 private:
   auto loadAccountBookInternal( std::filesystem::path const& ) -> std::shared_ptr< dbsc::AccountBook >;
-  /// @return std::nullopt if the user cancels the dialog;
-  ///   true if the user answers "yes"; false for "no"
-  auto promptUserToSaveIfAccountBookIsCurrentlyModified() -> std::optional< bool >;
+
+  /// Return information regarding the user's interaction with the save prompt and
+  /// the subsequent save operation. The values should be interpreted as follows:
+  ///
+  /// userProceededWithSaveAttempt (first):
+  ///   - std::nullopt: Canceled the save operation
+  ///   - true: The user attempted to save the current account book.
+  ///   - false: The user decided to proceed without saving
+  /// saveSuccessfulResult:
+  ///   - std::nullopt: The user canceled creating a file name for the account book that didn't have a
+  ///   previously-determined path (ex. an account book that was recently
+  ///       created but not saved).
+  ///   - true: save was successful.
+  ///   - false: save was unsuccessful
+  auto promptUserToSaveIfAccountBookIsCurrentlyModified()
+    -> std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
+                  std::optional< bool > /* successfuleSaveOpt */ >;
 
   /// @pre filePath is a valid path candidate.
   /// @return true if save was successful; false otherwise.
