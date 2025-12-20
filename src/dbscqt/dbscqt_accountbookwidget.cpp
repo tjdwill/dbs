@@ -73,9 +73,6 @@ dbscqt::AccountBookWidget::AccountBookWidget( std::shared_ptr< dbsc::AccountBook
 
     auto* splitter = mImp->mUi.mSplitter;
     splitter->setStretchFactor( splitter->indexOf( mImp->mUi.mAccountDisplayWidget ), 1 );
-    QObject::connect( splitter, &QSplitter::splitterMoved, [this]( int const pos, int const index ) {
-      qInfo() << QString( "Splitter Moved (pos, idx): (%1, %2)" ).arg( pos ).arg( index );
-    } );
   }
 
   QObject::connect(
