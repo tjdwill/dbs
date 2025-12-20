@@ -97,12 +97,18 @@ auto dbscqt::MainWindow::closeAccountBook() -> bool
 
 void dbscqt::MainWindow::createNewAccountBook()
 {
-  if ( closeAccountBook() ) {
+  auto const saveResult                       = promptUserToSaveIfAccountBookIsCurrentlyModified();
+  bool const userProceededWithAccountCreation = saveResult.has_value();
+  if ( userProceededWithAccountCreation ) {
     bool userAccepted {};
     QString const accountBookOwner = QInputDialog::getText(
       this, "Create an account book", "Owner Name:", QLineEdit::Normal, QString(), &userAccepted );
     if ( userAccepted && !accountBookOwner.isEmpty() ) {
+      mImp->mPathToAccountBookFileOpt = std::nullopt; // No save path yet.
+      handleAccountBookModified( false );
       updateAccountBookHandle( std::make_shared< dbsc::AccountBook >( accountBookOwner.toStdString() ) );
+      // Show display page if it isn't already active.
+      mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
     }
   }
 }
@@ -143,7 +149,8 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
         mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
       }
     } else {
-      // The user pressed cancel when prompting to save the file. No op.
+      // The user pressed cancel when prompting to save the file or account book file
+      // was already up to date. No op.
     }
   } else {
     // The user pressed cancel when selecting a file. No op.
