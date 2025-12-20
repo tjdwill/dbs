@@ -24,6 +24,7 @@
 #include <QtWidgets/QTextBrowser>
 #include <ui_dbscqt_mainwindow.h>
 
+#include <exception>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -239,9 +240,12 @@ auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& f
 
   try {
     dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
-  } catch ( dbsc::DbscSerializationException const& error ) {
-    QMessageBox::warning(
-      this, "Error saving file", QString( "Could not save the current account book. Reason: %1" ).arg( error.what() ) );
+  } catch ( std::exception const& error ) {
+    QMessageBox::warning( this,
+                          "Error saving file",
+                          QString( "Could not save the current account book %1. Reason:\n\n%2" )
+                            .arg( filePath.string() )
+                            .arg( error.what() ) );
     operationSuccessful = false;
   }
 
@@ -250,7 +254,6 @@ auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& f
 
 void dbscqt::MainWindow::showAboutPage()
 {
-
   auto aboutPage       = QPointer( new QDialog() );
   auto aboutPageLayout = QPointer( new QVBoxLayout( aboutPage ) );
   QObject::connect( aboutPage, &QDialog::finished, [aboutPage]() { aboutPage->deleteLater(); } );
@@ -307,9 +310,10 @@ void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBo
     try {
       return std::make_shared< dbsc::AccountBook >(
         dbsc::readAccountBook< dbsc::TomlSerializer >( accountBookFilePath ) );
-    } catch ( dbsc::DbscSerializationException const& error ) {
-      auto const errorMessage =
-        QString( "Could not load the account book due to the following error: %1" ).arg( error.what() );
+    } catch ( std::exception const& error ) {
+      auto const errorMessage = QString( "Could not load the account book %1 due to the following error:\n\n%2" )
+                                  .arg( accountBookFilePath.string() )
+                                  .arg( error.what() );
       QMessageBox::warning( this, "File load error", errorMessage );
       return nullptr;
     }
@@ -389,8 +393,13 @@ void dbscqt::MainWindow::updateWindowTitle( bool const accountBookIsModified )
 {
 
   if ( mImp->mCurrentAccountBookHandle ) {
-    QString const windowTitleWithAccountOwnerName =
-      QString( "%1 - %2" ).arg( dbscqt::kBaseWindowTitle ).arg( mImp->mCurrentAccountBookHandle->owner() );
+    QString const filePath = mImp->mPathToAccountBookFileOpt.has_value()
+                             ? QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() )
+                             : "Unsaved";
+    QString const windowTitleWithAccountOwnerName = QString( "%1 - %2 (%3)" )
+                                                      .arg( dbscqt::kBaseWindowTitle )
+                                                      .arg( mImp->mCurrentAccountBookHandle->owner() )
+                                                      .arg( filePath );
     MainWindow::setWindowTitle( accountBookIsModified ? QString( "%1*" ).arg( windowTitleWithAccountOwnerName )
                                                       : windowTitleWithAccountOwnerName );
   } else {
