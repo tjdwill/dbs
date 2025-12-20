@@ -177,6 +177,7 @@ void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
 {
   mImp->mCurrentAccountBookIsModified = isModified;
   QSettings().setValue( dbscqt::kAccountBookIsCurrentlyModified, isModified );
+  mImp->mUi.mSaveAction->setEnabled( isModified );
   updateWindowTitle( isModified );
 }
 
