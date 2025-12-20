@@ -1,8 +1,6 @@
 // dbscqt_mainwindow.cpp
 #include "dbscqt_mainwindow.h"
 
-#include "Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h"
-
 #include <dbsc_accountbook.h>
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
