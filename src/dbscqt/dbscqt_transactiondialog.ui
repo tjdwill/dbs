@@ -74,6 +74,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>mPrimaryPartyDisplay</tabstop>
+  <tabstop>mOtherPartySelectionBox</tabstop>
+  <tabstop>mTransactionAmountEdit</tabstop>
+  <tabstop>mNotesEdit</tabstop>
+ </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>
