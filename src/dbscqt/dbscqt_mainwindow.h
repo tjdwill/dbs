@@ -102,6 +102,10 @@ private:
   /// @return true if save was successful; false otherwise.
   auto saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool;
 
+  /// Determine if, based on prompting the user to save, the current operation
+  /// calling this function should be aborted.
+  auto shouldAbortOperation() -> bool;
+
   /// Update internal handle and set modified to false.
   void updateAccountBookHandle( std::shared_ptr< dbsc::AccountBook > );
   void updateWindowTitle( bool accountBookIsModified );
