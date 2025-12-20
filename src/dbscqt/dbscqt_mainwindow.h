@@ -73,7 +73,11 @@ public Q_SLOTS:
 private:
   auto loadAccountBookInternal( std::filesystem::path const& ) -> std::shared_ptr< dbsc::AccountBook >;
 
-  /// Return information regarding the user's interaction with the save prompt and
+  /// @return
+  /// std::nullopt: If the user never needs to be prompted in the first place.
+  ///
+  /// Otherwise:
+  /// Information regarding the user's interaction with the save prompt and
   /// the subsequent save operation. The values should be interpreted as follows:
   ///
   /// userProceededWithSaveAttempt (first):
@@ -87,8 +91,8 @@ private:
   ///   - true: save was successful.
   ///   - false: save was unsuccessful
   auto promptUserToSaveIfAccountBookIsCurrentlyModified()
-    -> std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
-                  std::optional< bool > /* successfuleSaveOpt */ >;
+    -> std::optional< std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
+                                 std::optional< bool > /* successfuleSaveOpt */ > >;
 
   /// @pre filePath is a valid path candidate.
   /// @return true if save was successful; false otherwise.

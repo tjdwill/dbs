@@ -54,22 +54,26 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   : QMainWindow( parent )
   , mImp( std::make_unique< dbscqt::MainWindow::Private >() )
 {
-  // Set action connections
-  QObject::connect( mImp->mUi.mCloseAction, &QAction::triggered, this, &dbscqt::MainWindow::closeAccountBook );
-  QObject::connect( mImp->mUi.mNewAction, &QAction::triggered, this, &dbscqt::MainWindow::createNewAccountBook );
-  QObject::connect(
-    mImp->mUi.mOpenAction, &QAction::triggered, this, &dbscqt::MainWindow::handleOpenAccountBookTriggered );
-  QObject::connect( mImp->mUi.mSaveAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBook );
-  QObject::connect( mImp->mUi.mExitAction, &QAction::triggered, this, &dbscqt::MainWindow::exitProgram );
-  // QObject::connect( mImp->mUi.mAboutAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutPage );
-  QObject::connect( mImp->mUi.mAboutQtAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutQtPage );
-  QObject::connect(
-    this, &dbscqt::MainWindow::accountBookLoaded, [this]( std::shared_ptr< dbsc::AccountBook > accountBookHandle ) {
-      bool const accountBookIsLoaded = static_cast< bool >( accountBookHandle );
-      mImp->mUi.mSaveAction->setEnabled( accountBookIsLoaded );
-      mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
-    } );
+  mImp->mUi.setupUi( this );
+  {
+    // Set action connections
+    QObject::connect( mImp->mUi.mCloseAction, &QAction::triggered, this, &dbscqt::MainWindow::closeAccountBook );
+    QObject::connect( mImp->mUi.mNewAction, &QAction::triggered, this, &dbscqt::MainWindow::createNewAccountBook );
+    QObject::connect(
+      mImp->mUi.mOpenAction, &QAction::triggered, this, &dbscqt::MainWindow::handleOpenAccountBookTriggered );
+    QObject::connect( mImp->mUi.mSaveAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBook );
+    QObject::connect( mImp->mUi.mExitAction, &QAction::triggered, this, &dbscqt::MainWindow::exitProgram );
+    // QObject::connect( mImp->mUi.mAboutAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutPage );
+    QObject::connect( mImp->mUi.mAboutQtAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutQtPage );
+    QObject::connect(
+      this, &dbscqt::MainWindow::accountBookLoaded, [this]( std::shared_ptr< dbsc::AccountBook > accountBookHandle ) {
+        bool const accountBookIsLoaded = static_cast< bool >( accountBookHandle );
+        mImp->mUi.mSaveAction->setEnabled( accountBookIsLoaded );
+        mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
+      } );
 
+    mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
+  }
   // Attempt to load the most recently-used account book
   /// TODO: Add a check to determine if the program shutdown properly in the previous
   /// session.
@@ -82,20 +86,16 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   }
 
   // Configure the account book widget
-  mImp->mUi.setupUi( this );
-  {
-    auto* accountBookWidget = new dbscqt::AccountBookWidget( mImp->mCurrentAccountBookHandle );
-    QObject::connect( this,
-                      &dbscqt::MainWindow::accountBookLoaded,
-                      accountBookWidget,
-                      &dbscqt::AccountBookWidget::handleAccountBookSet );
-    QObject::connect( accountBookWidget, &dbscqt::AccountBookWidget::accountBookModified, this, [this]() {
-      handleAccountBookModified( true );
-    } );
+  auto* accountBookWidget = new dbscqt::AccountBookWidget( mImp->mCurrentAccountBookHandle );
+  QObject::connect(
+    this, &dbscqt::MainWindow::accountBookLoaded, accountBookWidget, &dbscqt::AccountBookWidget::handleAccountBookSet );
+  QObject::connect( accountBookWidget, &dbscqt::AccountBookWidget::accountBookModified, this, [this]() {
+    handleAccountBookModified( true );
+  } );
 
-    mImp->mUi.mAccountBookDisplayPage->setLayout( new QVBoxLayout() );
-    mImp->mUi.mAccountBookDisplayPage->layout()->addWidget( accountBookWidget );
-  }
+  auto* accountBookDisplayLayout = new QVBoxLayout( mImp->mUi.mAccountBookDisplayPage );
+  accountBookDisplayLayout->setContentsMargins( {} );
+  accountBookDisplayLayout->addWidget( accountBookWidget );
 
   // Window's initial state.
   restoreGeometry( QSettings().value( dbscqt::kWindowGeometryKey ).toByteArray() );
@@ -106,12 +106,16 @@ dbscqt::MainWindow::~MainWindow() = default;
 
 auto dbscqt::MainWindow::closeAccountBook() -> bool
 {
-  auto const [userSavePromptResult, saveAttemptResult] = promptUserToSaveIfAccountBookIsCurrentlyModified();
-  bool const userAttemptedToSave                       = userSavePromptResult == true;
-  bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
-  bool const userCanceledOperation                     = !userSavePromptResult.has_value();
-  if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
-    return false;
+  auto const userPromptedResultsOpt = promptUserToSaveIfAccountBookIsCurrentlyModified();
+  bool const userNeededPrompting    = userPromptedResultsOpt.has_value();
+  if ( userNeededPrompting ) {
+    auto const [userSavePromptResult, saveAttemptResult] = userPromptedResultsOpt.value();
+    bool const userAttemptedToSave                       = userSavePromptResult == true;
+    bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
+    bool const userCanceledOperation                     = !userSavePromptResult.has_value();
+    if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
+      return false;
+    }
   }
 
   mImp->mPathToAccountBookFileOpt = std::nullopt;
@@ -123,12 +127,16 @@ auto dbscqt::MainWindow::closeAccountBook() -> bool
 
 void dbscqt::MainWindow::createNewAccountBook()
 {
-  auto const [userSavePromptResult, saveAttemptResult] = promptUserToSaveIfAccountBookIsCurrentlyModified();
-  bool const userAttemptedToSave                       = userSavePromptResult == true;
-  bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
-  bool const userCanceledOperation                     = !userSavePromptResult.has_value();
-  if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
-    return;
+  auto const userPromptedResultsOpt = promptUserToSaveIfAccountBookIsCurrentlyModified();
+  bool const userNeededPrompting    = userPromptedResultsOpt.has_value();
+  if ( userNeededPrompting ) {
+    auto const [userSavePromptResult, saveAttemptResult] = userPromptedResultsOpt.value();
+    bool const userAttemptedToSave                       = userSavePromptResult == true;
+    bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
+    bool const userCanceledOperation                     = !userSavePromptResult.has_value();
+    if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
+      return;
+    }
   }
 
   bool userAccepted {};
@@ -136,7 +144,7 @@ void dbscqt::MainWindow::createNewAccountBook()
     QInputDialog::getText( this, "Create an account book", "Owner Name:", QLineEdit::Normal, QString(), &userAccepted );
   if ( userAccepted && !accountBookOwner.isEmpty() ) {
     mImp->mPathToAccountBookFileOpt = std::nullopt; // No save path yet.
-    handleAccountBookModified( false );
+    handleAccountBookModified( true );
     updateAccountBookHandle( std::make_shared< dbsc::AccountBook >( accountBookOwner.toStdString() ) );
     // Show display page if it isn't already active.
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
@@ -145,17 +153,21 @@ void dbscqt::MainWindow::createNewAccountBook()
 
 void dbscqt::MainWindow::exitProgram()
 {
-  auto const [userSavePromptResult, saveAttemptResult] = promptUserToSaveIfAccountBookIsCurrentlyModified();
-  bool const userAttemptedToSave                       = userSavePromptResult == true;
-  bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
-  bool const userCanceledOperation                     = !userSavePromptResult.has_value();
-  if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
-    return;
+  auto const userPromptedResultsOpt = promptUserToSaveIfAccountBookIsCurrentlyModified();
+  bool const userNeededPrompting    = userPromptedResultsOpt.has_value();
+  if ( userNeededPrompting ) {
+    auto const [userSavePromptResult, saveAttemptResult] = userPromptedResultsOpt.value();
+    bool const userAttemptedToSave                       = userSavePromptResult == true;
+    bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
+    bool const userCanceledOperation                     = !userSavePromptResult.has_value();
+    if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
+      return;
+    }
   }
 
   QSettings().setValue( dbscqt::kWindowGeometryKey, saveGeometry() );
   QSettings().setValue( dbscqt::kWindowStateKey, saveState() );
-  Q_EMIT shutdownInitiated();
+  close();
 }
 
 void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
@@ -167,6 +179,17 @@ void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
 
 void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 {
+  auto const userPromptedResultsOpt = promptUserToSaveIfAccountBookIsCurrentlyModified();
+  bool const userNeededPrompting    = userPromptedResultsOpt.has_value();
+  if ( userNeededPrompting ) {
+    auto const [userSavePromptResult, saveAttemptResult] = userPromptedResultsOpt.value();
+    bool const userAttemptedToSave                       = userSavePromptResult == true;
+    bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
+    bool const userCanceledOperation                     = !userSavePromptResult.has_value();
+    if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
+      return;
+    }
+  }
 
   auto const startingDirectory = QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, "/home" ).toString();
   auto const userSelectedFilePath =
@@ -178,15 +201,7 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
       : std::optional< std::filesystem::path >( QFileInfo( userSelectedFilePath ).filesystemCanonicalFilePath() );
 
   if ( filePathOpt.has_value() ) {
-    auto const [userSavePromptResult, saveAttemptResult] = promptUserToSaveIfAccountBookIsCurrentlyModified();
-    bool const userAttemptedToSave                       = userSavePromptResult == true;
-    bool const attemptedSaveWasUnsuccessful              = userAttemptedToSave && ( saveAttemptResult != true );
-    bool const userCanceledOperation                     = !userSavePromptResult.has_value();
-    if ( attemptedSaveWasUnsuccessful || userCanceledOperation ) {
-      return;
-    }
 
-    // Checkpoint: Save was successful or the user proceeded without saving
     QFileInfo const fileInfo { userSelectedFilePath };
     QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey, fileInfo.canonicalPath() );
     auto const loadedAccountBook = loadAccountBookInternal( filePathOpt.value() );
@@ -247,13 +262,13 @@ auto dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& a
 }
 
 auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
-  -> std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
-                std::optional< bool > /* successfuleSaveOpt */ >
+  -> std::optional< std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
+                               std::optional< bool > /* successfuleSaveOpt */ > >
 {
-  std::optional< bool > userProceededWithSaveOperation {};
-  std::optional< bool > successfulSaveOpt {};
 
   if ( mImp->mCurrentAccountBookIsModified ) {
+    std::optional< bool > userProceededWithSaveOperation {};
+    std::optional< bool > successfulSaveOpt {};
     auto const buttonPressed =
       QMessageBox::question( this,
                              "Save Prompt",
@@ -276,8 +291,11 @@ auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
       default:
         throw std::runtime_error( "Unhandled, unexpected QMessageBox::StandardButton enum variant." );
     }
+    return std::optional< std::pair< std::optional< bool >, std::optional< bool > > > {
+      { userProceededWithSaveOperation, successfulSaveOpt }
+    };
   }
-  return { userProceededWithSaveOperation, successfulSaveOpt };
+  return std::nullopt;
 }
 
 auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool

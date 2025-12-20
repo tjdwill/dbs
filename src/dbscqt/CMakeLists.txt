@@ -267,6 +267,16 @@ target_link_libraries(dbscqt_mainwindow
     Qt::Widgets
 )
 
+add_executable(dbs)
+register_deployable_target(dbs)
+target_sources(dbs PRIVATE dbs.m.cpp)
+target_link_libraries(dbs 
+  PRIVATE
+    dbscqt_mainwindow
+    Qt::Core
+    Qt::Widgets
+)
+
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
   set_target_properties(${dbscqt_deployable_targets}
