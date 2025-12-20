@@ -157,7 +157,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Close Account Book</string>
+    <string>Close</string>
    </property>
   </action>
   <action name="mExitAction">
