@@ -290,7 +290,7 @@ auto dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& a
 
 auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
   -> std::optional< std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
-                               std::optional< bool > /* successfuleSaveOpt */ > >
+                               std::optional< bool > /* successfulSaveOpt */ > >
 {
 
   if ( mImp->mCurrentAccountBookIsModified ) {

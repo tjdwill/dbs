@@ -1,6 +1,7 @@
 // dbscqt_mainwindow.h
 #ifndef INCLUDED_DBSCQT_MAINWINDOW
 #define INCLUDED_DBSCQT_MAINWINDOW
+
 ///@PURPOSE: Define the application's main window.
 ///
 ///@CLASSES:
@@ -95,7 +96,7 @@ private:
   ///   - false: save was unsuccessful
   auto promptUserToSaveIfAccountBookIsCurrentlyModified()
     -> std::optional< std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
-                                 std::optional< bool > /* successfuleSaveOpt */ > >;
+                                 std::optional< bool > /* successfulSaveOpt */ > >;
 
   /// @pre filePath is a valid path candidate.
   /// @return true if save was successful; false otherwise.
