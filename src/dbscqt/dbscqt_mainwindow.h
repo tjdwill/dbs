@@ -58,13 +58,22 @@ public Q_SLOTS:
   void handleOpenAccountBookTriggered();
 
   /// Write the current account book to file.
-  void saveAccountBook();
+  /// @pre An account book is loaded. Does not have to be in a modified state.
+  auto saveAccountBook() -> bool;
 
   void showAboutPage();
   void showAboutQtPage();
 
 private:
-  void loadAccountBookInternal( std::filesystem::path const& );
+  auto loadAccountBookInternal( std::filesystem::path const& ) -> std::shared_ptr< dbsc::AccountBook >;
+  /// @return std::nullopt if the user cancels the dialog;
+  ///   true if the user answers "yes"; false for "no"
+  auto promptUserToSaveIfAccountBookIsCurrentlyModified() -> std::optional< bool >;
+
+  /// @pre filePath is a valid path candidate.
+  /// @return true if save was successful; false otherwise.
+  auto saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool;
+
   /// Update internal handle and set modified to false.
   void updateAccountBookHandle( std::shared_ptr< dbsc::AccountBook > );
   void updateWindowTitle( bool accountBookIsModified );

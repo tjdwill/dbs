@@ -1,10 +1,14 @@
 // dbscqt_mainwindow.cpp
 #include "dbscqt_mainwindow.h"
 
+#include "Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h"
+
 #include <dbsc_accountbook.h>
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
+
+#include <bsls_assert.h>
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QObject>
@@ -84,8 +88,10 @@ auto dbscqt::MainWindow::closeAccountBook() -> bool
 {
   /// TODO: add save check
 
-  mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
+  mImp->mPathToAccountBookFileOpt = std::nullopt;
   updateAccountBookHandle( nullptr );
+  handleAccountBookModified( false );
+  mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
   return true;
 }
 
@@ -110,44 +116,116 @@ void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
 
 void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 {
+
   auto const startingDirectory = QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, "/home" ).toString();
-  auto const filePath =
+  auto const userSelectedFilePath =
     QFileDialog::getOpenFileName( this, "Open an account book", startingDirectory, dbscqt::kOpenFileDialogFilter );
 
-  mImp->mPathToAccountBookFileOpt =
-    filePath.isEmpty() ? std::nullopt
-                       : std::optional< std::filesystem::path >( QFileInfo( filePath ).filesystemCanonicalFilePath() );
+  auto const filePathOpt =
+    userSelectedFilePath.isEmpty()
+      ? std::nullopt
+      : std::optional< std::filesystem::path >( QFileInfo( userSelectedFilePath ).filesystemCanonicalFilePath() );
 
-  if ( mImp->mPathToAccountBookFileOpt.has_value() ) {
-    QFileInfo const fileInfo { filePath };
-    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey, fileInfo.canonicalPath() );
-    loadAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
+  if ( filePathOpt.has_value() ) {
+    auto const saveResultOpt            = promptUserToSaveIfAccountBookIsCurrentlyModified();
+    bool const userProceededWithLoading = saveResultOpt.has_value();
+    if ( userProceededWithLoading ) {
+      QFileInfo const fileInfo { userSelectedFilePath };
+      QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey, fileInfo.canonicalPath() );
+      auto const loadedAccountBook = loadAccountBookInternal( filePathOpt.value() );
+
+      if ( loadedAccountBook ) {
+        mImp->mPathToAccountBookFileOpt = filePathOpt;
+        QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
+                              QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
+        handleAccountBookModified( false );
+        updateAccountBookHandle( loadedAccountBook );
+        mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
+      }
+    } else {
+      // The user pressed cancel when prompting to save the file. No op.
+    }
+  } else {
+    // The user pressed cancel when selecting a file. No op.
   }
 }
 
-void dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& accountBookFile )
+auto dbscqt::MainWindow::saveAccountBook() -> bool
 {
-  std::shared_ptr< dbsc::AccountBook > loadedAccountBook;
+  if ( !mImp->mPathToAccountBookFileOpt ) {
+    QString const userSelectedSaveLocation =
+      QFileDialog::getSaveFileName( this,
+                                    "Save the current account book",
+                                    QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, QString() ).toString(),
+                                    dbscqt::kOpenFileDialogFilter );
+    if ( userSelectedSaveLocation.isEmpty() ) {
+      return false;
+    }
+    mImp->mPathToAccountBookFileOpt = userSelectedSaveLocation.toStdString();
+  }
+
+  bool const saveWasSuccessful = saveAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
+  if ( saveWasSuccessful ) {
+    handleAccountBookModified( false );
+  }
+
+  return saveWasSuccessful;
+}
+
+auto dbscqt::MainWindow::loadAccountBookInternal( std::filesystem::path const& accountBookFile )
+  -> std::shared_ptr< dbsc::AccountBook >
+{
   try {
-    loadedAccountBook =
-      std::make_shared< dbsc::AccountBook >( dbsc::readAccountBook< dbsc::TomlSerializer >( accountBookFile ) );
+    return std::make_shared< dbsc::AccountBook >( dbsc::readAccountBook< dbsc::TomlSerializer >( accountBookFile ) );
   } catch ( dbsc::DbscSerializationException const& error ) {
     auto const errorMessage =
       QString( "Could not load the account book due to the following error: %1" ).arg( error.what() );
     QMessageBox::warning( this, "File load error", errorMessage );
-    return;
+    return nullptr;
+  }
+}
+
+auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified() -> std::optional< bool >
+{
+  std::optional< bool > successfulSaveOpt {};
+  if ( mImp->mCurrentAccountBookIsModified ) {
+    auto const buttonPressed =
+      QMessageBox::question( this,
+                             "Save Prompt",
+                             "This account book currently has unsaved data. Save the file?",
+                             QMessageBox::StandardButtons( QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel ),
+                             QMessageBox::Cancel );
+
+    if ( buttonPressed != QMessageBox::Cancel ) {
+      if ( buttonPressed == QMessageBox::Yes ) {
+        successfulSaveOpt = saveAccountBook();
+      } else {
+        successfulSaveOpt = false;
+      }
+    } else {
+      // successfulSaveOpt = std::nullopt;
+    }
+  }
+  return successfulSaveOpt;
+}
+
+auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool
+{
+  BSLS_ASSERT( mImp->mCurrentAccountBookHandle );
+  try {
+    dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
+  } catch ( dbsc::DbscSerializationException const& error ) {
+    QMessageBox::warning(
+      this, "Error saving file", QString( "Could not save the current account book. Reason: %1" ).arg( error.what() ) );
+    return false;
   }
 
-  // Update Settings and application state
-  QSettings().setValue( dbscqt::kRecentAccountBookPathKey, QString::fromStdString( accountBookFile.string() ) );
-  mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
-  updateAccountBookHandle( loadedAccountBook );
+  return true;
 }
 
 void dbscqt::MainWindow::updateAccountBookHandle( std::shared_ptr< dbsc::AccountBook > newHandle )
 {
   mImp->mCurrentAccountBookHandle = newHandle;
-  handleAccountBookModified( false );
   Q_EMIT accountBookLoaded( mImp->mCurrentAccountBookHandle );
 }
 
