@@ -258,6 +258,8 @@ void dbscqt::MainWindow::showAboutPage()
   QTextStream tss { &markdownText };
   tss << R"(
   # Digital Budgeting System
+
+  Copyright (C) 2025 Terrance Williams (tjdwill)
   
   &nbsp;
 
