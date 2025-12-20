@@ -38,6 +38,7 @@ namespace {
   QString const kLastAccountBookFileDirectoryKey { "state/LastAccountBookFileDirectory" };
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
+  QString const kBaseWindowTitle { "Digital Budgeting System (DBS)" };
 } // namespace
 
 class MainWindow::Private
@@ -87,8 +88,8 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
     if ( loadedAccountBook ) {
       QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
                             QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
-      handleAccountBookModified( false );
       updateAccountBookHandle( loadedAccountBook );
+      handleAccountBookModified( false );
       mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
     }
   }
@@ -165,8 +166,8 @@ void dbscqt::MainWindow::createNewAccountBook()
     QInputDialog::getText( this, "Create an account book", "Owner Name:", QLineEdit::Normal, QString(), &userAccepted );
   if ( userAccepted && !accountBookOwner.isEmpty() ) {
     mImp->mPathToAccountBookFileOpt = std::nullopt; // No save path yet.
-    handleAccountBookModified( true );
     updateAccountBookHandle( std::make_shared< dbsc::AccountBook >( accountBookOwner.toStdString() ) );
+    handleAccountBookModified( true );
     // Show display page if it isn't already active.
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
   }
@@ -346,6 +347,14 @@ void dbscqt::MainWindow::updateAccountBookHandle( std::shared_ptr< dbsc::Account
 
 void dbscqt::MainWindow::updateWindowTitle( bool const accountBookIsModified )
 {
-  QMainWindow::setWindowTitle( accountBookIsModified ? "Digital Budgeting System (DBS)*"
-                                                     : "Digital Budgeting System (DBS)" );
+
+  if ( mImp->mCurrentAccountBookHandle ) {
+    QString const windowTitleWithAccountOwnerName =
+      QString( "%1 - %2" ).arg( dbscqt::kBaseWindowTitle ).arg( mImp->mCurrentAccountBookHandle->owner() );
+    MainWindow::setWindowTitle( accountBookIsModified ? QString( "%1*" ).arg( windowTitleWithAccountOwnerName )
+                                                      : windowTitleWithAccountOwnerName );
+  } else {
+    MainWindow::setWindowTitle( accountBookIsModified ? QString( "%1*" ).arg( dbscqt::kBaseWindowTitle )
+                                                      : dbscqt::kBaseWindowTitle );
+  }
 }
