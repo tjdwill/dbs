@@ -295,3 +295,12 @@ if (WIN32)
   )
   add_dependencies(deployQtExecutables ${deployable_targets})
 endif()
+
+include(GNUInstallDirs)
+install(TARGETS dbs)
+qt_generate_deploy_app_script(
+  TARGET dbs
+  OUTPUT_SCRIPT deploy_script
+  NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${deploy_script})
