@@ -75,7 +75,7 @@ public Q_SLOTS:
 
   /// Save the current account book to a user-specified location.
   /// On success, the new location is used for subsequent saving.
-  auto saveAs() -> std::optional< bool >;
+  auto saveAccountBookAs() -> std::optional< bool >;
 
   void showAboutPage();
   void showAboutQtPage();

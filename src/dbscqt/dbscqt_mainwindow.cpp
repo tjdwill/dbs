@@ -68,7 +68,7 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
     QObject::connect(
       mImp->mUi.mOpenAction, &QAction::triggered, this, &dbscqt::MainWindow::handleOpenAccountBookTriggered );
     QObject::connect( mImp->mUi.mSaveAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBook );
-    QObject::connect( mImp->mUi.mSaveAsAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAs );
+    QObject::connect( mImp->mUi.mSaveAsAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBookAs );
     QObject::connect( mImp->mUi.mExitAction, &QAction::triggered, this, &dbscqt::MainWindow::attemptExitProgram );
     QObject::connect( mImp->mUi.mAboutAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutPage );
     QObject::connect( mImp->mUi.mAboutQtAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutQtPage );
@@ -201,8 +201,10 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 
   if ( filePathOpt.has_value() ) {
 
-    QFileInfo const fileInfo { userSelectedFilePath };
-    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey, fileInfo.canonicalPath() );
+    std::filesystem::path const selectedFilePath { userSelectedFilePath.toStdString() };
+    std::filesystem::path const selectedFileParentDirectory { selectedFilePath.parent_path() };
+    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey,
+                          QString::fromStdString( selectedFileParentDirectory.string() ) );
     loadAccountBook( filePathOpt.value() );
 
   } else {
@@ -213,7 +215,7 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
 {
   if ( !mImp->mPathToAccountBookFileOpt.has_value() ) {
-    return saveAs();
+    return saveAccountBookAs();
   }
 
   // Use the currently cached file path.
@@ -227,27 +229,7 @@ auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
   return saveWasSuccessful;
 }
 
-auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool
-{
-  BSLS_ASSERT( mImp->mCurrentAccountBookHandle );
-
-  bool operationSuccessful = true;
-
-  try {
-    dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
-  } catch ( std::exception const& error ) {
-    QMessageBox::warning( this,
-                          "Error saving file",
-                          QString( "Could not save the current account book %1. Reason:\n\n%2" )
-                            .arg( filePath.string() )
-                            .arg( error.what() ) );
-    operationSuccessful = false;
-  }
-
-  return operationSuccessful;
-}
-
-auto dbscqt::MainWindow::saveAs() -> std::optional< bool >
+auto dbscqt::MainWindow::saveAccountBookAs() -> std::optional< bool >
 {
 
   std::optional< bool > saveWasSuccessfulOpt;
@@ -257,12 +239,16 @@ auto dbscqt::MainWindow::saveAs() -> std::optional< bool >
                                   QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, QString() ).toString(),
                                   dbscqt::kOpenFileDialogFilter );
   if ( !userSelectedSaveLocation.isEmpty() ) {
+    // Update QSettings directory key.
+    std::filesystem::path const selectedFilePath { userSelectedSaveLocation.toStdString() };
+    std::filesystem::path const selectedFileParentDirectory { selectedFilePath.parent_path() };
+    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey,
+                          QString::fromStdString( selectedFileParentDirectory.string() ) );
 
-    auto const filePath = std::filesystem::path( userSelectedSaveLocation.toStdString() );
-
-    bool const saveWasSuccessful = saveAccountBookInternal( filePath );
+    // Write the file.
+    bool const saveWasSuccessful = saveAccountBookInternal( selectedFilePath );
     if ( saveWasSuccessful ) {
-      mImp->mPathToAccountBookFileOpt = filePath;
+      mImp->mPathToAccountBookFileOpt = selectedFilePath;
       QSettings().setValue( dbscqt::kRecentAccountBookPathKey, userSelectedSaveLocation );
       handleAccountBookModified( false );
     }
@@ -386,6 +372,26 @@ auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
     };
   }
   return std::nullopt;
+}
+
+auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool
+{
+  BSLS_ASSERT( mImp->mCurrentAccountBookHandle );
+
+  bool operationSuccessful = true;
+
+  try {
+    dbsc::writeAccountBook< dbsc::TomlSerializer >( *mImp->mCurrentAccountBookHandle, filePath );
+  } catch ( std::exception const& error ) {
+    QMessageBox::warning( this,
+                          "Error saving file",
+                          QString( "Could not save the current account book %1. Reason:\n\n%2" )
+                            .arg( filePath.string() )
+                            .arg( error.what() ) );
+    operationSuccessful = false;
+  }
+
+  return operationSuccessful;
 }
 
 auto dbscqt::MainWindow::shouldAbortOperation() -> bool
