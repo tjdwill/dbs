@@ -68,6 +68,7 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
     QObject::connect(
       mImp->mUi.mOpenAction, &QAction::triggered, this, &dbscqt::MainWindow::handleOpenAccountBookTriggered );
     QObject::connect( mImp->mUi.mSaveAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAccountBook );
+    QObject::connect( mImp->mUi.mSaveAsAction, &QAction::triggered, this, &dbscqt::MainWindow::saveAs );
     QObject::connect( mImp->mUi.mExitAction, &QAction::triggered, this, &dbscqt::MainWindow::attemptExitProgram );
     QObject::connect( mImp->mUi.mAboutAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutPage );
     QObject::connect( mImp->mUi.mAboutQtAction, &QAction::triggered, this, &dbscqt::MainWindow::showAboutQtPage );
@@ -75,6 +76,7 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
       this, &dbscqt::MainWindow::accountBookLoaded, [this]( std::shared_ptr< dbsc::AccountBook > accountBookHandle ) {
         bool const accountBookIsLoaded = static_cast< bool >( accountBookHandle );
         mImp->mUi.mSaveAction->setEnabled( accountBookIsLoaded );
+        mImp->mUi.mSaveAsAction->setEnabled( accountBookIsLoaded );
         mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
       } );
   }
@@ -211,17 +213,10 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
 {
   if ( !mImp->mPathToAccountBookFileOpt.has_value() ) {
-    QString const userSelectedSaveLocation =
-      QFileDialog::getSaveFileName( this,
-                                    "Save the current account book",
-                                    QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, QString() ).toString(),
-                                    dbscqt::kOpenFileDialogFilter );
-    if ( userSelectedSaveLocation.isEmpty() ) {
-      return std::nullopt;
-    }
-    mImp->mPathToAccountBookFileOpt = userSelectedSaveLocation.toStdString();
+    return saveAs();
   }
 
+  // Use the currently cached file path.
   bool const saveWasSuccessful = saveAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
   if ( saveWasSuccessful ) {
     handleAccountBookModified( false );
@@ -250,6 +245,31 @@ auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& f
   }
 
   return operationSuccessful;
+}
+
+auto dbscqt::MainWindow::saveAs() -> std::optional< bool >
+{
+
+  std::optional< bool > saveWasSuccessfulOpt;
+  QString const userSelectedSaveLocation =
+    QFileDialog::getSaveFileName( this,
+                                  "Save the current account book",
+                                  QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, QString() ).toString(),
+                                  dbscqt::kOpenFileDialogFilter );
+  if ( !userSelectedSaveLocation.isEmpty() ) {
+
+    auto const filePath = std::filesystem::path( userSelectedSaveLocation.toStdString() );
+
+    bool const saveWasSuccessful = saveAccountBookInternal( filePath );
+    if ( saveWasSuccessful ) {
+      mImp->mPathToAccountBookFileOpt = filePath;
+      QSettings().setValue( dbscqt::kRecentAccountBookPathKey, userSelectedSaveLocation );
+      handleAccountBookModified( false );
+    }
+    saveWasSuccessfulOpt = saveWasSuccessful;
+  }
+
+  return saveWasSuccessfulOpt;
 }
 
 void dbscqt::MainWindow::showAboutPage()
@@ -281,6 +301,7 @@ void dbscqt::MainWindow::showAboutPage()
   - [Exchange](https://icons8.com/icon/61743/exchange) icon by [Icons8](https://icons8.com) 
   - [Plus](https://icons8.com/icon/1501/plus) icon by [Icons8](https://icons8.com) 
   - [Save](https://icons8.com/icon/18765/save) icon by [Icons8](https://icons8.com) 
+  - [Save as](https://icons8.com/icon/3701/save-as) icon by [Icons8](https://icons8.com) 
   - [Toggle Indeterminate](https://icons8.com/icon/123425/toggle-indeterminate) icon by [Icons8](https://icons8.com) 
   - [U.S. Dollar Sign](https://icons8.com/icon/7172/us-dollar-circled) icon by [Icons8](https://icons8.com) 
 
