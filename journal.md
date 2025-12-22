@@ -2,8 +2,9 @@
 
 ## 21 December 2025
 
-I tweaked the window title and the about page. Finally, I update the README with
-documentation for using the application.
+I tweaked the window title and the about page. Finally, I updated the README with
+documentation for using the application. With these changes, I was able to
+release a test version (PY!).
 
 ## 20 December 2025
 
@@ -42,7 +43,7 @@ TODO:
 - [ ] Add "add transaction" button to dbscqt_accountmodel.m.cpp for feature completeness.
 - [x] dbscqt_accountbookwidget: Add logic for creating accounts.
 - [x] Add button icons.
-- [ ] MainWindow 
+- [x] MainWindow 
 
 ## 12 December 2025
 
@@ -356,7 +357,7 @@ notes = """"""
 
 ## 8 July 2025
 
-- Attempted to implement serailization interface as a concept
+- Attempted to implement serialization interface as a concept
     - Still much to learn. Doing it as an abstract base class instead.
 
 ## 7 July 2025
@@ -412,7 +413,7 @@ The broker would have at least three static functions:
  
 1. a function to perform a transaction between two `dbsc::Account` objects.
 0. a function to perform a deposit into a `dbsc::Account`.
-0. a function to perform a withdrawl from a `dbsc::Account`.
+0. a function to perform a withdrawal from a `dbsc::Account`.
 
 ## 4 July 2025
 
@@ -462,7 +463,7 @@ for the accounts to have the same transaction IDs.
 
 - Transaction ID (uuid)
 - Date Time
-- Transaction Amount (+Deposit, -Withdrawl)
+- Transaction Amount (+Deposit, -Withdrawal)
 - Source (?)
 - Additional notes
 
@@ -510,11 +511,10 @@ possible before beginning the work of solving it.
 
 ## Living List of To-Dos
 
-- [ ] Create a serialization schema
-- [ ] Implement monetary calculations
-- [ ] Determine how to generate unique IDs.
-- [ ] Design the UI (down the line)
-- [ ] 
+- [x] Create a serialization schema
+- [x] Implement monetary calculations
+- [x] Determine how to generate unique IDs.
+- [x] Design the UI (down the line)
 
 ## Libraries
 
