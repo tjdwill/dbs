@@ -14,10 +14,10 @@
 
 #include <dbscqt_transactionitem.h>
 
-#include <QString>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QUuid>
+#include <QtCore/QString>
+#include <QtCore/QUuid>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
 
 #include <memory>
 

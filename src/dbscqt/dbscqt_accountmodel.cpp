@@ -6,7 +6,7 @@
 
 #include <bsls_assert.h>
 
-#include <QTimeZone>
+#include <QtCore/QTimeZone>
 
 #include <memory>
 #include <stdexcept>

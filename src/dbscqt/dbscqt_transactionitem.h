@@ -11,9 +11,9 @@
 //
 //@DESCRIPTION: This component defines a means to represent displayable transaction data.
 
-#include <QDateTime>
-#include <QString>
-#include <QUuid>
+#include <QtCore/QDateTime>
+#include <QtCore/QString>
+#include <QtCore/QUuid>
 
 namespace dbsc {
 class Account;

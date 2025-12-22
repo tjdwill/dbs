@@ -5,12 +5,12 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_transactionitem.h>
 
-#include <QApplication>
-#include <QHeaderView>
-#include <QMainWindow>
-#include <QTableView>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 #include <filesystem>
 

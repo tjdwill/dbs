@@ -14,8 +14,8 @@
 //@DESCRIPTION: This component defines functions that facilitate conditional deletion
 //  of QObjects.
 
-#include <QObject>
-#include <QPointer>
+#include <QtCore/QObject>
+#include <QtCore/QPointer>
 
 namespace dbscqt {
 /// Deletes QObjects that are unparented.

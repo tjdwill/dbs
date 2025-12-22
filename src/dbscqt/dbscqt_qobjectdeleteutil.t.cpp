@@ -3,9 +3,9 @@
 
 #include <bsls_assert.h>
 
-#include <QObject>
-#include <QPointer>
-#include <QScopedPointer>
+#include <QtCore/QObject>
+#include <QtCore/QPointer>
+#include <QtCore/QScopedPointer>
 
 namespace {
 struct DbscqtQObjectDeleteTestSuite

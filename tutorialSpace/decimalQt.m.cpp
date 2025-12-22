@@ -7,7 +7,7 @@
 #include <bsl_sstream.h>
 #include <bsl_string.h>
 
-#include <QString>
+#include <QtCore/QString>
 
 #include <cassert>
 

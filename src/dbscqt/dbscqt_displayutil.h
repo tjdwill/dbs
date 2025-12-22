@@ -15,9 +15,9 @@
 
 #include <bdldfp_decimal.fwd.h>
 
-#include <QDateTime>
-#include <QString>
-#include <QUuid>
+#include <QtCore/QDateTime>
+#include <QtCore/QString>
+#include <QtCore/QUuid>
 
 namespace dbscqt {
 struct DisplayUtil

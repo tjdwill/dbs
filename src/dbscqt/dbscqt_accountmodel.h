@@ -10,12 +10,12 @@
 //@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
 //  the dbsc::Account class.
 
-#include <QAbstractTableModel>
-#include <QDateTime>
-#include <QModelIndex>
-#include <QString>
-#include <QUuid>
-#include <QVariant>
+#include <QtCore/QAbstractTableModel>
+#include <QtCore/QDateTime>
+#include <QtCore/QModelIndex>
+#include <QtCore/QString>
+#include <QtCore/QUuid>
+#include <QtCore/QVariant>
 
 #include <memory>
 #include <vector>

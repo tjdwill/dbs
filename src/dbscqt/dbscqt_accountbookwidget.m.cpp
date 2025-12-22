@@ -4,11 +4,11 @@
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
 
-#include <QApplication>
-#include <QBoxLayout>
-#include <QMainWindow>
-#include <QScopedPointer>
-#include <QWidget>
+#include <QtCore/QScopedPointer>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QWidget>
 
 #include <filesystem>
 #include <memory>

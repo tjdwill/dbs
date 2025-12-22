@@ -5,7 +5,7 @@
 #include <bdldfp_decimal.h>
 #include <bsls_assert.h>
 
-#include <QString>
+#include <QtCore/QString>
 
 #include <concepts>
 

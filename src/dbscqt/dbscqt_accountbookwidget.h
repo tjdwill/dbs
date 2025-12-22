@@ -12,8 +12,8 @@
 
 #include <dbscqt_transactionitem.h>
 
-#include <QUuid>
-#include <QWidget>
+#include <QtCore/QUuid>
+#include <QtWidgets/QWidget>
 
 #include <memory>
 
