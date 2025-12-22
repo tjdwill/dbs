@@ -57,5 +57,5 @@ else ()
 endif()
 
 install(FILES LICENSE.txt
-  DESTINATION ${CMAKE_INSTALL_PREFIX}
+  TYPE DATA
 )
