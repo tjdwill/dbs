@@ -269,7 +269,7 @@ void dbscqt::MainWindow::showAboutPage()
   tss << R"(
   # Digital Budgeting System
 
-  Copyright (C) 2025 Terrance Williams (tjdwill)
+  Copyright &copy; 2025 Terrance Williams (tjdwill)
   
   &nbsp;
 
