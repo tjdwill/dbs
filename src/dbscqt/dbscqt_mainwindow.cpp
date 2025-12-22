@@ -41,7 +41,7 @@ namespace {
   QString const kLastAccountBookFileDirectoryKey { "state/LastAccountBookFileDirectory" };
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
-  QString const kBaseWindowTitle { QObject::tr( "Digital Budgeting System (DBS)" ) };
+  QString const kBaseWindowTitle { QObject::tr( "Digital Budgeting System" ) };
 } // namespace
 
 class MainWindow::Private
