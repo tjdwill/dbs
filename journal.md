@@ -1,5 +1,21 @@
 # DBS Journal
 
+## 21 December 2025
+
+I tweaked the window title and the about page. Finally, I update the README with
+documentation for using the application.
+
+## 20 December 2025
+
+Experimented with CMake install to create a basic distribution for Windows.
+I will need to learn how to build a shared library version of DBS on Windows as
+well as correct the installation on Linux. The install script does not appear to
+copy Qt's platform plugins into the installation directory.
+
+- Learn how to create _declspec macro files.
+- Learn to build w/ shared libraries with correct linking
+- Debug the Linux installation.
+
 ## 19 December 2025
 
 I completed the draft of the DBS application. I'm not too ecstatic with how some
