@@ -60,7 +60,7 @@ A *transaction* in DBS is a transfer of money. While an active account is
 selected, pressing the *Transact* button will bring up the following dialog:
 
 <p align="center">
-    <img src="https://github.com/tjdwill/dbs/blob/assets/dbsImages/transaction.png" alt="Transaction Dialog" />
+    <img src="https://github.com/tjdwill/dbs/blob/assets/dbsImages/transactionDialog.png" alt="Transaction Dialog" />
 </p>
 
 To make a deposit into the selected account, enter a positive number into the
