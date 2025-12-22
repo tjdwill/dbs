@@ -53,3 +53,21 @@ This dependency is what is used for serialization (data-persistence).
 I use `aqtinstall` to get a working Qt installation. Those who don't mind making a Qt account can
 download an installation. Building from source is *also* an option, but I haven't been able to get
 that to work.
+
+After installing the dependencies, create a `CMakeUserPresets.json` file in the
+project's top-level directory. This file will contain information specific to
+your system such as defining CMake cache variables and pointing to the correct
+dependency locations.
+
+## Icons
+
+Icons used in this project are not included in the Git repository due to
+licensing. See [the icons README](/resources/icons/README.md) for links to
+download the icons for your system.
+
+## Executable type
+
+Currently, this project is built with the expectation of static linking. I am
+still in the process of learning about to shared libraries work. I intend to
+read about Windows' symbol exports as well as experiement with ensuring proper
+build behavior on Windows and Linux in the near future.
