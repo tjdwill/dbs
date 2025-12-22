@@ -143,12 +143,12 @@ auto dbscqt::AccountBookTreeWidget::accountItemFromId( QUuid const accountId ) c
 
 auto dbscqt::AccountBookTreeWidget::accountItemData( QUuid const accountId ) const -> dbscqt::AccountItemData const&
 {
-  return mImp->mAccountItems.at( accountId )->accountItemData();
+  return accountItemFromId( accountId )->accountItemData();
 }
 
 auto dbscqt::AccountBookTreeWidget::accountModel( QUuid const accountId ) const -> dbscqt::AccountModel*
 {
-  return mImp->mAccountItems.at( accountId )->accountModel();
+  return accountItemFromId( accountId )->accountModel();
 }
 
 auto dbscqt::AccountBookTreeWidget::activeAccountItems() const -> std::vector< dbscqt::AccountItem* >
@@ -169,7 +169,7 @@ auto dbscqt::AccountBookTreeWidget::activeAccountItems() const -> std::vector< d
 
 auto dbscqt::AccountBookTreeWidget::accountItemDataMut( QUuid const accountId ) -> dbscqt::AccountItemData&
 {
-  return mImp->mAccountItems.at( accountId )->accountItemDataMut();
+  return accountItemFromId( accountId )->accountItemDataMut();
 }
 
 auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCandidate ) -> bool
