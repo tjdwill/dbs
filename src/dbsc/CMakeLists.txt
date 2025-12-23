@@ -27,6 +27,7 @@ target_sources(dbsc
       dbsc_accountbook.h
       dbsc_dbscserializer.h
       dbsc_tomlserializer.h
+      ${CMAKE_CURRENT_BINARY_DIR}/dbsc_sharedapi.h
 )
 target_link_libraries(dbsc
   PUBLIC
