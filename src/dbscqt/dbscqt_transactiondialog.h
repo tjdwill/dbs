@@ -12,6 +12,8 @@
 //  work with the data stored in dbscqt::AccountBookTreeWidget and
 //  dbscqt::AccountBookWidget.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtCore/QString>
 #include <QtCore/QUuid>
 #include <QtWidgets/QDialog>
@@ -29,7 +31,7 @@ namespace dbscqt {
 
 /// This dialog's getter methods only return valid values if the dialog was
 /// accepted. Connect to this widget's `accepted` signal
-class TransactionDialog : public QDialog
+class DBSCQT_API TransactionDialog : public QDialog
 {
   Q_OBJECT
 public:

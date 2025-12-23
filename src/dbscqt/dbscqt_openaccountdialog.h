@@ -9,6 +9,8 @@
 //
 //@DESCRIPTION: This component defines a dialog for opening an account in DBS.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtCore/QString>
 #include <QtWidgets/QDialog>
 
@@ -19,7 +21,7 @@ class OpenAccountDialog;
 } // namespace Ui
 
 namespace dbscqt {
-class OpenAccountDialog : public QDialog
+class DBSCQT_API OpenAccountDialog : public QDialog
 {
   Q_OBJECT
 public:

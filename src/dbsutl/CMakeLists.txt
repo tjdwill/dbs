@@ -3,7 +3,8 @@
 include(GenerateExportHeader)
 
 # Define a target that allows the propagation of the CMake-generated export header.
-add_library(dbsutl)
+# Currently build static because there are no symbols to export.
+add_library(dbsutl STATIC)
 generate_export_header(dbsutl
   EXPORT_FILE_NAME dbsutl_sharedapi.h
   EXPORT_MACRO_NAME DBSUTL_API

@@ -11,6 +11,8 @@
 //
 //@DESCRIPTION: This component defines a means to represent displayable transaction data.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtCore/QDateTime>
 #include <QtCore/QString>
 #include <QtCore/QUuid>
@@ -34,7 +36,7 @@ struct TransactionItemData
 
 /// Represents a row in the view. Its data is the data associated with a single
 /// transaction.
-class TransactionItem
+class DBSCQT_API TransactionItem
 {
 public:
   /// @note @param transactionAmount is a QString due to its representation in
@@ -62,10 +64,12 @@ private:
   std::unique_ptr< Private > mImp;
 };
 
-[[nodiscard]] auto createTransactionItemData( dbsc::Transaction const& transaction,
-                                              dbsc::AccountBook const& accountBook ) -> dbscqt::TransactionItemData;
+[[nodiscard]] DBSCQT_API auto createTransactionItemData( dbsc::Transaction const& transaction,
+                                                         dbsc::AccountBook const& accountBook )
+  -> dbscqt::TransactionItemData;
 /// @return a sequence of transaction items sorted in ascending date order.
-[[nodiscard]] auto createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
+[[nodiscard]] DBSCQT_API auto createTransactionItems( dbsc::Account const& account,
+                                                      dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >;
 } // namespace dbscqt
 #endif

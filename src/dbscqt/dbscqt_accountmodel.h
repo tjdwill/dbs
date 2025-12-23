@@ -10,6 +10,8 @@
 //@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
 //  the dbsc::Account class.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QDateTime>
 #include <QtCore/QModelIndex>
@@ -28,7 +30,7 @@ namespace dbscqt {
 class TransactionItem;
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
-class AccountModel : public QAbstractTableModel
+class DBSCQT_API AccountModel : public QAbstractTableModel
 {
   Q_OBJECT
 

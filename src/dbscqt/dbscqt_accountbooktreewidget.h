@@ -12,6 +12,7 @@
 //@DESCRIPTION: This component defines a tree widget for the account book for use in the
 //  GUI display.
 
+#include <dbscqt_sharedapi.h>
 #include <dbscqt_transactionitem.h>
 
 #include <QtCore/QString>
@@ -40,9 +41,9 @@ struct AccountItemData
   bool mIsActive { true };
 };
 
-[[nodiscard]] auto createAccountItemData( dbsc::Account const& account ) -> dbscqt::AccountItemData;
+[[nodiscard]] DBSCQT_API auto createAccountItemData( dbsc::Account const& account ) -> dbscqt::AccountItemData;
 
-class AccountItem : public QTreeWidgetItem
+class DBSCQT_API AccountItem : public QTreeWidgetItem
 {
 public:
   // Since AccountItems are classified according to account active/inactive status, there will never be
@@ -70,7 +71,7 @@ private:
   std::unique_ptr< Private > mImp;
 };
 
-class AccountBookTreeWidget : public QTreeWidget
+class DBSCQT_API AccountBookTreeWidget : public QTreeWidget
 {
   Q_OBJECT
 public:

@@ -14,12 +14,14 @@
 //@DESCRIPTION: This component defines functions that facilitate conditional deletion
 //  of QObjects.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 
 namespace dbscqt {
 /// Deletes QObjects that are unparented.
-struct OrphanDeleterPrivate
+struct DBSCQT_INTERNAL OrphanDeleterPrivate
 {
   void operator()( QObject* objectHandle )
   {
@@ -31,12 +33,12 @@ struct OrphanDeleterPrivate
 
 /// Always calls delete on the object handle (valid because delete on nullptr is a
 /// no-op).
-struct UnconditionalDeleterPrivate
+struct DBSCQT_INTERNAL UnconditionalDeleterPrivate
 {
   void operator()( QObject* objectHandle ) { delete objectHandle; };
 };
 
-struct QObjectDeleteUtil
+struct DBSCQT_API QObjectDeleteUtil
 {
 
   template< typename DeletionPolicy >

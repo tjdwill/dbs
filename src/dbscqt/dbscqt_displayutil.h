@@ -12,6 +12,7 @@
 
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
+#include <dbscqt_sharedapi.h>
 
 #include <bdldfp_decimal.fwd.h>
 
@@ -20,7 +21,7 @@
 #include <QtCore/QUuid>
 
 namespace dbscqt {
-struct DisplayUtil
+struct DBSCQT_API DisplayUtil
 {
   /// @return Formatted string for displaying shortened uuid + name.
   [[nodiscard]] static auto accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString;

@@ -10,6 +10,7 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
+#include <dbscqt_sharedapi.h>
 #include <dbscqt_transactionitem.h>
 
 #include <QtCore/QUuid>
@@ -25,7 +26,7 @@ namespace dbscqt {
 class AccountItem;
 class TransactionItem;
 
-class AccountBookWidget : public QWidget
+class DBSCQT_API AccountBookWidget : public QWidget
 {
   Q_OBJECT
 public:

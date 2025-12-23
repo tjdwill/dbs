@@ -11,6 +11,8 @@
 ///@DESCRIPTION: This component defines the application's main window, coordinating the
 ///  logic responsible for managing account books.
 
+#include <dbscqt_sharedapi.h>
+
 #include <QtWidgets/QMainWindow>
 
 #include <filesystem>
@@ -24,7 +26,7 @@ class AccountBook;
 } // namespace dbsc
 
 namespace dbscqt {
-class MainWindow final : public QMainWindow
+class DBSCQT_API MainWindow final : public QMainWindow
 {
   Q_OBJECT
 public:
