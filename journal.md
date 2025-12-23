@@ -1,5 +1,23 @@
 # DBS Journal
 
+## 22 December 2025
+
+I figured out how to build and install with shared libraries (PY)! I'll write
+notes later about the following:
+
+- CMake error on Windows 
+  - Building SHARED
+  - Tries to link, but can't find `.lib` file
+  - Windows uses `.lib` for comp-time linking and the `.dll` for runtime loading
+  - `.lib` isn't produced if no symbols are exported
+- Symbol visibility
+- GenerateExportHeader (`generate_export_header()` command)
+- CMake install
+- John Lakos-style architecture while only producing package-level targets.
+  - No more granular, component-level `add_library()` commands.
+  - Components still require the inclusion of the headers on which they depend.
+  - Test drivers can still be individual targets.
+
 ## 21 December 2025
 
 I tweaked the window title and the about page. Finally, I updated the README with
