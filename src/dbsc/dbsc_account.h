@@ -15,6 +15,7 @@
 //  description.
 
 #include <dbsc_registerexception.h>
+#include <dbsc_sharedapi.h>
 #include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
 
@@ -33,7 +34,7 @@ DBSC_REGISTER_EXCEPTION( InactiveAccountException, "Attempted to modify an inact
 /// two states, "active" and "inactive," which is the way this program disables
 /// modifying the Account further without actually deleting the data (someone
 /// may wish to reactivate at a future date).
-class Account
+class DBSC_API Account
 {
 public:
   using const_iterator =                                          // NOLINT

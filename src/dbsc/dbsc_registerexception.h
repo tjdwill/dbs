@@ -37,14 +37,17 @@
 
 /// Include necesary headers for exceptions. This is so other components using this macro
 /// have the necessary components "for free".
+#include <dbsc_sharedapi.h>
+
 #include <exception>
 #include <string>
+
 /// @param EXCEPTION_NAME: the name of the exception class
 /// @param DEFAULT_MESSAGE: the message that is passed to the default constructor.
 ///     @note This argument should always be enclosed in quotation marks, just like
 ///       defining a regular string literal. Even the empty default case should use `""`.
 #define DBSC_REGISTER_EXCEPTION( EXCEPTION_NAME, DEFAULT_MESSAGE )                                                     \
-  class EXCEPTION_NAME : public std::exception                                                                         \
+  class DBSC_API EXCEPTION_NAME : public std::exception                                                                \
   {                                                                                                                    \
   public:                                                                                                              \
     EXCEPTION_NAME( std::string const& message ) noexcept                                                              \

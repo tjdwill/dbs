@@ -16,6 +16,7 @@
 //  - DateTime
 //  - Extra Notes
 
+#include <dbsc_sharedapi.h>
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
@@ -37,7 +38,7 @@ using TimeStamp =
 /// income.). Generally, dbsc::Transactions are intended to be made in pairs.
 /// The two pairs will have swapped party IDs and transaction amounts of
 /// opposing signs.
-class Transaction
+class DBSC_API Transaction
 {
 public:
   [[nodiscard]] Transaction( UuidString const& transactionId,
@@ -71,7 +72,7 @@ private:
   std::string mNotes {};
 };
 
-struct TransactionUtil
+struct DBSC_API TransactionUtil
 {
   [[nodiscard]] static auto currencyToString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
   [[nodiscard]] static auto currencyFromString( std::string_view borrowedStr ) -> BloombergLP::bdldfp::Decimal64;

@@ -14,6 +14,7 @@
 
 #include <dbsc_account.h>
 #include <dbsc_registerexception.h>
+#include <dbsc_sharedapi.h>
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.fwd.h>
@@ -33,7 +34,7 @@ DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 /// over its Accounts by way of key-value pairs [AccountId, Account]. It is
 /// also responsible for recording transactions and can open new accounts as
 /// well as toggle the status of an existing status (active/closed).
-class AccountBook
+class DBSC_API AccountBook
 
 {
 public:

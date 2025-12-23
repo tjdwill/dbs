@@ -11,6 +11,7 @@
 //  dbsc::DbsSerializer.
 
 #include <dbsc_dbscserializer.h>
+#include <dbsc_sharedapi.h>
 
 #include <toml++/toml.hpp>
 
@@ -23,7 +24,7 @@ class AccountBook;
 class UuidString;
 
 /// This class adheres to the dbsc::DbscSerializer concept.
-class TomlSerializer
+class DBSC_API TomlSerializer
 {
 public:
   using InputType  = toml::table;

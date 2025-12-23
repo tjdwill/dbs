@@ -34,6 +34,7 @@
 ///
 
 #include <dbsc_registerexception.h>
+#include <dbsc_sharedapi.h>
 
 #include <uuid.h>
 
@@ -56,7 +57,7 @@ DBSC_REGISTER_EXCEPTION( InvalidUuidException, "Input is not a UUID-conformant s
 /// construction will always return the null UUID).
 ///
 /// Note that this class assumes UUIDv4, but should work with others.
-class UuidString
+class DBSC_API UuidString
 {
 public:
   // Constructors enforce the invariant that the object represents a valid UUID.
@@ -78,10 +79,10 @@ private:
   std::string mData {};
 };
 
-auto operator<<( std::ostream& oss, UuidString const& str ) -> std::ostream&;
+DBSC_API auto operator<<( std::ostream& oss, UuidString const& str ) -> std::ostream&;
 
 /// Interface for generating Uuids.
-struct UuidStringUtil
+struct DBSC_API UuidStringUtil
 {
   /// Attempt to construct a UuidString from an external source. Throws
   /// `dbsc::InvalidUuidException` if input is non-conformant.
