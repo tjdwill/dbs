@@ -35,6 +35,7 @@ target_link_libraries(dbsc
     stduuid
     tomlplusplus::tomlplusplus
 )
+install(TARGETS dbsc)
 
 add_executable(dbsc_uuidstring.t)
 target_sources(dbsc_uuidstring.t PRIVATE dbsc_uuidstring.t.cpp)

@@ -72,6 +72,7 @@ target_link_libraries(dbscqt
     Qt::Gui
     Qt::Widgets
 )
+install(TARGETS dbscqt)
 
 
 add_executable(dbscqt_qobjectdeleteutil.t dbscqt_qobjectdeleteutil.t.cpp)
