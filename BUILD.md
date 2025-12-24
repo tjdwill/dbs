@@ -64,10 +64,3 @@ dependency locations.
 Icons used in this project are not included in the Git repository due to
 licensing. See [the icons README](/resources/icons/README.md) for links to
 download the icons for your system.
-
-## Executable type
-
-Currently, this project is built with the expectation of static linking. I am
-still in the process of learning about to shared libraries work. I intend to
-read about Windows' symbol exports as well as experiement with ensuring proper
-build behavior on Windows and Linux in the near future.
