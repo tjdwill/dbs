@@ -30,7 +30,7 @@ namespace dbscqt {
 class TransactionItem;
 
 /// An implementation of the QAbstractTableModel for a dbsc::Account.
-class DBSCQT_API AccountModel : public QAbstractTableModel
+class DBSCQT_API AccountModel final : public QAbstractTableModel
 {
   Q_OBJECT
 
