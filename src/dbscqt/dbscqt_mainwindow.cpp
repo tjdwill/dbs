@@ -5,6 +5,7 @@
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
+#include <dbscqt_preferencekeys.h>
 
 #include <bsls_assert.h>
 
@@ -32,13 +33,6 @@
 namespace dbscqt {
 
 namespace {
-
-  QString const kRecentAccountBookPathKey { "state/recentAccountBook" };
-  /// Used to detect if the program shutdown via crash.
-  QString const kAccountBookIsCurrentlyModified { "state/AccountBookUpToDate" };
-  QString const kWindowGeometryKey { "window/Geometry" };
-  QString const kWindowStateKey { "window/State" };
-  QString const kLastAccountBookFileDirectoryKey { "state/LastAccountBookFileDirectory" };
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
   QString const kBaseWindowTitle { QObject::tr( "Digital Budgeting System" ) };
@@ -84,7 +78,8 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   // Attempt to load the most recently-used account book
   /// TODO: Add a check to determine if the program shutdown properly in the previous
   /// session.
-  auto const mostRecentAccountBookPath = QSettings().value( dbscqt::kRecentAccountBookPathKey, QString() ).toString();
+  auto const mostRecentAccountBookPath =
+    QSettings().value( dbscqt::PreferenceKeys::kRecentAccountBookPathKey, QString() ).toString();
   mImp->mPathToAccountBookFileOpt = mostRecentAccountBookPath.isEmpty()
                                     ? std::nullopt
                                     : std::optional< std::filesystem::path >( mostRecentAccountBookPath.toStdString() );
@@ -112,8 +107,8 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   }
 
   // Window's initial state.
-  restoreGeometry( QSettings().value( dbscqt::kWindowGeometryKey ).toByteArray() );
-  restoreState( QSettings().value( dbscqt::kWindowStateKey ).toByteArray() );
+  restoreGeometry( QSettings().value( dbscqt::PreferenceKeys::kWindowGeometryKey ).toByteArray() );
+  restoreState( QSettings().value( dbscqt::PreferenceKeys::kWindowStateKey ).toByteArray() );
   if ( mImp->mCurrentAccountBookHandle ) {
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
   } else {
@@ -137,8 +132,8 @@ auto dbscqt::MainWindow::attemptExitProgram() -> bool
     return false;
   }
 
-  QSettings().setValue( dbscqt::kWindowGeometryKey, saveGeometry() );
-  QSettings().setValue( dbscqt::kWindowStateKey, saveState() );
+  QSettings().setValue( dbscqt::PreferenceKeys::kWindowGeometryKey, saveGeometry() );
+  QSettings().setValue( dbscqt::PreferenceKeys::kWindowStateKey, saveState() );
   mImp->mMainWindowIsClosing = true;
   close();
   return true;
@@ -154,7 +149,7 @@ auto dbscqt::MainWindow::closeAccountBook() -> bool
   updateAccountBookHandle( nullptr );
   handleAccountBookModified( false );
   mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
-  QSettings().setValue( dbscqt::kRecentAccountBookPathKey, QString() );
+  QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBookPathKey, QString() );
   return true;
 }
 
@@ -179,7 +174,7 @@ void dbscqt::MainWindow::createNewAccountBook()
 void dbscqt::MainWindow::handleAccountBookModified( bool const isModified )
 {
   mImp->mCurrentAccountBookIsModified = isModified;
-  QSettings().setValue( dbscqt::kAccountBookIsCurrentlyModified, isModified );
+  QSettings().setValue( dbscqt::PreferenceKeys::kAccountBookIsCurrentlyModified, isModified );
   mImp->mUi.mSaveAction->setEnabled( isModified );
   updateWindowTitle( isModified );
 }
@@ -190,7 +185,8 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
     return;
   }
 
-  auto const startingDirectory = QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, "/home" ).toString();
+  auto const startingDirectory =
+    QSettings().value( dbscqt::PreferenceKeys::kLastAccountBookFileDirectoryKey, "/home" ).toString();
   auto const userSelectedFilePath =
     QFileDialog::getOpenFileName( this, "Open an account book", startingDirectory, dbscqt::kOpenFileDialogFilter );
 
@@ -203,7 +199,7 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 
     std::filesystem::path const selectedFilePath { userSelectedFilePath.toStdString() };
     std::filesystem::path const selectedFileParentDirectory { selectedFilePath.parent_path() };
-    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey,
+    QSettings().setValue( dbscqt::PreferenceKeys::kLastAccountBookFileDirectoryKey,
                           QString::fromStdString( selectedFileParentDirectory.string() ) );
     loadAccountBook( filePathOpt.value() );
 
@@ -222,7 +218,7 @@ auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
   bool const saveWasSuccessful = saveAccountBookInternal( mImp->mPathToAccountBookFileOpt.value() );
   if ( saveWasSuccessful ) {
     handleAccountBookModified( false );
-    QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
+    QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBookPathKey,
                           QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
   }
 
@@ -233,23 +229,23 @@ auto dbscqt::MainWindow::saveAccountBookAs() -> std::optional< bool >
 {
 
   std::optional< bool > saveWasSuccessfulOpt;
-  QString const userSelectedSaveLocation =
-    QFileDialog::getSaveFileName( this,
-                                  "Save the current account book",
-                                  QSettings().value( dbscqt::kLastAccountBookFileDirectoryKey, QString() ).toString(),
-                                  dbscqt::kOpenFileDialogFilter );
+  QString const userSelectedSaveLocation = QFileDialog::getSaveFileName(
+    this,
+    "Save the current account book",
+    QSettings().value( dbscqt::PreferenceKeys::kLastAccountBookFileDirectoryKey, QString() ).toString(),
+    dbscqt::kOpenFileDialogFilter );
   if ( !userSelectedSaveLocation.isEmpty() ) {
     // Update QSettings directory key.
     std::filesystem::path const selectedFilePath { userSelectedSaveLocation.toStdString() };
     std::filesystem::path const selectedFileParentDirectory { selectedFilePath.parent_path() };
-    QSettings().setValue( dbscqt::kLastAccountBookFileDirectoryKey,
+    QSettings().setValue( dbscqt::PreferenceKeys::kLastAccountBookFileDirectoryKey,
                           QString::fromStdString( selectedFileParentDirectory.string() ) );
 
     // Write the file.
     bool const saveWasSuccessful = saveAccountBookInternal( selectedFilePath );
     if ( saveWasSuccessful ) {
       mImp->mPathToAccountBookFileOpt = selectedFilePath;
-      QSettings().setValue( dbscqt::kRecentAccountBookPathKey, userSelectedSaveLocation );
+      QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBookPathKey, userSelectedSaveLocation );
       handleAccountBookModified( false );
     }
     saveWasSuccessfulOpt = saveWasSuccessful;
@@ -342,7 +338,7 @@ void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBo
 
   if ( loadedAccountBook ) {
     mImp->mPathToAccountBookFileOpt = accountBookFile;
-    QSettings().setValue( dbscqt::kRecentAccountBookPathKey,
+    QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBookPathKey,
                           QString::fromStdString( mImp->mPathToAccountBookFileOpt.value().string() ) );
     updateAccountBookHandle( loadedAccountBook );
     handleAccountBookModified( false );
