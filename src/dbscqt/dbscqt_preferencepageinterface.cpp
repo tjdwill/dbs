@@ -15,14 +15,17 @@ void dbscqt::PreferencePageInterface::apply()
   for ( auto const& [settingKey, newValue] : mModifiedSettings ) {
     QSettings().setValue( settingKey, newValue );
   }
+  Q_EMIT settingsApplied( preferenceDisplayName() );
 }
 
-void dbscqt::PreferencePageInterface::resetModifiedSettings()
+void dbscqt::PreferencePageInterface::discardModifiedSettings()
 {
   mModifiedSettings.clear();
+  Q_EMIT modifiedSettingsDiscarded( preferenceDisplayName() );
 }
 
-void dbscqt::PreferencePageInterface::handleSettingModified( QString const& settingKey,
+void dbscqt::PreferencePageInterface::handleSettingModified( QString const& /* preferencePageIdentifier */,
+                                                             QString const& settingKey,
                                                              QVariant const& proposedNewValue )
 {
   // Inserts the key-value pair if it does not exist already in the store.
