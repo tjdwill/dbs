@@ -1,5 +1,12 @@
 # DBS Journal
 
+## 27-28 December 2025
+
+- Create a preference widget to control color scheme (and other preferences in
+  the future).
+- TODO: Fix sizing issue between the QListWidget and the QStackedWidget in the
+  PreferenceWidget.
+
 ## 22 December 2025
 
 I figured out how to build and install with shared libraries (PY)! I'll write
