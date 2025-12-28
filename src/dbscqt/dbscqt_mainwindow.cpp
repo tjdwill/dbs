@@ -222,7 +222,6 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 void dbscqt::MainWindow::openPreferencesWindow()
 {
   auto* preferencesWindow = dbscqt::MainWindow::createPreferencesWidget( this );
-  preferencesWindow->setParent( this );
   QObject::connect(
     preferencesWindow, &QDialog::finished, [preferencesWindow]() { preferencesWindow->deleteLater(); } );
 
