@@ -11,6 +11,7 @@
 
 #include <bsls_assert.h>
 
+#include <Qt> // Qt enums (Qt::ColorScheme)
 #include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
@@ -20,6 +21,8 @@
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QInputDialog>
@@ -118,6 +121,10 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   } else {
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mWelcomePage );
   }
+
+  auto* preferencesWidget = createPreferencesWidget( this );
+  preferencesWidget->applyAll();
+  preferencesWidget->deleteLater();
 }
 
 dbscqt::MainWindow::~MainWindow() = default;
@@ -214,8 +221,8 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
 
 void dbscqt::MainWindow::openPreferencesWindow()
 {
-  auto preferencesWindow = QPointer( new dbscqt::PreferencesWidget( this ) );
-  preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
+  auto* preferencesWindow = dbscqt::MainWindow::createPreferencesWidget( this );
+  preferencesWindow->setParent( this );
   QObject::connect(
     preferencesWindow, &QDialog::finished, [preferencesWindow]() { preferencesWindow->deleteLater(); } );
 
@@ -332,6 +339,14 @@ void dbscqt::MainWindow::showAboutPage()
 void dbscqt::MainWindow::showAboutQtPage()
 {
   QMessageBox::aboutQt( this, "About Qt" );
+}
+
+auto dbscqt::MainWindow::createPreferencesWidget( QWidget* parent ) -> dbscqt::PreferencesWidget*
+{
+  auto* preferencesWindow = new dbscqt::PreferencesWidget( parent );
+  preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
+
+  return preferencesWindow;
 }
 
 void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBookFile )

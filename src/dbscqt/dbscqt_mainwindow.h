@@ -26,6 +26,8 @@ class AccountBook;
 } // namespace dbsc
 
 namespace dbscqt {
+class PreferencesWidget;
+
 class DBSCQT_API MainWindow final : public QMainWindow
 {
   Q_OBJECT
@@ -85,6 +87,7 @@ public Q_SLOTS:
   void showAboutQtPage();
 
 private:
+  static auto createPreferencesWidget( QWidget* parent ) -> dbscqt::PreferencesWidget*;
   /// Initiates account loading and handles the Ui updating associated with
   /// loading an account.
   void loadAccountBook( std::filesystem::path const& );
