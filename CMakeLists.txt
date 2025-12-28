@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 project(dbs
-  VERSION 0.1.0
+  VERSION 0.2.0
   DESCRIPTION "An electronic budgeting system that emulates the envelope budgeting method."
   HOMEPAGE_URL "https://github.com/tjdwill/dbs"
   LANGUAGES CXX)
