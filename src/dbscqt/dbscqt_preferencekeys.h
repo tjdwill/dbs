@@ -25,7 +25,7 @@ struct PreferenceKeys
   inline static QString const kWindowGeometryKey { "window/Geometry" };
   inline static QString const kWindowStateKey { "window/State" };
 
-  inline static QString const kApplicationColorScheme { "colorScheme" };
+  inline static QString const kApplicationColorSchemeKey { "colorScheme" };
 };
 } // namespace dbscqt
 

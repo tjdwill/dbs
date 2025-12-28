@@ -29,14 +29,17 @@ public:
   explicit PreferencePageInterface( QWidget* parent = nullptr );
 
   /// Apply the modified settings, writing the new values to QSettings.
-  void apply();
+  /// Subclasses must call the parent version of this method.
+  /// Subclasses must emit the settingsApplied signal at the end of the function.
+  virtual void apply();
 
   /// Revert modified settings to their original state. Subclasses must
   /// implement GUI-specific logic, resetting the editors to the modified
-  /// settings' original values. Subclasses must call this interface's
-  /// implementation at the end of their override implementations to update the
-  /// internal tracking of modified settings and signal the setting
-  /// modifications were discarded.
+  /// settings' original values.
+  ///
+  /// Subclasses must call this interface's implementation to update the
+  /// internal tracking of modified settings. Additionally, subclasses must emit
+  /// the modifiedSettingsDiscarded signal.
   virtual void discardModifiedSettings();
 
   /// @return a collection of QSettings keys corresponding to the settings this
@@ -53,8 +56,6 @@ public:
 Q_SIGNALS:
   /// Sends an identifier of the preference page (i.e. the display name) whose
   /// changes have been discarded.
-  /// @note Subclasses *do not* need to emit this in implementations of `discardModifiedSettings`.
-  ///   The abstract interface emits this signal.
   void modifiedSettingsDiscarded( QString const& preferencePageIdentifier );
 
   void settingsApplied( QString const& preferencePageIdentifier );

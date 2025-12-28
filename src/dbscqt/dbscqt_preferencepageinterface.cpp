@@ -15,13 +15,11 @@ void dbscqt::PreferencePageInterface::apply()
   for ( auto const& [settingKey, newValue] : mModifiedSettings ) {
     QSettings().setValue( settingKey, newValue );
   }
-  Q_EMIT settingsApplied( preferenceDisplayName() );
 }
 
 void dbscqt::PreferencePageInterface::discardModifiedSettings()
 {
   mModifiedSettings.clear();
-  Q_EMIT modifiedSettingsDiscarded( preferenceDisplayName() );
 }
 
 auto dbscqt::PreferencePageInterface::hasModifiedSettings() const -> bool
