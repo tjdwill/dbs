@@ -6,6 +6,7 @@
 #include <bsls_assert.h>
 
 #include <QtCore/QPointer>
+#include <QtCore/QSignalBlocker>
 #include <QtGui/QFont>
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QDialogButtonBox>
