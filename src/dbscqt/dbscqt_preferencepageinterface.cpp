@@ -24,6 +24,11 @@ void dbscqt::PreferencePageInterface::discardModifiedSettings()
   Q_EMIT modifiedSettingsDiscarded( preferenceDisplayName() );
 }
 
+auto dbscqt::PreferencePageInterface::hasModifiedSettings() const -> bool
+{
+  return !mModifiedSettings.empty();
+}
+
 void dbscqt::PreferencePageInterface::handleSettingModified( QString const& /* preferencePageIdentifier */,
                                                              QString const& settingKey,
                                                              QVariant const& proposedNewValue )

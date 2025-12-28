@@ -43,6 +43,9 @@ public:
   /// widget edits.
   virtual auto editedSettings() const -> std::vector< QString > const& = 0;
 
+  /// @return true if there are unapplied, modified setting values.
+  auto hasModifiedSettings() const -> bool;
+
   /// @return the name of the "category" of preferences this page edits.
   /// @note Assumed to be unique to this page.
   virtual auto preferenceDisplayName() const -> QString const& = 0;
