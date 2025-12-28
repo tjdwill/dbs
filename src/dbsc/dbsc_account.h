@@ -34,42 +34,42 @@ DBSC_REGISTER_EXCEPTION( InactiveAccountException, "Attempted to modify an inact
 /// two states, "active" and "inactive," which is the way this program disables
 /// modifying the Account further without actually deleting the data (someone
 /// may wish to reactivate at a future date).
-class DBSC_API Account
+class Account
 {
 public:
   using const_iterator =                                          // NOLINT
     std::map< UuidString, Transaction >::const_iterator;          // NOLINT
   using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
 
-  [[nodiscard]] explicit Account( UuidString const& accountId,
-                                  std::string const& name,
-                                  std::string const& description );
-  [[nodiscard]] explicit Account( std::string const& name, std::string const& description );
+  [[nodiscard]] DBSC_API explicit Account( UuidString const& accountId,
+                                           std::string const& name,
+                                           std::string const& description );
+  [[nodiscard]] DBSC_API explicit Account( std::string const& name, std::string const& description );
 
   // Accessors
 
-  [[nodiscard]] auto balance() const -> BloombergLP::bdldfp::Decimal64;
-  [[nodiscard]] auto description() const -> std::string const&;
-  [[nodiscard]] auto id() const -> UuidString const&;
-  [[nodiscard]] auto name() const -> std::string const&;
-  [[nodiscard]] auto transactionCount() const -> int;
-  [[nodiscard]] auto begin() -> iterator;
-  [[nodiscard]] auto begin() const -> const_iterator;
-  [[nodiscard]] auto cbegin() const noexcept -> const_iterator;
-  [[nodiscard]] auto end() -> iterator;
-  [[nodiscard]] auto end() const -> const_iterator;
-  [[nodiscard]] auto cend() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto balance() const -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] DBSC_API auto description() const -> std::string const&;
+  [[nodiscard]] DBSC_API auto id() const -> UuidString const&;
+  [[nodiscard]] DBSC_API auto name() const -> std::string const&;
+  [[nodiscard]] DBSC_API auto transactionCount() const -> int;
+  [[nodiscard]] DBSC_API auto begin() -> iterator;
+  [[nodiscard]] DBSC_API auto begin() const -> const_iterator;
+  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto end() -> iterator;
+  [[nodiscard]] DBSC_API auto end() const -> const_iterator;
+  [[nodiscard]] DBSC_API auto cend() const noexcept -> const_iterator;
 
   /// Query if this account has a transaction with the provided Id.
-  [[nodiscard]] auto contains( UuidString const& transactionId ) const -> bool;
+  [[nodiscard]] DBSC_API auto contains( UuidString const& transactionId ) const -> bool;
 
   /// Retrieve the transaction data associated with the input transactionID.
   /// Propagates the @c std::out_of_range error if the transaction doesn't exist
   /// for the account.
-  [[nodiscard]] auto transaction( UuidString const& transactionId ) const -> Transaction const&;
+  [[nodiscard]] DBSC_API auto transaction( UuidString const& transactionId ) const -> Transaction const&;
 
   /// Queries if the account is open for making new transactions.
-  [[nodiscard]] auto isActive() const -> bool;
+  [[nodiscard]] DBSC_API auto isActive() const -> bool;
 
   // Manipulators
 
@@ -77,17 +77,17 @@ public:
   /// Throws `dbsc::DuplicateUuidException` if the transaction is a duplicate.
   /// Throws `dbsc::ClosedAccountException` if the account is closed at the time
   /// this function is called.
-  void logTransaction( Transaction const& transaction );
+  DBSC_API void logTransaction( Transaction const& transaction );
 
   /// Sets this account's status to "read-only". No further transactions can be
   /// added.
-  void deactivate();
+  DBSC_API void deactivate();
 
   /// Sets this account's status to "writeable", meaning it can store new
   /// transactions.
-  void activate();
+  DBSC_API void activate();
 
-  [[nodiscard]] friend auto operator==( Account const& a, Account const& b ) -> bool = default;
+  [[nodiscard]] DBSC_API friend auto operator==( Account const& a, Account const& b ) -> bool = default;
 
 private:
   UuidString mId;

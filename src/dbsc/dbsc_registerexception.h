@@ -47,7 +47,7 @@
 ///     @note This argument should always be enclosed in quotation marks, just like
 ///       defining a regular string literal. Even the empty default case should use `""`.
 #define DBSC_REGISTER_EXCEPTION( EXCEPTION_NAME, DEFAULT_MESSAGE )                                                     \
-  class DBSC_API EXCEPTION_NAME : public std::exception                                                                \
+  class EXCEPTION_NAME : public std::exception                                                                         \
   {                                                                                                                    \
   public:                                                                                                              \
     EXCEPTION_NAME( std::string const& message ) noexcept                                                              \
@@ -59,7 +59,7 @@
     {                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto what() const noexcept -> char const* { return mMessage.c_str(); }                               \
+    [[nodiscard]] DBSC_API auto what() const noexcept -> char const* { return mMessage.c_str(); }                      \
                                                                                                                        \
   private:                                                                                                             \
     std::string mMessage;                                                                                              \

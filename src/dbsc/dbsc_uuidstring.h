@@ -57,32 +57,32 @@ DBSC_REGISTER_EXCEPTION( InvalidUuidException, "Input is not a UUID-conformant s
 /// construction will always return the null UUID).
 ///
 /// Note that this class assumes UUIDv4, but should work with others.
-class DBSC_API UuidString
+class UuidString
 {
 public:
   // Constructors enforce the invariant that the object represents a valid UUID.
 
   /// Returns the nil UUID "00000000-0000-0000-0000-000000000000"
-  UuidString();
+  DBSC_API UuidString();
 
-  [[nodiscard]] auto operator<=>( UuidString const& other ) const        = default;
-  [[nodiscard]] auto operator==( UuidString const& other ) const -> bool = default;
-  [[nodiscard]] auto toStdString() const -> std::string;
-  [[nodiscard]] auto view() const noexcept -> std::string_view;
+  [[nodiscard]] DBSC_API auto operator<=>( UuidString const& other ) const        = default;
+  [[nodiscard]] DBSC_API auto operator==( UuidString const& other ) const -> bool = default;
+  [[nodiscard]] DBSC_API auto toStdString() const -> std::string;
+  [[nodiscard]] DBSC_API auto view() const noexcept -> std::string_view;
 
 private:
   friend struct UuidStringUtil;
   /// Construct a UuidString from an external string source.
   /// Private since this constructor assumes validation is performed before it's
   /// called.
-  UuidString( std::string str );
+  DBSC_API UuidString( std::string str );
   std::string mData {};
 };
 
 DBSC_API auto operator<<( std::ostream& oss, UuidString const& str ) -> std::ostream&;
 
 /// Interface for generating Uuids.
-struct DBSC_API UuidStringUtil
+struct UuidStringUtil
 {
   /// Attempt to construct a UuidString from an external source. Throws
   /// `dbsc::InvalidUuidException` if input is non-conformant.
@@ -100,9 +100,9 @@ struct DBSC_API UuidStringUtil
   }
 
   /// Generate a UUIDv4 (i.e. randomly-generated) string
-  [[nodiscard]] static auto generate() -> UuidString;
+  [[nodiscard]] DBSC_API static auto generate() -> UuidString;
   /// Queries if the uuid is the "00000000-0000-0000-0000-000000000000" string.
-  [[nodiscard]] static auto isNil( UuidString const& uuid ) -> bool;
+  [[nodiscard]] DBSC_API static auto isNil( UuidString const& uuid ) -> bool;
 };
 } // namespace dbsc
 

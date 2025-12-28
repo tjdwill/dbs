@@ -38,28 +38,29 @@ using TimeStamp =
 /// income.). Generally, dbsc::Transactions are intended to be made in pairs.
 /// The two pairs will have swapped party IDs and transaction amounts of
 /// opposing signs.
-class DBSC_API Transaction
+class Transaction
 {
 public:
-  [[nodiscard]] Transaction( UuidString const& transactionId,
-                             UuidString const& owningPartyId,
-                             UuidString const& otherPartyId,
-                             BloombergLP::bdldfp::Decimal64 amount,
-                             TimeStamp timeStamp,
-                             std::string const& notes );
+  [[nodiscard]] DBSC_API Transaction( UuidString const& transactionId,
+                                      UuidString const& owningPartyId,
+                                      UuidString const& otherPartyId,
+                                      BloombergLP::bdldfp::Decimal64 amount,
+                                      TimeStamp timeStamp,
+                                      std::string const& notes );
 
-  [[nodiscard]] auto amount() const -> BloombergLP::bdldfp::Decimal64;
-  [[nodiscard]] auto notes() const -> std::string const&;
-  [[nodiscard]] auto owningPartyId() const -> UuidString const&;
-  [[nodiscard]] auto otherPartyId() const -> UuidString const&;
-  [[nodiscard]] auto timestamp() const -> TimeStamp;
-  [[nodiscard]] auto transactionId() const -> UuidString const&;
+  [[nodiscard]] DBSC_API auto amount() const -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] DBSC_API auto notes() const -> std::string const&;
+  [[nodiscard]] DBSC_API auto owningPartyId() const -> UuidString const&;
+  [[nodiscard]] DBSC_API auto otherPartyId() const -> UuidString const&;
+  [[nodiscard]] DBSC_API auto timestamp() const -> TimeStamp;
+  [[nodiscard]] DBSC_API auto transactionId() const -> UuidString const&;
 
-  [[nodiscard]] friend auto operator==( dbsc::Transaction const& t1, dbsc::Transaction const& t2 ) -> bool = default;
+  [[nodiscard]] DBSC_API friend auto operator==( dbsc::Transaction const& t1, dbsc::Transaction const& t2 )
+    -> bool = default;
 
   /// Determine if two Transaction objects represent opposing perspectives of a
   /// single transaction.
-  [[nodiscard]] static auto isPair( Transaction const& a, Transaction const& b ) -> bool;
+  [[nodiscard]] DBSC_API static auto isPair( Transaction const& a, Transaction const& b ) -> bool;
 
 private:
   UuidString mTransactionId;
@@ -72,13 +73,14 @@ private:
   std::string mNotes {};
 };
 
-struct DBSC_API TransactionUtil
+struct TransactionUtil
 {
-  [[nodiscard]] static auto currencyToString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
-  [[nodiscard]] static auto currencyFromString( std::string_view borrowedStr ) -> BloombergLP::bdldfp::Decimal64;
-  [[nodiscard]] static auto timestampToString( TimeStamp const& timestamp ) -> std::string;
-  [[nodiscard]] static auto timestampFromString( std::string_view borrowedStr ) -> TimeStamp;
-  [[nodiscard]] static constexpr auto timestampConversionFormat() -> std::string_view;
+  [[nodiscard]] DBSC_API static auto currencyToString( BloombergLP::bdldfp::Decimal64 const& amount ) -> std::string;
+  [[nodiscard]] DBSC_API static auto currencyFromString( std::string_view borrowedStr )
+    -> BloombergLP::bdldfp::Decimal64;
+  [[nodiscard]] DBSC_API static auto timestampToString( TimeStamp const& timestamp ) -> std::string;
+  [[nodiscard]] DBSC_API static auto timestampFromString( std::string_view borrowedStr ) -> TimeStamp;
+  [[nodiscard]] DBSC_API static constexpr auto timestampConversionFormat() -> std::string_view;
 };
 
 } // namespace dbsc

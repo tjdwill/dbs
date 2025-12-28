@@ -34,7 +34,7 @@ DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 /// over its Accounts by way of key-value pairs [AccountId, Account]. It is
 /// also responsible for recording transactions and can open new accounts as
 /// well as toggle the status of an existing status (active/closed).
-class DBSC_API AccountBook
+class AccountBook
 
 {
 public:
@@ -42,29 +42,29 @@ public:
     std::map< UuidString, Account >::const_iterator;          // NOLINT
   using iterator = std::map< UuidString, Account >::iterator; // NOLINT
 
-  AccountBook( std::string const& ownerName );
+  DBSC_API AccountBook( std::string const& ownerName );
 
   // Accessors
 
   /// @return the account referred to by the identifier string.
   /// @throw @c dbsc::NonExistentAccount if the account does not exist.
-  [[nodiscard]] auto account( UuidString const& accountId ) const -> Account const&;
+  [[nodiscard]] DBSC_API auto account( UuidString const& accountId ) const -> Account const&;
 
-  [[nodiscard]] auto owner() const -> std::string const&;
+  [[nodiscard]] DBSC_API auto owner() const -> std::string const&;
 
-  [[nodiscard]] auto begin() -> iterator;
-  [[nodiscard]] auto begin() const -> const_iterator;
-  [[nodiscard]] auto cbegin() const noexcept -> const_iterator;
-  [[nodiscard]] auto end() -> iterator;
-  [[nodiscard]] auto end() const -> const_iterator;
-  [[nodiscard]] auto cend() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto begin() -> iterator;
+  [[nodiscard]] DBSC_API auto begin() const -> const_iterator;
+  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto end() -> iterator;
+  [[nodiscard]] DBSC_API auto end() const -> const_iterator;
+  [[nodiscard]] DBSC_API auto cend() const noexcept -> const_iterator;
 
-  [[nodiscard]] auto accountCount() const -> int;
+  [[nodiscard]] DBSC_API auto accountCount() const -> int;
   // Manipulators
 
   /// Create a new account based on the provided information, returning the
   /// account's Id.
-  auto createAccount( std::string const& accountName, std::string const& description ) -> UuidString;
+  DBSC_API auto createAccount( std::string const& accountName, std::string const& description ) -> UuidString;
 
   /// @brief Record the transaction for the provided accountId and amounts.
   ///
@@ -81,23 +81,23 @@ public:
   /// respective copies.
   ///
   /// @return the transaction id
-  auto makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
-                        std::string const& transactionNotes,
-                        UuidString const& firstPartyId,
-                        std::optional< std::reference_wrapper< UuidString const > > internalSecondPartyIdOpt )
+  DBSC_API auto makeTransaction( BloombergLP::bdldfp::Decimal64 amount,
+                                 std::string const& transactionNotes,
+                                 UuidString const& firstPartyId,
+                                 std::optional< std::reference_wrapper< UuidString const > > internalSecondPartyIdOpt )
     -> UuidString;
 
   /// Modify the writability of a given account.
   /// @throw @c dbsc::NonExistentAccount if account does not exist.
-  void deactivate( UuidString const& accountId );
-  void activate( UuidString const& accountId );
+  DBSC_API void deactivate( UuidString const& accountId );
+  DBSC_API void activate( UuidString const& accountId );
 
   /// Insert the account into the collection.
   /// @note This function is intended for de-serialization purposes.
-  void addParsedAccount( Account account );
+  DBSC_API void addParsedAccount( Account account );
 
 private:
-  auto accountMut( UuidString const& accountId ) -> Account&;
+  DBSC_API auto accountMut( UuidString const& accountId ) -> Account&;
 
   std::string mOwner {};
   std::map< UuidString, Account > mAccountsMap {};
