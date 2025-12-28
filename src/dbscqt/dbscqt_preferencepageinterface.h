@@ -49,6 +49,11 @@ public:
   /// @return true if there are unapplied, modified setting values.
   auto hasModifiedSettings() const -> bool;
 
+  /// Each implementer must load all of the settings they modify if they have
+  /// UI-affecting changes. For example, if color scheme is a setting, it must
+  /// be loaded by whatever implementer monitors that setting.
+  virtual void loadSettings();
+
   /// @return the name of the "category" of preferences this page edits.
   /// @note Assumed to be unique to this page.
   virtual auto preferenceDisplayName() const -> QString const& = 0;

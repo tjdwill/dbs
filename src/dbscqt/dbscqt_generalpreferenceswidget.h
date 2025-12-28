@@ -30,10 +30,12 @@ public:
   void apply() final;
   void discardModifiedSettings() final;
   auto editedSettings() const -> std::vector< QString > const& final;
+  void loadSettings() final;
   auto preferenceDisplayName() const -> QString const& final;
 
 private:
   void handleColorSchemeSelectionChanged( QString const& colorSchemeName );
+  void setColorSchemeFromSetting();
 
   class Private;
   std::unique_ptr< Private > mImp;

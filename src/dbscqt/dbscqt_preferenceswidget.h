@@ -41,6 +41,11 @@ public:
   /// category name among the other registered pages.
   void addPreferencePage( PreferencePageInterface* );
 
+  /// Load settings for all pages attached to this widget.
+  /// @note This function is useful for setting the application state on program
+  /// startup.
+  void loadSettings();
+
 public Q_SLOTS:
   /// Apply the settings that have been modified.
   void applyAll();

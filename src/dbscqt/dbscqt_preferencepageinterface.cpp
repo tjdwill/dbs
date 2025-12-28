@@ -36,6 +36,8 @@ void dbscqt::PreferencePageInterface::handleSettingModified( QString const& /* p
   mModifiedSettings[settingKey] = proposedNewValue;
 }
 
+void dbscqt::PreferencePageInterface::loadSettings() {}
+
 // -----------------------------------------------------------------------------
 // Copyright (C) 2025 Terrance Williams
 //

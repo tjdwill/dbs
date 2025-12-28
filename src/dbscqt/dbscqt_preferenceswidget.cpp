@@ -82,14 +82,9 @@ dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
     }
 
     mImp->mPreferencePagesStackedWidget = QPointer( new QStackedWidget() );
-    {
-      mImp->mPreferencePagesStackedWidget->setObjectName( "mPreferencePagesStackedWidget" );
-      mImp->mPreferencePagesStackedWidget->setSizePolicy( QSizePolicy::MinimumExpanding,
-                                                          QSizePolicy::MinimumExpanding );
-    }
+    mImp->mPreferencePagesStackedWidget->setObjectName( "mPreferencePagesStackedWidget" );
 
     mImp->mPreferencePageList = QPointer( new QListWidget() );
-    // mImp->mPreferencePageList->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding );
 
     mImp->mWidgetSplitter = QPointer( new QSplitter( Qt::Orientation::Horizontal ) );
     mImp->mWidgetSplitter->addWidget( mImp->mPreferencePageList );
@@ -161,6 +156,13 @@ void dbscqt::PreferencesWidget::addPreferencePage( PreferencePageInterface* pref
                     &dbscqt::PreferencePageInterface::settingsApplied,
                     this,
                     &dbscqt::PreferencesWidget::handlePreferencePageIsUpToDate );
+}
+
+void dbscqt::PreferencesWidget::loadSettings()
+{
+  for ( auto const& [_, preferencePage] : mImp->mPreferencePagesMap ) {
+    preferencePage->loadSettings();
+  }
 }
 
 void dbscqt::PreferencesWidget::applyAll()

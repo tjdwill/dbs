@@ -88,12 +88,7 @@ void dbscqt::GeneralPreferencesWidget::apply()
   dbscqt::PreferencePageInterface::apply();
 
   // Update GUI
-  auto const colorSchemeSettingValue = QSettings()
-                                         .value( dbscqt::PreferenceKeys::kApplicationColorSchemeKey,
-                                                 dbscqt::colorSchemeToString( Qt::ColorScheme::Unknown ) )
-                                         .toString();
-  auto const colorScheme = colorSchemeFromString( colorSchemeSettingValue );
-  QGuiApplication::styleHints()->setColorScheme( colorScheme );
+  setColorSchemeFromSetting();
 
   Q_EMIT settingsApplied( preferenceDisplayName() );
 }
@@ -124,10 +119,25 @@ auto dbscqt::GeneralPreferencesWidget::preferenceDisplayName() const -> QString 
   return kDisplayName;
 }
 
+void dbscqt::GeneralPreferencesWidget::loadSettings()
+{
+  setColorSchemeFromSetting();
+}
+
 void dbscqt::GeneralPreferencesWidget::handleColorSchemeSelectionChanged( QString const& colorSchemeName )
 {
   Q_EMIT settingModified(
     preferenceDisplayName(), dbscqt::PreferenceKeys::kApplicationColorSchemeKey, colorSchemeName );
+}
+
+void dbscqt::GeneralPreferencesWidget::setColorSchemeFromSetting()
+{
+  auto const colorSchemeSettingValue = QSettings()
+                                         .value( dbscqt::PreferenceKeys::kApplicationColorSchemeKey,
+                                                 dbscqt::colorSchemeToString( Qt::ColorScheme::Unknown ) )
+                                         .toString();
+  auto const colorScheme = colorSchemeFromString( colorSchemeSettingValue );
+  QGuiApplication::styleHints()->setColorScheme( colorScheme );
 }
 
 // -----------------------------------------------------------------------------
