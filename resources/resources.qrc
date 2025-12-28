@@ -8,6 +8,7 @@
         <file>icons/icons8-plus-100.png</file>
         <file>icons/icons8-save-100.png</file>
         <file>icons/icons8-save-as-100.png</file>
+        <file>icons/icons8-settings-100.png</file>
         <!-- <file>icons/icons8-minus-100.png</file> -->
     </qresource>
 </RCC>

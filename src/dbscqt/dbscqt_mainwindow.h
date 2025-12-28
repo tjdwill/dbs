@@ -63,6 +63,8 @@ public Q_SLOTS:
   /// selected or the account book cannot be found, this function is a no-op.
   void handleOpenAccountBookTriggered();
 
+  void openPreferencesWindow();
+
   /// Write the current account book to file.
   ///
   /// @pre An account book is loaded. Does not have to be in a modified state.

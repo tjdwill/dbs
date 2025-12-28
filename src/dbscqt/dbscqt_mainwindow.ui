@@ -117,7 +117,14 @@
     <addaction name="mAboutAction"/>
     <addaction name="mAboutQtAction"/>
    </widget>
+   <widget class="QMenu" name="mToolsMenu">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="mPreferencesAction"/>
+   </widget>
    <addaction name="mFileMenu"/>
+   <addaction name="mToolsMenu"/>
    <addaction name="mHelpMenu"/>
   </widget>
   <widget class="QStatusBar" name="mStatusBar"/>
@@ -194,6 +201,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="mPreferencesAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/icons8-settings-100.png</normaloff>:/icons/icons8-settings-100.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
    </property>
   </action>
  </widget>

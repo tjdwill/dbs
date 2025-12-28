@@ -7,6 +7,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QSettings>
 #include <QtCore/qnamespace.h>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtWidgets/QApplication>
 
 int main( int argc, char* argv[] )
@@ -18,6 +20,7 @@ int main( int argc, char* argv[] )
   QApplication dbsApp { argc, argv };
   dbscqt::MainWindow mainWindow {};
 
+  QGuiApplication::styleHints()->setColorScheme( Qt::ColorScheme::Light );
   mainWindow.show();
 
   return dbsApp.exec();

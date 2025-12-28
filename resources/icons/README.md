@@ -19,7 +19,9 @@ Teal color: #20C997
   - [Minus](https://icons8.com/icon/1504/minus) icon by [Icons8](https://icons8.com) 
   - [Plus](https://icons8.com/icon/1501/plus) icon by [Icons8](https://icons8.com) 
   - [Save](https://icons8.com/icon/18765/save) icon by [Icons8](https://icons8.com) 
-  - [Save as](https://icons8.com/icon/3701/save-as) icon by [Icons8](https://icons8.com) 
+  - [Save as](https://icons8.com/icon/3701/save-as) icon by
+    [Icons8](https://icons8.com) 
+  - [Settings](https://icons8.com/icon/364/settings) icon by [Icons8](https://icons8.com) 
   - [Summary List](https://icons8.com/icon/48622/summary-list) icon by [Icons8](https://icons8.com) 
   - [Toggle Indeterminate](https://icons8.com/icon/123425/toggle-indeterminate) icon by [Icons8](https://icons8.com) 
   - [U.S. Dollar Sign](https://icons8.com/icon/7172/us-dollar-circled) icon by [Icons8](https://icons8.com) 

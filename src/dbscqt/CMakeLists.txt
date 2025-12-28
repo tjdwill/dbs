@@ -33,8 +33,12 @@ target_sources(dbscqt
     dbscqt_accountbookwidget.cpp
     dbscqt_accountmodel.cpp
     dbscqt_displayutil.cpp
+    dbscqt_generalpreferenceswidget.cpp
     dbscqt_mainwindow.cpp
     dbscqt_openaccountdialog.cpp
+    dbscqt_preferencekeys.cpp
+    dbscqt_preferencepageinterface.cpp
+    dbscqt_preferenceswidget.cpp
     dbscqt_qobjectdeleteutil.cpp
     dbscqt_transactiondialog.cpp
     dbscqt_transactionitem.cpp
@@ -54,8 +58,12 @@ target_sources(dbscqt
       dbscqt_accountbookwidget.h
       dbscqt_accountmodel.h
       dbscqt_displayutil.h
+      dbscqt_generalpreferenceswidget.h
       dbscqt_mainwindow.h
       dbscqt_openaccountdialog.h
+      dbscqt_preferencekeys.h
+      dbscqt_preferencepageinterface.h
+      dbscqt_preferenceswidget.h
       dbscqt_qobjectdeleteutil.h
       dbscqt_transactiondialog.h
       dbscqt_transactionitem.h

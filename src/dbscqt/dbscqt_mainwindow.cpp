@@ -5,7 +5,9 @@
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
+#include <dbscqt_generalpreferenceswidget.h>
 #include <dbscqt_preferencekeys.h>
+#include <dbscqt_preferenceswidget.h>
 
 #include <bsls_assert.h>
 
@@ -73,6 +75,8 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
         mImp->mUi.mSaveAsAction->setEnabled( accountBookIsLoaded );
         mImp->mUi.mCloseAction->setEnabled( accountBookIsLoaded );
       } );
+    QObject::connect(
+      mImp->mUi.mPreferencesAction, &QAction::triggered, this, &dbscqt::MainWindow::openPreferencesWindow );
   }
 
   // Attempt to load the most recently-used account book
@@ -208,6 +212,16 @@ void dbscqt::MainWindow::handleOpenAccountBookTriggered()
   }
 }
 
+void dbscqt::MainWindow::openPreferencesWindow()
+{
+  auto preferencesWindow = QPointer( new dbscqt::PreferencesWidget( this ) );
+  preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
+  QObject::connect(
+    preferencesWindow, &QDialog::finished, [this, preferencesWindow]() { preferencesWindow->deleteLater(); } );
+
+  preferencesWindow->show();
+}
+
 auto dbscqt::MainWindow::saveAccountBook() -> std::optional< bool >
 {
   if ( !mImp->mPathToAccountBookFileOpt.has_value() ) {
@@ -297,6 +311,7 @@ void dbscqt::MainWindow::showAboutPage()
   - [Plus](https://icons8.com/icon/1501/plus) icon by [Icons8](https://icons8.com) 
   - [Save](https://icons8.com/icon/18765/save) icon by [Icons8](https://icons8.com) 
   - [Save as](https://icons8.com/icon/3701/save-as) icon by [Icons8](https://icons8.com) 
+  - [Settings](https://icons8.com/icon/364/settings) icon by [Icons8](https://icons8.com) 
   - [Toggle Indeterminate](https://icons8.com/icon/123425/toggle-indeterminate) icon by [Icons8](https://icons8.com) 
   - [U.S. Dollar Sign](https://icons8.com/icon/7172/us-dollar-circled) icon by [Icons8](https://icons8.com) 
 
