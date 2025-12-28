@@ -10,6 +10,8 @@
 //  but note that functions may be to be moved around over time.
 
 #include <concepts>
+#include <map>
+#include <stdexcept>
 
 namespace dbsutl {
 
@@ -18,6 +20,28 @@ constexpr auto enumAsIntegral( EnumType type ) -> ReturnType
 {
   return static_cast< ReturnType >( type );
 }
+
+/// Given an associative map, @return a map with the keys and values reversed.
+/// This assumes that every key in the input map has a unique value such that
+/// the resulting two maps are bi-directional.
+///
+/// @throws @c std::invalid_argument if the input map is not bijective
+/// (one-to-one).
+template< typename KeyType, typename ValueType >
+auto createReversedMap( std::map< KeyType, ValueType > const map ) -> std::map< ValueType, KeyType >
+{
+  std::map< ValueType, KeyType > reversedMap;
+  for ( auto const& [key, value] : map ) {
+    reversedMap.insert( { value, key } );
+  }
+
+  if ( reversedMap.size() != map.size() ) {
+    throw std::invalid_argument( "Could not create reversed map due to non-unique values." );
+  }
+
+  return reversedMap;
+}
+
 } // namespace dbsutl
 
 #endif // include guard
