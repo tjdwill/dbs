@@ -4,8 +4,12 @@
 
 - Create a preference widget to control color scheme (and other preferences in
   the future).
-- TODO: Fix sizing issue between the QListWidget and the QStackedWidget in the
-  PreferenceWidget.
+- TODO: 
+  - ~~Fix sizing issue between the QListWidget and the QStackedWidget in thePreferenceWidget.~~
+  - There was no sizing issue between the widgets. The preference window was too small.
+
+The next feature I want to implement is an "Open Recent" option. It should list
+the last five account books that were loaded from most recent to least.
 
 ## 22 December 2025
 
