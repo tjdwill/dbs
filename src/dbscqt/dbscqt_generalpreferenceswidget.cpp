@@ -54,6 +54,7 @@ public:
 
 dbscqt::GeneralPreferencesWidget::GeneralPreferencesWidget( QWidget* parent )
   : dbscqt::PreferencePageInterface( parent )
+  , mImp( std::make_unique< Private >() )
 {
   setObjectName( "dbscqt::GeneralPreferencesWidget" );
   auto mainLayout = QPointer( new QFormLayout( this ) );

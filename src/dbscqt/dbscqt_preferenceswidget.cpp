@@ -50,6 +50,7 @@ public:
 
 dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
   : QDialog( parent )
+  , mImp( std::make_unique< Private >() )
 {
   using ButtonType = QDialogButtonBox::StandardButton;
   auto mainLayout  = QPointer( new QVBoxLayout( this ) );
