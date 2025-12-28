@@ -57,6 +57,9 @@ public Q_SLOTS:
                               QVariant const& /* proposedNewValue */ );
 
 private:
+  void updateApplyAndResetButtonVisibility( bool isVisible );
+  void updateApplyAndResetButtonsEnabled( bool isEnabled );
+
   class Private;
   std::unique_ptr< Private > mImp;
 };

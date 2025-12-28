@@ -9,9 +9,11 @@
 #include <QtGui/QFont>
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QFrame>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStackedWidget>
 
@@ -40,14 +42,79 @@ public:
   std::map< QString /* preferencePageDisplayName */, QPointer< dbscqt::PreferencePageInterface > > mPreferencePagesMap;
   QPointer< QSplitter > mWidgetSplitter;
   QPointer< QListWidget > mPreferencePageList;
-  QPointer< QWidget > mPageDisplayContainer;
   QPointer< QDialogButtonBox > mDialogButtons;
   QPointer< QStackedWidget > mPreferencePagesStackedWidget;
+  QPointer< QScrollArea > mDisplayScrollArea;
 };
 
 dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
   : QDialog( parent )
 {
+  using ButtonType = QDialogButtonBox::StandardButton;
+  auto mainLayout  = QPointer( new QVBoxLayout( this ) );
+  {
+    auto const dialogButtons = ButtonType::Ok | ButtonType::Cancel | ButtonType::Reset | ButtonType::Apply;
+    mImp->mDialogButtons     = QPointer( new QDialogButtonBox( dialogButtons, Qt::Orientation::Horizontal, this ) );
+    {
+      mImp->mDialogButtons->setObjectName( "mDialogButtons" );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Apply ), &QPushButton::clicked, [this]() {
+        auto* currentItem = mImp->mPreferencePageList->currentItem();
+        BSLS_ASSERT( currentItem );
+        auto preferencePage = mImp->mPreferencePagesMap.at( currentItem->text() );
+        preferencePage->apply();
+      } );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Reset ), &QPushButton::clicked, [this]() {
+        auto* currentItem = mImp->mPreferencePageList->currentItem();
+        BSLS_ASSERT( currentItem );
+        auto preferencePage = mImp->mPreferencePagesMap.at( currentItem->text() );
+        preferencePage->discardModifiedSettings();
+      } );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Ok ),
+                        &QPushButton::clicked,
+                        this,
+                        &dbscqt::PreferencesWidget::applyAll );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Cancel ),
+                        &QPushButton::clicked,
+                        this,
+                        &dbscqt::PreferencesWidget::discardChanges );
+    }
+    mImp->mDisplayScrollArea = QPointer( new QScrollArea() );
+    {
+      mImp->mDisplayScrollArea->setObjectName( "mDisplayScrollArea" );
+      mImp->mDisplayScrollArea->setWidgetResizable( true );
+      mImp->mDisplayScrollArea->setFrameShape( QFrame::NoFrame );
+
+      mImp->mPreferencePagesStackedWidget = QPointer( new QStackedWidget() );
+      mImp->mDisplayScrollArea->setWidget( mImp->mPreferencePagesStackedWidget );
+    }
+
+    mImp->mPreferencePageList = QPointer( new QListWidget() );
+    mImp->mWidgetSplitter     = QPointer( new QSplitter( Qt::Orientation::Horizontal ) );
+    mImp->mWidgetSplitter->addWidget( mImp->mPreferencePageList );
+    mImp->mWidgetSplitter->addWidget( mImp->mDisplayScrollArea );
+    mImp->mWidgetSplitter->setStretchFactor( mImp->mWidgetSplitter->indexOf( mImp->mDisplayScrollArea ), 1 );
+
+    mainLayout->addWidget( mImp->mWidgetSplitter );
+    mainLayout->addWidget( mImp->mDialogButtons );
+  }
+
+  QObject::connect( mImp->mPreferencePageList,
+                    &QListWidget::currentItemChanged,
+                    [this]( QListWidgetItem* current, QListWidgetItem* /* previous */ ) {
+                      // Update apply and reset button visibility/state.
+                      // Update currently-displayed preference page.
+                      bool const isValidItem = static_cast< bool >( current );
+                      updateApplyAndResetButtonVisibility( isValidItem );
+
+                      if ( isValidItem ) {
+                        auto const preferencePage = mImp->mPreferencePagesMap[current->text()];
+                        updateApplyAndResetButtonsEnabled( preferencePage->hasModifiedSettings() );
+
+                        mImp->mPreferencePagesStackedWidget->setCurrentWidget( preferencePage );
+                      } else {
+                        mImp->mPreferencePagesStackedWidget->setCurrentIndex( -1 );
+                      }
+                    } );
 }
 
 dbscqt::PreferencesWidget::~PreferencesWidget() = default;
@@ -97,8 +164,8 @@ void dbscqt::PreferencesWidget::applyAll()
     page->apply();
   }
 
-  // Reset list item fonts to the "unmodified" state.
   dbscqt::setAllListItemsToUnmodifiedState( mImp->mPreferencePageList );
+  updateApplyAndResetButtonsEnabled( false );
 }
 
 void dbscqt::PreferencesWidget::discardChanges()
@@ -108,8 +175,8 @@ void dbscqt::PreferencesWidget::discardChanges()
     page->discardModifiedSettings();
   }
 
-  // Reset list item fonts to the "unmodified" state.
   dbscqt::setAllListItemsToUnmodifiedState( mImp->mPreferencePageList );
+  updateApplyAndResetButtonsEnabled( false );
 }
 
 void dbscqt::PreferencesWidget::handlePreferencePageIsUpToDate( QString const& preferencePageIdentifier )
@@ -120,6 +187,7 @@ void dbscqt::PreferencesWidget::handlePreferencePageIsUpToDate( QString const& p
   auto fontForUnmodifiedItem = updatedItem->font();
   fontForUnmodifiedItem.setBold( false );
   updatedItem->setFont( fontForUnmodifiedItem );
+  updateApplyAndResetButtonsEnabled( false );
 }
 
 void dbscqt::PreferencesWidget::handleSettingModified( QString const& preferencePageIdentifier,
@@ -132,6 +200,26 @@ void dbscqt::PreferencesWidget::handleSettingModified( QString const& preference
   auto fontForModifiedItem = updatedItem->font();
   fontForModifiedItem.setBold( true );
   updatedItem->setFont( fontForModifiedItem );
+  updateApplyAndResetButtonsEnabled( true );
+}
+
+void dbscqt::PreferencesWidget::updateApplyAndResetButtonVisibility( bool const isVisible )
+{
+
+  auto* applyButton = mImp->mDialogButtons->button( QDialogButtonBox::StandardButton::Apply );
+  auto* resetButton = mImp->mDialogButtons->button( QDialogButtonBox::StandardButton::Reset );
+
+  applyButton->setVisible( isVisible );
+  resetButton->setVisible( isVisible );
+}
+
+void dbscqt::PreferencesWidget::updateApplyAndResetButtonsEnabled( bool const isEnabled )
+{
+  auto* applyButton = mImp->mDialogButtons->button( QDialogButtonBox::StandardButton::Apply );
+  auto* resetButton = mImp->mDialogButtons->button( QDialogButtonBox::StandardButton::Reset );
+
+  applyButton->setEnabled( isEnabled );
+  resetButton->setEnabled( isEnabled );
 }
 
 // -----------------------------------------------------------------------------
