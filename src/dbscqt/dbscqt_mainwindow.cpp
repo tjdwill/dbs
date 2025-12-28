@@ -123,7 +123,7 @@ dbscqt::MainWindow::MainWindow( QWidget* parent )
   }
 
   auto* preferencesWidget = createPreferencesWidget( this );
-  preferencesWidget->applyAll();
+  preferencesWidget->loadSettings();
   preferencesWidget->deleteLater();
 }
 
@@ -344,6 +344,9 @@ auto dbscqt::MainWindow::createPreferencesWidget( QWidget* parent ) -> dbscqt::P
 {
   auto* preferencesWindow = new dbscqt::PreferencesWidget( parent );
   preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
+  constexpr int kPreferenceWindowWidth  = 600;
+  constexpr int kPreferenceWindowHeight = 480;
+  preferencesWindow->resize( QSize( kPreferenceWindowWidth, kPreferenceWindowHeight ) );
 
   return preferencesWindow;
 }
