@@ -217,7 +217,7 @@ void dbscqt::MainWindow::openPreferencesWindow()
   auto preferencesWindow = QPointer( new dbscqt::PreferencesWidget( this ) );
   preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
   QObject::connect(
-    preferencesWindow, &QDialog::finished, [this, preferencesWindow]() { preferencesWindow->deleteLater(); } );
+    preferencesWindow, &QDialog::finished, [preferencesWindow]() { preferencesWindow->deleteLater(); } );
 
   preferencesWindow->show();
 }

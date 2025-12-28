@@ -14,7 +14,6 @@
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStackedWidget>
 
@@ -45,7 +44,6 @@ public:
   QPointer< QListWidget > mPreferencePageList;
   QPointer< QDialogButtonBox > mDialogButtons;
   QPointer< QStackedWidget > mPreferencePagesStackedWidget;
-  QPointer< QScrollArea > mDisplayScrollArea;
 };
 
 dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
@@ -71,30 +69,32 @@ dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
         auto preferencePage = mImp->mPreferencePagesMap.at( currentItem->text() );
         preferencePage->discardModifiedSettings();
       } );
-      QObject::connect( mImp->mDialogButtons->button( ButtonType::Ok ),
-                        &QPushButton::clicked,
-                        this,
-                        &dbscqt::PreferencesWidget::applyAll );
-      QObject::connect( mImp->mDialogButtons->button( ButtonType::Cancel ),
-                        &QPushButton::clicked,
-                        this,
-                        &dbscqt::PreferencesWidget::discardChanges );
-    }
-    mImp->mDisplayScrollArea = QPointer( new QScrollArea() );
-    {
-      mImp->mDisplayScrollArea->setObjectName( "mDisplayScrollArea" );
-      mImp->mDisplayScrollArea->setWidgetResizable( true );
-      mImp->mDisplayScrollArea->setFrameShape( QFrame::NoFrame );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Ok ), &QPushButton::clicked, [this]() {
+        applyAll();
+        QDialog::accept();
+      } );
+      QObject::connect( mImp->mDialogButtons->button( ButtonType::Cancel ), &QPushButton::clicked, [this]() {
+        discardChanges();
+        QDialog::reject();
+      } );
 
-      mImp->mPreferencePagesStackedWidget = QPointer( new QStackedWidget() );
-      mImp->mDisplayScrollArea->setWidget( mImp->mPreferencePagesStackedWidget );
+      updateApplyAndResetButtonsEnabled( false );
+    }
+
+    mImp->mPreferencePagesStackedWidget = QPointer( new QStackedWidget() );
+    {
+      mImp->mPreferencePagesStackedWidget->setObjectName( "mPreferencePagesStackedWidget" );
+      mImp->mPreferencePagesStackedWidget->setSizePolicy( QSizePolicy::MinimumExpanding,
+                                                          QSizePolicy::MinimumExpanding );
     }
 
     mImp->mPreferencePageList = QPointer( new QListWidget() );
-    mImp->mWidgetSplitter     = QPointer( new QSplitter( Qt::Orientation::Horizontal ) );
+    // mImp->mPreferencePageList->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding );
+
+    mImp->mWidgetSplitter = QPointer( new QSplitter( Qt::Orientation::Horizontal ) );
     mImp->mWidgetSplitter->addWidget( mImp->mPreferencePageList );
-    mImp->mWidgetSplitter->addWidget( mImp->mDisplayScrollArea );
-    mImp->mWidgetSplitter->setStretchFactor( mImp->mWidgetSplitter->indexOf( mImp->mDisplayScrollArea ), 1 );
+    mImp->mWidgetSplitter->addWidget( mImp->mPreferencePagesStackedWidget );
+    mImp->mWidgetSplitter->setStretchFactor( mImp->mWidgetSplitter->indexOf( mImp->mPreferencePagesStackedWidget ), 1 );
 
     mainLayout->addWidget( mImp->mWidgetSplitter );
     mainLayout->addWidget( mImp->mDialogButtons );
@@ -139,10 +139,14 @@ void dbscqt::PreferencesWidget::addPreferencePage( PreferencePageInterface* pref
   mImp->mSettingKeys.insert_range( editedSettingsKeys );
 
   // Take ownership of the page and add to the internal store
+  mImp->mPreferencePagesStackedWidget->addWidget( preferencePage );
+  mImp->mPreferencePagesMap.insert( { preferenceCategory, preferencePage } );
   mImp->mPreferencePageList->addItem( preferenceCategory );
   mImp->mPreferencePageList->sortItems();
-  mImp->mPreferencePagesMap.insert( { preferenceCategory, preferencePage } );
-  mImp->mPreferencePagesStackedWidget->addWidget( preferencePage );
+  // Ensure an item is selected. This prevents an nullptr assertion error.
+  auto* const currentListItem = mImp->mPreferencePageList->currentItem();
+  auto* const firstListItem   = mImp->mPreferencePageList->item( 0 );
+  mImp->mPreferencePageList->setCurrentItem( currentListItem ? currentListItem : firstListItem );
 
   // Connect signals and slots
   QObject::connect( preferencePage,
