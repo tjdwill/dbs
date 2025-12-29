@@ -380,7 +380,6 @@ void dbscqt::MainWindow::showAboutPage()
   )";
   auto aboutPageTextDisplay = QPointer( new QTextBrowser() );
   aboutPageTextDisplay->setOpenLinks( false );
-  // aboutPageTextDisplay->setOpenExternalLinks( true );
   aboutPageTextDisplay->setMarkdown( markdownText );
   aboutPageTextDisplay->setReadOnly( true );
   aboutPageLayout->addWidget( aboutPageTextDisplay );
@@ -432,8 +431,8 @@ auto dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBo
     handleAccountBookModified( false );
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
 
-    // Update recent account books menu
     updateRecentAccountBooksMenu( accountBookFile );
+
     return true;
   }
   return false;
@@ -487,6 +486,10 @@ void dbscqt::MainWindow::refreshRecentAccountBooksMenu()
         auto const filePath           = std::filesystem::path( pointer->text().toStdString() );
         bool const loadedSuccessfully = loadAccountBook( filePath );
         if ( !loadedSuccessfully ) {
+          auto recentAccountBookPaths =
+            QSettings().value( dbscqt::PreferenceKeys::kRecentAccountBooksKey ).toStringList();
+          recentAccountBookPaths.removeAll( pointer->text() );
+          QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBooksKey, recentAccountBookPaths );
           pointer->deleteLater();
         }
       }
