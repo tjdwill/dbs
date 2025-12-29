@@ -321,6 +321,8 @@ auto dbscqt::MainWindow::saveAccountBookAs() -> std::optional< bool >
       mImp->mPathToAccountBookFileOpt = selectedFilePath;
       QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBookPathKey, userSelectedSaveLocation );
       handleAccountBookModified( false );
+
+      updateRecentAccountBooksMenu( mImp->mPathToAccountBookFileOpt.value() );
     }
     saveWasSuccessfulOpt = saveWasSuccessful;
   }
