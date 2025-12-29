@@ -13,6 +13,7 @@
 
 #include <Qt> // Qt enums (Qt::ColorScheme)
 #include <QtCore/QFileInfo>
+#include <QtCore/QList>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 #include <QtCore/QSettings>
@@ -33,6 +34,7 @@
 #include <exception>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <stdexcept>
 
 namespace dbscqt {
@@ -41,11 +43,16 @@ namespace {
 
   QString const kOpenFileDialogFilter { QObject::tr( "Toml files (*.toml)" ) };
   QString const kBaseWindowTitle { QObject::tr( "Digital Budgeting System" ) };
+  constexpr int kMaxNumberOfRecentAccountBooks = 5;
 } // namespace
 
 class MainWindow::Private
 {
 public:
+  static auto recentAccountBookActionsFromSettings() -> QList< QAction* >;
+  auto recentAccountBookActionsFromMenu() const -> QList< QAction* >;
+  void updateRecentAccountBooksSetting( std::filesystem::path const& );
+
   ::Ui::MainWindow mUi {};
   std::shared_ptr< dbsc::AccountBook > mCurrentAccountBookHandle {};
   std::optional< std::filesystem::path > mPathToAccountBookFileOpt {};
@@ -55,12 +62,59 @@ public:
 
 } // namespace dbscqt
 
+auto dbscqt::MainWindow::Private::recentAccountBookActionsFromSettings() -> QList< QAction* >
+{
+  QList< QAction* > recentAccountBooks;
+  recentAccountBooks.reserve( dbscqt::kMaxNumberOfRecentAccountBooks );
+
+  auto const accountBookPaths = QSettings().value( dbscqt::PreferenceKeys::kRecentAccountBooksKey, {} ).toStringList();
+  for ( auto const& path : accountBookPaths ) {
+    auto* action = new QAction( path );
+    recentAccountBooks.push_back( action );
+  }
+
+  return recentAccountBooks;
+}
+
+auto dbscqt::MainWindow::Private::recentAccountBookActionsFromMenu() const -> QList< QAction* >
+{
+  return mUi.mRecentAccountBooksMenu->actions();
+}
+
+void dbscqt::MainWindow::Private::updateRecentAccountBooksSetting( std::filesystem::path const& accountBookPath )
+{
+  auto const path = QString::fromStdString( accountBookPath.string() );
+
+  // Check if path is already present among saved paths. If so, it is now the most recent.
+  QStringList recentAccountBooksMostToLeast;
+  recentAccountBooksMostToLeast.reserve( dbscqt::kMaxNumberOfRecentAccountBooks );
+  for ( auto const* action : recentAccountBookActionsFromMenu() ) {
+    recentAccountBooksMostToLeast.push_back( action->text() );
+  }
+
+  auto const pathIsPresentIter = std::ranges::find( recentAccountBooksMostToLeast, path );
+  if ( pathIsPresentIter != recentAccountBooksMostToLeast.end() ) {
+    // Move the element to the front of the list.
+    auto index = static_cast< int >( std::distance( recentAccountBooksMostToLeast.begin(), pathIsPresentIter ) );
+    recentAccountBooksMostToLeast.takeAt( index );
+  } else if ( recentAccountBooksMostToLeast.size() == dbscqt::kMaxNumberOfRecentAccountBooks ) {
+    recentAccountBooksMostToLeast.pop_back();
+  }
+  recentAccountBooksMostToLeast.push_front( path );
+
+  QSettings().setValue( dbscqt::PreferenceKeys::kRecentAccountBooksKey, recentAccountBooksMostToLeast );
+}
+
+//---
+
 dbscqt::MainWindow::MainWindow( QWidget* parent )
   : QMainWindow( parent )
   , mImp( std::make_unique< dbscqt::MainWindow::Private >() )
 {
   mImp->mUi.setupUi( this );
   {
+    refreshRecentAccountBooksMenu();
+
     // Set action connections
     QObject::connect( mImp->mUi.mCloseAction, &QAction::triggered, this, &dbscqt::MainWindow::closeAccountBook );
     QObject::connect( mImp->mUi.mNewAction, &QAction::triggered, this, &dbscqt::MainWindow::createNewAccountBook );
@@ -375,6 +429,9 @@ void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBo
     updateAccountBookHandle( loadedAccountBook );
     handleAccountBookModified( false );
     mImp->mUi.mStackedWidget->setCurrentWidget( mImp->mUi.mAccountBookDisplayPage );
+
+    // Update recent account books menu
+    updateRecentAccountBooksMenu( accountBookFile );
   }
 }
 
@@ -413,6 +470,28 @@ auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
     };
   }
   return std::nullopt;
+}
+
+void dbscqt::MainWindow::refreshRecentAccountBooksMenu()
+{
+  mImp->mUi.mRecentAccountBooksMenu->clear();
+  auto const recentFileActions = mImp->recentAccountBookActionsFromSettings();
+  for ( auto* action : recentFileActions ) {
+    QObject::connect( action, &QAction::triggered, [action, this]() {
+      auto const pointer = QPointer( action );
+      if ( pointer ) {
+        auto const filePath = std::filesystem::path( pointer->text().toStdString() );
+        loadAccountBook( filePath );
+      }
+    } );
+  }
+  mImp->mUi.mRecentAccountBooksMenu->addActions( recentFileActions );
+}
+
+void dbscqt::MainWindow::updateRecentAccountBooksMenu( std::filesystem::path const& latestAccountBookPath )
+{
+  mImp->updateRecentAccountBooksSetting( latestAccountBookPath );
+  refreshRecentAccountBooksMenu();
 }
 
 auto dbscqt::MainWindow::saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool

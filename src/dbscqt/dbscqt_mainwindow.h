@@ -113,6 +113,10 @@ private:
     -> std::optional< std::pair< std::optional< bool > /* userProceededWithSaveOperation */,
                                  std::optional< bool > /* successfulSaveOpt */ > >;
 
+  void refreshRecentAccountBooksMenu();
+  /// Updates the recent file settings and refreshes the menu
+  void updateRecentAccountBooksMenu( std::filesystem::path const& latestAccountBookPath );
+
   /// @pre filePath is a valid path candidate.
   /// @return true if save was successful; false otherwise.
   auto saveAccountBookInternal( std::filesystem::path const& filePath ) -> bool;

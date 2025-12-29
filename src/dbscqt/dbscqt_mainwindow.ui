@@ -101,8 +101,15 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="mRecentAccountBooksMenu">
+     <property name="title">
+      <string>Recent Account Books</string>
+     </property>
+     <addaction name="action"/>
+    </widget>
     <addaction name="mNewAction"/>
     <addaction name="mOpenAction"/>
+    <addaction name="mRecentAccountBooksMenu"/>
     <addaction name="mSaveAction"/>
     <addaction name="mSaveAsAction"/>
     <addaction name="mCloseAction"/>
@@ -210,6 +217,16 @@
    </property>
    <property name="text">
     <string>Preferences...</string>
+   </property>
+  </action>
+  <action name="actionOpenRecent">
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>PlaceHolder</string>
    </property>
   </action>
  </widget>

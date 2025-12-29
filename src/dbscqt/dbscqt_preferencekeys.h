@@ -26,6 +26,9 @@ struct PreferenceKeys
   inline static QString const kWindowStateKey { "window/State" };
 
   inline static QString const kApplicationColorSchemeKey { "colorScheme" };
+  /// Stores list of paths to the most recently-loaded account books.
+  /// The list is ordered from most recent to least.
+  inline static QString const kRecentAccountBooksKey { "recentAccountBooks" };
 };
 } // namespace dbscqt
 
