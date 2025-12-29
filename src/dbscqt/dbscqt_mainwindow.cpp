@@ -483,7 +483,10 @@ void dbscqt::MainWindow::refreshRecentAccountBooksMenu()
     QObject::connect( action, &QAction::triggered, [action, this]() {
       auto const pointer = QPointer( action );
       if ( pointer ) {
-        auto const filePath           = std::filesystem::path( pointer->text().toStdString() );
+        auto const filePath = std::filesystem::path( pointer->text().toStdString() );
+        if ( shouldAbortOperation() ) {
+          return;
+        }
         bool const loadedSuccessfully = loadAccountBook( filePath );
         if ( !loadedSuccessfully ) {
           auto recentAccountBookPaths =
