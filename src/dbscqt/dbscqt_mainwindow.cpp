@@ -407,7 +407,7 @@ auto dbscqt::MainWindow::createPreferencesWidget( QWidget* parent ) -> dbscqt::P
   return preferencesWindow;
 }
 
-void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBookFile )
+auto dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBookFile ) -> bool
 {
   auto const loadAccountBookInternal =
     [this]( std::filesystem::path const& accountBookFilePath ) -> std::shared_ptr< dbsc::AccountBook > {
@@ -434,7 +434,9 @@ void dbscqt::MainWindow::loadAccountBook( std::filesystem::path const& accountBo
 
     // Update recent account books menu
     updateRecentAccountBooksMenu( accountBookFile );
+    return true;
   }
+  return false;
 }
 
 auto dbscqt::MainWindow::promptUserToSaveIfAccountBookIsCurrentlyModified()
@@ -482,8 +484,11 @@ void dbscqt::MainWindow::refreshRecentAccountBooksMenu()
     QObject::connect( action, &QAction::triggered, [action, this]() {
       auto const pointer = QPointer( action );
       if ( pointer ) {
-        auto const filePath = std::filesystem::path( pointer->text().toStdString() );
-        loadAccountBook( filePath );
+        auto const filePath           = std::filesystem::path( pointer->text().toStdString() );
+        bool const loadedSuccessfully = loadAccountBook( filePath );
+        if ( !loadedSuccessfully ) {
+          pointer->deleteLater();
+        }
       }
     } );
   }

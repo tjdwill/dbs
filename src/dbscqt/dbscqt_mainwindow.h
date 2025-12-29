@@ -90,7 +90,7 @@ private:
   static auto createPreferencesWidget( QWidget* parent ) -> dbscqt::PreferencesWidget*;
   /// Initiates account loading and handles the Ui updating associated with
   /// loading an account.
-  void loadAccountBook( std::filesystem::path const& );
+  auto loadAccountBook( std::filesystem::path const& ) -> bool;
 
   /// @return Information regarding the user's interaction with the save prompt
   /// and the subsequent save operation.
