@@ -11,6 +11,8 @@
 The next feature I want to implement is an "Open Recent" option. It should list
 the last five account books that were loaded from most recent to least.
 
+**Update**: Recent files support has been implemented.
+
 ## 22 December 2025
 
 I figured out how to build and install with shared libraries (PY)! I'll write

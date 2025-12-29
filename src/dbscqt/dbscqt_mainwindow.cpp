@@ -94,7 +94,7 @@ void dbscqt::MainWindow::Private::updateRecentAccountBooksSetting( std::filesyst
 
   auto const pathIsPresentIter = std::ranges::find( recentAccountBooksMostToLeast, path );
   if ( pathIsPresentIter != recentAccountBooksMostToLeast.end() ) {
-    // Move the element to the front of the list.
+    // Remove the element from the list to later be placed in the front.
     auto index = static_cast< int >( std::distance( recentAccountBooksMostToLeast.begin(), pathIsPresentIter ) );
     recentAccountBooksMostToLeast.takeAt( index );
   } else if ( recentAccountBooksMostToLeast.size() == dbscqt::kMaxNumberOfRecentAccountBooks ) {
