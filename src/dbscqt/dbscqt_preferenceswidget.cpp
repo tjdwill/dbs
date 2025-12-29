@@ -50,6 +50,8 @@ dbscqt::PreferencesWidget::PreferencesWidget( QWidget* parent )
   : QDialog( parent )
   , mImp( std::make_unique< Private >() )
 {
+  setWindowTitle( "Preferences" );
+  setWindowIcon( QIcon( ":/icons/icons8-settings-100.png" ) );
   using ButtonType = QDialogButtonBox::StandardButton;
   auto mainLayout  = QPointer( new QVBoxLayout( this ) );
   {

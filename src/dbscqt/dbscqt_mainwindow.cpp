@@ -386,6 +386,7 @@ void dbscqt::MainWindow::showAboutPage()
   constexpr int kMinHeight { 600 };
   constexpr int kMinWidth { 800 };
   aboutPage->setMinimumSize( { kMinWidth, kMinHeight } );
+  aboutPage->setWindowTitle( "About DBS" );
 
   aboutPage->open();
 }
