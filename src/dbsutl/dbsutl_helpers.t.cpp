@@ -3,6 +3,7 @@
 
 #include <cassert>
 
+namespace {
 struct EnumAsIntegralTestSuite
 {
   struct IntegerTest
@@ -25,6 +26,7 @@ struct EnumAsIntegralTestSuite
   // run tests in suite
   EnumAsIntegralTestSuite() { IntegerTest {}; }
 };
+} // namespace
 
 int main()
 {

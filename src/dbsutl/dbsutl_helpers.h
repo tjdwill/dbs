@@ -9,15 +9,17 @@
 //  At the time of writing, there is no defined structure due to a lack of quantity,
 //  but note that functions may be to be moved around over time.
 
-#include <concepts>
 #include <map>
 #include <stdexcept>
+#include <type_traits>
 
 namespace dbsutl {
 
-template< typename EnumType, std::integral ReturnType = int >
-constexpr auto enumAsIntegral( EnumType type ) -> ReturnType
+template< typename EnumType >
+  requires std::is_enum_v< EnumType >
+constexpr auto enumAsIntegral( EnumType type )
 {
+  using ReturnType = std::underlying_type_t< EnumType >;
   return static_cast< ReturnType >( type );
 }
 
