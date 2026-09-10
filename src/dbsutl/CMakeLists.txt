@@ -1,16 +1,16 @@
 # dbsutl
 # ------
-include(GenerateExportHeader)
+include( GenerateExportHeader )
 
 # Define a target that allows the propagation of the CMake-generated export header.
 # Currently build static because there are no symbols to export.
-add_library(dbsutl STATIC)
-generate_export_header(dbsutl
+add_library( dbsutl STATIC )
+generate_export_header( dbsutl
   EXPORT_FILE_NAME dbsutl_sharedapi.h
   EXPORT_MACRO_NAME DBSUTL_API
   NO_EXPORT_MACRO_NAME DBSUTL_INTERNAL
 )
-target_sources(dbsutl 
+target_sources( dbsutl 
   PRIVATE
     dbsutl_helpers.cpp
   PUBLIC
@@ -23,7 +23,7 @@ target_sources(dbsutl
       ${CMAKE_CURRENT_BINARY_DIR}/dbsutl_sharedapi.h
 )
 
-add_executable(dbsutl_helpers.t)
-target_sources(dbsutl_helpers.t PRIVATE dbsutl_helpers.t.cpp)
-target_link_libraries(dbsutl_helpers.t PRIVATE dbsutl)
-add_test(NAME DbsutlHelpersTest COMMAND dbsutl_helpers.t)
+add_executable( dbsutl_helpers.t )
+target_sources( dbsutl_helpers.t PRIVATE dbsutl_helpers.t.cpp )
+target_link_libraries( dbsutl_helpers.t PRIVATE dbsCompilationConfigs dbsutl )
+add_test( NAME DbsutlHelpersTest COMMAND dbsutl_helpers.t )
