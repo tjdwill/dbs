@@ -6,18 +6,10 @@ project( dbs
   LANGUAGES CXX
 )
 
-enable_testing()
-#===================Top-Config==========================
-if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-  if( MSVC )
-    # warning level 4
-    add_compile_options( /W4 )
-  else()
-    add_compile_options( -Wall -Wextra -Wpedantic )
-  endif()
-endif()
+# Register CMakeModules directory to access this project's modules.
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules )
 
-message( "Prefix path: $ENV{CMAKE_PREFIX_PATH}" )
+enable_testing()
 
 # Qt imports
 find_package( Qt6 REQUIRED COMPONENTS Core Gui Widgets )
@@ -33,12 +25,18 @@ find_package( bdl REQUIRED )
 find_package( bsl REQUIRED )
 
 #============Subdirectories====================
-set( DBS_THIRDPARTY_BASE_DIR ${PROJECT_SOURCE_DIR}/3rdparty )
-
 option( DBS_BUILD_TUTORIALS "Build the components in the tutorialSpace directory" OFF )
 if( DBS_BUILD_TUTORIALS )
   add_subdirectory( tutorialSpace )
 endif()
+
+add_library( dbsCompileOptionsInternal INTERFACE )
+if( MSVC )
+  target_compile_options( dbsCompileOptionsInternal INTERFACE /W4 )
+else()
+  target_compile_options( dbsCompileOptionsInternal INTERFACE -Wall -Wextra -Wpedantic )
+endif()
+
 add_subdirectory( src )
 
 if( CMAKE_HOST_UNIX )
@@ -49,10 +47,28 @@ if( CMAKE_HOST_UNIX )
   )
   execute_process( COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build )
 elseif( CMAKE_HOST_WIN32 )
-  add_custom_target( copyCompilationDatabase ALL
-    COMMAND powershell "Copy-Item -Path ${CMAKE_BINARY_DIR}/compile_commands.json -Destination ${CMAKE_SOURCE_DIR}/compile_commands.json"
-    VERBATIM
+  # Copy the compile_commands.json file anytime CMake reconfigures. One way to
+  # detect this is to detect if CMake-related files change.
+  file( GLOB command_dependencies 
+    "CMakeLists.txt"
+    "src/**/CMakeLists.txt" 
+    "tutorialSpace/CMakeLists.txt" 
+    "CMakeModules/*.cmake"
+    "src/**/*.cmake"
   )
+  add_custom_command( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+    VERBATIM
+    COMMENT "Copying compilation database."
+    COMMAND powershell "Copy-Item -Path ${CMAKE_BINARY_DIR}/compile_commands.json -Destination ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json"
+    DEPENDS
+      ${command_dependencies}
+  )
+
+  # Create a custom target that depends on the generated file. This target is
+  # then added as a dependency of this project's main target, forcing the file
+  # generation before the main target is built.
+  add_custom_target( CopyCompilationDatabase DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json )
+  add_dependencies( dbs CopyCompilationDatabase )
 else ()
 endif()
 
