@@ -35,7 +35,6 @@ DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 /// also responsible for recording transactions and can open new accounts as
 /// well as toggle the status of an existing status (active/closed).
 class AccountBook
-
 {
 public:
   using const_iterator =                                      // NOLINT

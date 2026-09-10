@@ -156,21 +156,21 @@ target_link_libraries(dbs
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if (WIN32)
-  set_target_properties(${dbscqt_deployable_targets}
+  set_target_properties( ${dbscqt_deployable_targets}
     PROPERTIES WIN32_EXECUTABLE TRUE
   )
-  retrieve_target_artifacts("${dbscqt_deployable_targets}" windeployqt_args)
+  retrieve_target_artifacts("${dbscqt_deployable_targets}" windeployqt_args )
 
   set(deploy_command_args ${WINDEPLOYQT_EXECUTABLE}) 
   list(APPEND deploy_command_args "${windeployqt_args}")
   list(JOIN deploy_command_args " " deploy_command)
   # message(COMMAND: "${deploy_command}")
-  add_custom_target(deployQtExecutables ALL
+  add_custom_command( TARGET dbs
+    POST_BUILD
     COMMAND powershell "${deploy_command}" # Use powershell because the default cmd.exe doesn't handle pathing well
     COMMENT "Deploying Qt Executables."
     VERBATIM
   )
-  add_dependencies(deployQtExecutables ${deployable_targets})
 endif()
 
 include(GNUInstallDirs)
