@@ -1,5 +1,15 @@
 # DBS Journal
 
+## 10 September 2026
+
+After a hiatus, I have come back to continue development. To begin with, I plan
+to take stock of the current state of the code, reading through the repo and
+assessing the design. 
+
+For now, I've refactored the project's CMake to improve its organization and
+efficiency, especially with things like custom targets vs. custom commands. Yah
+willing, I look forward to picking this back up.
+
 ## 27-28 December 2025
 
 - Create a preference widget to control color scheme (and other preferences in
