@@ -1,3 +1,11 @@
+find_package( tomlplusplus REQUIRED )
+find_package( stduuid REQUIRED )
+
+# Bloomberg BDE imports
+find_package( Threads REQUIRED )
+find_package( bdl REQUIRED )
+find_package( bsl REQUIRED )
+
 
 include( GenerateExportHeader )
 add_library( dbsc )

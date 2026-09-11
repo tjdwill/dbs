@@ -1,6 +1,18 @@
+find_package( tomlplusplus REQUIRED )
+find_package( stduuid REQUIRED )
+
+# Bloomberg BDE imports
+find_package( Threads REQUIRED )
+find_package( bdl REQUIRED )
+find_package( bsl REQUIRED )
+
+find_package( Qt6 REQUIRED COMPONENTS Core Gui Widgets )
+qt_standard_project_setup()
+set( CMAKE_AUTORCC ON )
+
 add_library( dbscqtCompilationConfigs INTERFACE )
-  target_compile_definitions( dbscqtCompilationConfigs INTERFACE QT_NO_KEYWORDS )
-  target_link_libraries( dbscqtCompilationConfigs INTERFACE dbsCompilationConfigs )
+target_compile_definitions( dbscqtCompilationConfigs INTERFACE QT_NO_KEYWORDS )
+target_link_libraries( dbscqtCompilationConfigs INTERFACE dbsCompilationConfigs )
 
 set( dbs_resources_dir "${PROJECT_SOURCE_DIR}/resources" ) # Used for CMake
 set( qtResourcesFile "${dbs_resources_dir}/resources.qrc" )
@@ -14,7 +26,7 @@ macro( register_deployable_target target_name )
 endmacro()
 
 function( retrieve_target_artifacts targetList oList )
-  foreach(target IN LISTS targetList)
+  foreach( target IN LISTS targetList )
     list( APPEND targets "$<TARGET_FILE:${target}>" )
     #message( "${targets}" )
   endforeach()

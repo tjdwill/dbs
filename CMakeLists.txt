@@ -5,26 +5,11 @@ project( dbs
   HOMEPAGE_URL "https://github.com/tjdwill/dbs"
   LANGUAGES CXX
 )
+enable_testing()
 
 # Register CMakeModules directory to access this project's modules.
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules )
 
-enable_testing()
-
-# Qt imports
-find_package( Qt6 REQUIRED COMPONENTS Core Gui Widgets )
-qt_standard_project_setup()
-set( CMAKE_AUTORCC ON )
-
-find_package( tomlplusplus REQUIRED )
-find_package( stduuid REQUIRED )
-
-# Bloomberg BDE imports
-find_package( Threads REQUIRED )
-find_package( bdl REQUIRED )
-find_package( bsl REQUIRED )
-
-#============Subdirectories====================
 option( DBS_BUILD_TUTORIALS "Build the components in the tutorialSpace directory" OFF )
 if( DBS_BUILD_TUTORIALS )
   add_subdirectory( tutorialSpace )
