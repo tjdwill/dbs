@@ -14,6 +14,9 @@
 #include <ratio>
 
 namespace dbsc {
+
+// Explicitly set the duration precision to ensure the same behavior on Linux and Windows.
+// The two platforms have different default duration precisions.
 using TimeStamp =
   std::chrono::time_point< std::chrono::system_clock, std::chrono::duration< std::int64_t, std::nano > >;
 } // namespace dbsc
