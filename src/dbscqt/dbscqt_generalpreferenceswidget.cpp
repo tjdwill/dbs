@@ -51,17 +51,17 @@ namespace {
 } // namespace
 } // namespace dbscqt
 
-class dbscqt::GeneralPreferencesWidget::Private
+class dbscqt::GeneralPreferencesPage::Private
 {
 public:
   QPointer< QComboBox > mColorSchemeSelectionBox;
 };
 
-dbscqt::GeneralPreferencesWidget::GeneralPreferencesWidget( QWidget* parent )
+dbscqt::GeneralPreferencesPage::GeneralPreferencesPage( QWidget* parent )
   : dbscqt::PreferencePageInterface( parent )
   , mImp( std::make_unique< Private >() )
 {
-  setObjectName( "dbscqt::GeneralPreferencesWidget" );
+  setObjectName( "dbscqt::GeneralPreferencesPage" );
   auto mainLayout = QPointer( new QFormLayout( this ) );
   // Color Scheme Editor
   {
@@ -79,15 +79,15 @@ dbscqt::GeneralPreferencesWidget::GeneralPreferencesWidget( QWidget* parent )
     QObject::connect( mImp->mColorSchemeSelectionBox,
                       &QComboBox::currentTextChanged,
                       this,
-                      &dbscqt::GeneralPreferencesWidget::handleColorSchemeSelectionChanged );
+                      &dbscqt::GeneralPreferencesPage::handleColorSchemeSelectionChanged );
 
     mainLayout->addRow( "Color Scheme:", mImp->mColorSchemeSelectionBox );
   }
 }
 
-dbscqt::GeneralPreferencesWidget::~GeneralPreferencesWidget() = default;
+dbscqt::GeneralPreferencesPage::~GeneralPreferencesPage() = default;
 
-void dbscqt::GeneralPreferencesWidget::apply()
+void dbscqt::GeneralPreferencesPage::apply()
 {
   // Update QSettings
   dbscqt::PreferencePageInterface::apply();
@@ -98,7 +98,7 @@ void dbscqt::GeneralPreferencesWidget::apply()
   Q_EMIT settingsApplied( preferenceDisplayName() );
 }
 
-void dbscqt::GeneralPreferencesWidget::discardModifiedSettings()
+void dbscqt::GeneralPreferencesPage::discardModifiedSettings()
 {
   dbscqt::PreferencePageInterface::discardModifiedSettings();
 
@@ -108,7 +108,7 @@ void dbscqt::GeneralPreferencesWidget::discardModifiedSettings()
   Q_EMIT modifiedSettingsDiscarded( preferenceDisplayName() );
 }
 
-auto dbscqt::GeneralPreferencesWidget::editedSettings() const -> std::vector< QString > const&
+auto dbscqt::GeneralPreferencesPage::editedSettings() const -> std::vector< QString > const&
 {
   static std::vector< QString > const kEditedSettings {
     dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey,
@@ -117,25 +117,25 @@ auto dbscqt::GeneralPreferencesWidget::editedSettings() const -> std::vector< QS
   return kEditedSettings;
 }
 
-auto dbscqt::GeneralPreferencesWidget::preferenceDisplayName() const -> QString const&
+auto dbscqt::GeneralPreferencesPage::preferenceDisplayName() const -> QString const&
 {
   static QString const kDisplayName = "General";
 
   return kDisplayName;
 }
 
-void dbscqt::GeneralPreferencesWidget::loadSettings()
+void dbscqt::GeneralPreferencesPage::loadSettings()
 {
   setColorSchemeFromSetting();
 }
 
-void dbscqt::GeneralPreferencesWidget::handleColorSchemeSelectionChanged( QString const& colorSchemeName )
+void dbscqt::GeneralPreferencesPage::handleColorSchemeSelectionChanged( QString const& colorSchemeName )
 {
   Q_EMIT settingModified(
     preferenceDisplayName(), dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey, colorSchemeName );
 }
 
-void dbscqt::GeneralPreferencesWidget::setColorSchemeFromSetting()
+void dbscqt::GeneralPreferencesPage::setColorSchemeFromSetting()
 {
   auto const colorSchemeSettingValue = QSettings()
                                          .value( dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey,

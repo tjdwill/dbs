@@ -5,7 +5,7 @@
 //@PURPOSE: Define a widget for general application preferences.
 //
 //@CLASSES:
-//  dbscqt::GeneralPreferencesWidget: Edits the application's general preferences.
+//  dbscqt::GeneralPreferencesPage: Edits the application's general preferences.
 //
 //@DESCRIPTION: This component defines a widget that edits general application settings.
 
@@ -15,16 +15,16 @@
 #include <memory>
 
 namespace dbscqt {
-class DBSCQT_API GeneralPreferencesWidget final : public PreferencePageInterface
+class DBSCQT_API GeneralPreferencesPage final : public PreferencePageInterface
 {
   Q_OBJECT
 public:
-  explicit GeneralPreferencesWidget( QWidget* parent = nullptr );
-  ~GeneralPreferencesWidget() final;
-  GeneralPreferencesWidget( GeneralPreferencesWidget const& )                        = delete;
-  GeneralPreferencesWidget( GeneralPreferencesWidget&& ) noexcept                    = delete;
-  auto operator=( GeneralPreferencesWidget const& ) -> GeneralPreferencesWidget&     = delete;
-  auto operator=( GeneralPreferencesWidget&& ) noexcept -> GeneralPreferencesWidget& = delete;
+  explicit GeneralPreferencesPage( QWidget* parent = nullptr );
+  ~GeneralPreferencesPage() final;
+  GeneralPreferencesPage( GeneralPreferencesPage const& )                        = delete;
+  GeneralPreferencesPage( GeneralPreferencesPage&& ) noexcept                    = delete;
+  auto operator=( GeneralPreferencesPage const& ) -> GeneralPreferencesPage&     = delete;
+  auto operator=( GeneralPreferencesPage&& ) noexcept -> GeneralPreferencesPage& = delete;
 
   void apply() final;
   void discardModifiedSettings() final;

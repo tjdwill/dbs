@@ -415,7 +415,7 @@ void dbscqt::MainWindow::showAboutQtPage()
 auto dbscqt::MainWindow::createPreferencesWidget( QWidget* parent ) -> dbscqt::PreferencesWidget*
 {
   auto* preferencesWindow = new dbscqt::PreferencesWidget( parent );
-  preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesWidget() );
+  preferencesWindow->addPreferencePage( new dbscqt::GeneralPreferencesPage() );
   constexpr int kPreferenceWindowWidth  = 600;
   constexpr int kPreferenceWindowHeight = 480;
   preferencesWindow->resize( QSize( kPreferenceWindowWidth, kPreferenceWindowHeight ) );
