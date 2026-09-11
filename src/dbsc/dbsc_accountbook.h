@@ -37,9 +37,8 @@ DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 class AccountBook
 {
 public:
-  using const_iterator =                                      // NOLINT
-    std::map< UuidString, Account >::const_iterator;          // NOLINT
-  using iterator = std::map< UuidString, Account >::iterator; // NOLINT
+  using ConstIterator   = std::map< UuidString, Account >::const_iterator;
+  using MutableIterator = std::map< UuidString, Account >::iterator;
 
   DBSC_API AccountBook( std::string const& ownerName );
 
@@ -51,12 +50,12 @@ public:
 
   [[nodiscard]] DBSC_API auto owner() const -> std::string const&;
 
-  [[nodiscard]] DBSC_API auto begin() -> iterator;
-  [[nodiscard]] DBSC_API auto begin() const -> const_iterator;
-  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> const_iterator;
-  [[nodiscard]] DBSC_API auto end() -> iterator;
-  [[nodiscard]] DBSC_API auto end() const -> const_iterator;
-  [[nodiscard]] DBSC_API auto cend() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto begin() -> MutableIterator;
+  [[nodiscard]] DBSC_API auto begin() const -> ConstIterator;
+  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> ConstIterator;
+  [[nodiscard]] DBSC_API auto end() -> MutableIterator;
+  [[nodiscard]] DBSC_API auto end() const -> ConstIterator;
+  [[nodiscard]] DBSC_API auto cend() const noexcept -> ConstIterator;
 
   [[nodiscard]] DBSC_API auto accountCount() const -> int;
   // Manipulators

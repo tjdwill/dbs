@@ -39,32 +39,32 @@ auto AccountBook::owner() const -> std::string const&
   return mOwner;
 }
 
-auto AccountBook::begin() -> iterator
+auto AccountBook::begin() -> MutableIterator
 {
   return mAccountsMap.begin();
 }
 
-auto AccountBook::begin() const -> const_iterator
+auto AccountBook::begin() const -> ConstIterator
 {
   return mAccountsMap.begin();
 }
 
-auto AccountBook::cbegin() const noexcept -> const_iterator
+auto AccountBook::cbegin() const noexcept -> ConstIterator
 {
   return mAccountsMap.cbegin();
 }
 
-auto AccountBook::end() -> iterator
+auto AccountBook::end() -> MutableIterator
 {
   return mAccountsMap.end();
 }
 
-auto AccountBook::end() const -> const_iterator
+auto AccountBook::end() const -> ConstIterator
 {
   return mAccountsMap.end();
 }
 
-auto AccountBook::cend() const noexcept -> const_iterator
+auto AccountBook::cend() const noexcept -> ConstIterator
 {
   return mAccountsMap.cend();
 }
