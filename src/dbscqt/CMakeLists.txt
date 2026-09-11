@@ -48,23 +48,23 @@ target_sources( dbscqt
   PRIVATE
     dbscqt_accountbooktreewidget.cpp
     dbscqt_accountbookwidget.cpp
+    dbscqt_accountbookwidget.ui
     dbscqt_accountmodel.cpp
     dbscqt_displayutil.cpp
     dbscqt_generalpreferenceswidget.cpp
     dbscqt_mainwindow.cpp
+    dbscqt_mainwindow.ui
     dbscqt_openaccountdialog.cpp
+    dbscqt_openaccountdialog.ui
     dbscqt_preferencekeys.cpp
     dbscqt_preferencepageinterface.cpp
     dbscqt_preferenceswidget.cpp
     dbscqt_qobjectdeleteutil.cpp
     dbscqt_transactiondialog.cpp
-    dbscqt_transactionitem.cpp
-    # Qt Files
-    ${qtResourcesFile}
-    dbscqt_accountbookwidget.ui
-    dbscqt_mainwindow.ui
-    dbscqt_openaccountdialog.ui
     dbscqt_transactiondialog.ui
+    dbscqt_transactionitem.cpp
+  PUBLIC
+    ${qtResourcesFile} # Needs to be public for icons to appear in linked targets
   PUBLIC
     FILE_SET HEADERS
     BASE_DIRS
