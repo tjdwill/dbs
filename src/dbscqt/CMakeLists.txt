@@ -51,7 +51,7 @@ target_sources( dbscqt
     dbscqt_accountbookwidget.ui
     dbscqt_accountmodel.cpp
     dbscqt_displayutil.cpp
-    dbscqt_generalpreferenceswidget.cpp
+    dbscqt_generalpreferencespage.cpp
     dbscqt_mainwindow.cpp
     dbscqt_mainwindow.ui
     dbscqt_openaccountdialog.cpp
@@ -74,7 +74,7 @@ target_sources( dbscqt
       dbscqt_accountbookwidget.h
       dbscqt_accountmodel.h
       dbscqt_displayutil.h
-      dbscqt_generalpreferenceswidget.h
+      dbscqt_generalpreferencespage.h
       dbscqt_mainwindow.h
       dbscqt_openaccountdialog.h
       dbscqt_preferencepageinterface.h

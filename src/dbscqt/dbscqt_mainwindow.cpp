@@ -5,7 +5,7 @@
 #include <dbsc_dbscserializer.h>
 #include <dbsc_tomlserializer.h>
 #include <dbscqt_accountbookwidget.h>
-#include <dbscqt_generalpreferenceswidget.h>
+#include <dbscqt_generalpreferencespage.h>
 #include <dbscqt_preferenceswidget.h>
 
 #include <bsls_assert.h>

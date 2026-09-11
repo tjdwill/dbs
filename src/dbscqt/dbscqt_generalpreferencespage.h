@@ -1,4 +1,4 @@
-// dbscqt_generalpreferenceswidget.h
+// dbscqt_generalpreferencespage.h
 #ifndef INCLUDED_DBSCQT_GENERALPREFERENCESWIDGET
 #define INCLUDED_DBSCQT_GENERALPREFERENCESWIDGET
 

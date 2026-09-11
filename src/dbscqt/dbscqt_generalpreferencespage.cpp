@@ -1,5 +1,5 @@
-// dbscqt_generalpreferenceswidget.cpp
-#include "dbscqt_generalpreferenceswidget.h"
+// dbscqt_generalpreferencespage.cpp
+#include "dbscqt_generalpreferencespage.h"
 
 #include <dbsutl_helpers.h>
 
