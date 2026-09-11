@@ -9,6 +9,7 @@
 #include <dbscqt_openaccountdialog.h>
 #include <dbscqt_qobjectdeleteutil.h>
 #include <dbscqt_transactiondialog.h>
+#include <dbscqt_transactionitem.h>
 
 #include <bsls_assert.h>
 
@@ -22,6 +23,7 @@
 
 #include <memory>
 #include <optional>
+
 
 namespace dbscqt {
 namespace {

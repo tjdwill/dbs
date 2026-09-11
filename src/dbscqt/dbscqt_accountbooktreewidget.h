@@ -13,7 +13,6 @@
 //  GUI display.
 
 #include <dbscqt_sharedapi.h>
-#include <dbscqt_transactionitem.h>
 
 #include <QtCore/QString>
 #include <QtCore/QUuid>

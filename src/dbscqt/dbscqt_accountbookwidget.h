@@ -11,7 +11,6 @@
 //  DBS program.
 
 #include <dbscqt_sharedapi.h>
-#include <dbscqt_transactionitem.h>
 
 #include <QtCore/QUuid>
 #include <QtWidgets/QWidget>
@@ -25,6 +24,7 @@ class AccountBook;
 namespace dbscqt {
 class AccountItem;
 class TransactionItem;
+struct TransactionItemData;
 
 class DBSCQT_API AccountBookWidget : public QWidget
 {

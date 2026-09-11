@@ -1,6 +1,8 @@
 // dbscqt_displayutil.cpp
 #include "dbscqt_displayutil.h"
 
+#include <dbsc_uuidstring.h>
+
 auto dbscqt::DisplayUtil::accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString
 {
   return QString( "%1 (%2)" ).arg( name ).arg( id.toString( QUuid::WithoutBraces ).split( '-' ).front() );

@@ -7,6 +7,7 @@
 #include <dbscqt_accountmodel.h>
 #include <dbscqt_displayutil.h>
 #include <dbscqt_qobjectdeleteutil.h>
+#include <dbscqt_transactionitem.h>
 
 #include <bsls_assert.h>
 
