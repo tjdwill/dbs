@@ -38,6 +38,10 @@ using TimeStamp =
 /// income.). Generally, dbsc::Transactions are intended to be made in pairs.
 /// The two pairs will have swapped party IDs and transaction amounts of
 /// opposing signs.
+///
+/// @note Transaction is a class instead of a struct to prevent subsequent value
+///   mutation without needing the data members to be `const`
+///   (which would prohibit move semantics).
 class Transaction
 {
 public:
