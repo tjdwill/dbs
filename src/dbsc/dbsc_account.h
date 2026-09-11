@@ -37,9 +37,8 @@ DBSC_REGISTER_EXCEPTION( InactiveAccountException, "Attempted to modify an inact
 class Account
 {
 public:
-  using const_iterator =                                          // NOLINT
-    std::map< UuidString, Transaction >::const_iterator;          // NOLINT
-  using iterator = std::map< UuidString, Transaction >::iterator; // NOLINT
+  using ConstIterator   = std::map< UuidString, Transaction >::const_iterator;
+  using MutableIterator = std::map< UuidString, Transaction >::iterator;
 
   [[nodiscard]] DBSC_API explicit Account( UuidString const& accountId,
                                            std::string const& name,
@@ -53,12 +52,12 @@ public:
   [[nodiscard]] DBSC_API auto id() const -> UuidString const&;
   [[nodiscard]] DBSC_API auto name() const -> std::string const&;
   [[nodiscard]] DBSC_API auto transactionCount() const -> int;
-  [[nodiscard]] DBSC_API auto begin() -> iterator;
-  [[nodiscard]] DBSC_API auto begin() const -> const_iterator;
-  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> const_iterator;
-  [[nodiscard]] DBSC_API auto end() -> iterator;
-  [[nodiscard]] DBSC_API auto end() const -> const_iterator;
-  [[nodiscard]] DBSC_API auto cend() const noexcept -> const_iterator;
+  [[nodiscard]] DBSC_API auto begin() -> MutableIterator;
+  [[nodiscard]] DBSC_API auto begin() const -> ConstIterator;
+  [[nodiscard]] DBSC_API auto cbegin() const noexcept -> ConstIterator;
+  [[nodiscard]] DBSC_API auto end() -> MutableIterator;
+  [[nodiscard]] DBSC_API auto end() const -> ConstIterator;
+  [[nodiscard]] DBSC_API auto cend() const noexcept -> ConstIterator;
 
   /// Query if this account has a transaction with the provided Id.
   [[nodiscard]] DBSC_API auto contains( UuidString const& transactionId ) const -> bool;
@@ -93,8 +92,8 @@ private:
   UuidString mId;
   std::string mName {};
   std::string mDescription {};
-  BloombergLP::bdldfp::Decimal64 mBalance {};
   std::map< UuidString, Transaction > mTransactions {};
+  BloombergLP::bdldfp::Decimal64 mBalance {};
   bool mIsActive { true };
 };
 
