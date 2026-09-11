@@ -56,7 +56,6 @@ target_sources( dbscqt
     dbscqt_mainwindow.ui
     dbscqt_openaccountdialog.cpp
     dbscqt_openaccountdialog.ui
-    dbscqt_preferencekeys.cpp
     dbscqt_preferencepageinterface.cpp
     dbscqt_preferenceswidget.cpp
     dbscqt_qobjectdeleteutil.cpp
@@ -78,7 +77,6 @@ target_sources( dbscqt
       dbscqt_generalpreferenceswidget.h
       dbscqt_mainwindow.h
       dbscqt_openaccountdialog.h
-      dbscqt_preferencekeys.h
       dbscqt_preferencepageinterface.h
       dbscqt_preferenceswidget.h
       dbscqt_qobjectdeleteutil.h

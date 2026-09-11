@@ -9,7 +9,6 @@
 //
 //@DESCRIPTION: This component defines a widget that edits general application settings.
 
-#include <dbscqt_preferencekeys.h>
 #include <dbscqt_preferencepageinterface.h>
 #include <dbscqt_sharedapi.h>
 

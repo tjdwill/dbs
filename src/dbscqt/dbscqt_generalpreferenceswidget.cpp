@@ -20,6 +20,11 @@
 namespace dbscqt {
 
 namespace {
+  struct PreferenceKeysInternal
+  {
+    inline static QString const kApplicationColorSchemeKey { "colorScheme" };
+  };
+
   auto colorSchemeToStringMap() -> std::map< Qt::ColorScheme, QString > const&
   {
     static std::map< Qt::ColorScheme, QString > const kColorSchemeToStringMap {
@@ -69,7 +74,7 @@ dbscqt::GeneralPreferencesWidget::GeneralPreferencesWidget( QWidget* parent )
     } );
     // Set initial combo box state.
     mImp->mColorSchemeSelectionBox->setCurrentText(
-      QSettings().value( dbscqt::PreferenceKeys::kApplicationColorSchemeKey ).toString() );
+      QSettings().value( dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey ).toString() );
 
     QObject::connect( mImp->mColorSchemeSelectionBox,
                       &QComboBox::currentTextChanged,
@@ -98,7 +103,7 @@ void dbscqt::GeneralPreferencesWidget::discardModifiedSettings()
   dbscqt::PreferencePageInterface::discardModifiedSettings();
 
   mImp->mColorSchemeSelectionBox->setCurrentText(
-    QSettings().value( dbscqt::PreferenceKeys::kApplicationColorSchemeKey ).toString() );
+    QSettings().value( dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey ).toString() );
 
   Q_EMIT modifiedSettingsDiscarded( preferenceDisplayName() );
 }
@@ -106,7 +111,7 @@ void dbscqt::GeneralPreferencesWidget::discardModifiedSettings()
 auto dbscqt::GeneralPreferencesWidget::editedSettings() const -> std::vector< QString > const&
 {
   static std::vector< QString > const kEditedSettings {
-    dbscqt::PreferenceKeys::kApplicationColorSchemeKey,
+    dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey,
   };
 
   return kEditedSettings;
@@ -127,16 +132,16 @@ void dbscqt::GeneralPreferencesWidget::loadSettings()
 void dbscqt::GeneralPreferencesWidget::handleColorSchemeSelectionChanged( QString const& colorSchemeName )
 {
   Q_EMIT settingModified(
-    preferenceDisplayName(), dbscqt::PreferenceKeys::kApplicationColorSchemeKey, colorSchemeName );
+    preferenceDisplayName(), dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey, colorSchemeName );
 }
 
 void dbscqt::GeneralPreferencesWidget::setColorSchemeFromSetting()
 {
   auto const colorSchemeSettingValue = QSettings()
-                                         .value( dbscqt::PreferenceKeys::kApplicationColorSchemeKey,
+                                         .value( dbscqt::PreferenceKeysInternal::kApplicationColorSchemeKey,
                                                  dbscqt::colorSchemeToString( Qt::ColorScheme::Unknown ) )
                                          .toString();
-  auto const colorScheme = colorSchemeFromString( colorSchemeSettingValue );
+  auto const colorScheme             = colorSchemeFromString( colorSchemeSettingValue );
   QGuiApplication::styleHints()->setColorScheme( colorScheme );
 }
 
