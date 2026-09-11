@@ -10,7 +10,8 @@
 //
 //@DESCRIPTION: This component defines functions for easy type dbsc<->Qt conversions.
 
-#include <dbsc_transaction.h>
+#include <dbsc_forward.h>
+#include <dbsc_timestamp.h>
 #include <dbscqt_sharedapi.h>
 
 #include <bdldfp_decimal.fwd.h>
@@ -18,10 +19,6 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QString>
 #include <QtCore/QUuid>
-
-namespace dbsc {
-class UuidString;
-} // namespace dbsc
 
 namespace dbscqt {
 struct DBSCQT_API DisplayUtil

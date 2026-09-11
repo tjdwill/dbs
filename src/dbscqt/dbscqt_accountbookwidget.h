@@ -10,16 +10,13 @@
 //@DESCRIPTION: This component handles the user interaction needed to interface with the
 //  DBS program.
 
+#include <dbsc_forward.h>
 #include <dbscqt_sharedapi.h>
 
 #include <QtCore/QUuid>
 #include <QtWidgets/QWidget>
 
 #include <memory>
-
-namespace dbsc {
-class AccountBook;
-} // namespace dbsc
 
 namespace dbscqt {
 class AccountItem;

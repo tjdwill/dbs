@@ -12,6 +12,7 @@
 //@DESCRIPTION: This component defines a tree widget for the account book for use in the
 //  GUI display.
 
+#include <dbsc_forward.h>
 #include <dbscqt_sharedapi.h>
 
 #include <QtCore/QString>
@@ -20,11 +21,6 @@
 #include <QtWidgets/QTreeWidgetItem>
 
 #include <memory>
-
-namespace dbsc {
-class AccountBook;
-class Account;
-} // namespace dbsc
 
 namespace dbscqt {
 class AccountBookTreeWidget;

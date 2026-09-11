@@ -17,17 +17,13 @@
 // serialization and deserialization operations for DBSC classes.
 
 #include <dbsc_accountbook.h>
+#include <dbsc_forward.h>
 #include <dbsc_registerexception.h>
 
 #include <concepts>
 #include <filesystem>
 
 namespace dbsc {
-class Transaction;
-class Account;
-class AccountBook;
-class UuidString;
-
 DBSC_REGISTER_EXCEPTION( DbscSerializationException, "An error occurred during (de)serialization." );
 
 /// These concepts form a protocol that specifies the interface for SerDes
@@ -72,7 +68,7 @@ concept DbscSerializer = DbscReader< Serializer > && DbscWriter< Serializer >;
 
 template< typename Serializer >
   requires dbsc::DbscSerializer< Serializer >
-auto writeAccountBook( dbsc::AccountBook const& accountRecord, std::filesystem::path const& filePath )
+void writeAccountBook( dbsc::AccountBook const& accountRecord, std::filesystem::path const& filePath )
 {
   Serializer::writeAccountBook( accountRecord, filePath );
 }

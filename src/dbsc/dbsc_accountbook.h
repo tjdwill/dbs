@@ -13,6 +13,7 @@
 //  purpose is to allow iteration over a single user's accounts.
 
 #include <dbsc_account.h>
+#include <dbsc_forward.h>
 #include <dbsc_registerexception.h>
 #include <dbsc_sharedapi.h>
 #include <dbsc_uuidstring.h>
@@ -24,9 +25,6 @@
 #include <string>
 
 namespace dbsc {
-
-class UuidString;
-class Account;
 
 DBSC_REGISTER_EXCEPTION( NonExistentAccountException, "" );
 

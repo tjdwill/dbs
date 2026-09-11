@@ -16,25 +16,29 @@ generate_export_header( dbsc
 )
 target_sources( dbsc
   PRIVATE
-    dbsc_uuidstring.cpp
-    dbsc_transaction.cpp
     dbsc_account.cpp
     dbsc_accountbook.cpp
     dbsc_dbscserializer.cpp
+    dbsc_forward.cpp
+    dbsc_timestamp.cpp
     dbsc_tomlserializer.cpp
+    dbsc_transaction.cpp
+    dbsc_uuidstring.cpp
   PUBLIC
     FILE_SET HEADERS
     BASE_DIRS
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
     FILES
-      dbsc_registerexception.h
-      dbsc_uuidstring.h
-      dbsc_transaction.h
       dbsc_account.h
       dbsc_accountbook.h
       dbsc_dbscserializer.h
+      dbsc_forward.h
+      dbsc_registerexception.h
+      dbsc_timestamp.h
       dbsc_tomlserializer.h
+      dbsc_transaction.h
+      dbsc_uuidstring.h
       ${CMAKE_CURRENT_BINARY_DIR}/dbsc_sharedapi.h
 )
 target_link_libraries( dbsc

@@ -17,20 +17,15 @@
 //  - Extra Notes
 
 #include <dbsc_sharedapi.h>
+#include <dbsc_timestamp.h>
 #include <dbsc_uuidstring.h>
 
 #include <bdldfp_decimal.h>
 
-#include <chrono>
-#include <cstdint>
-#include <ratio>
 #include <string>
 #include <string_view>
 
 namespace dbsc {
-using TimeStamp =
-  std::chrono::time_point< std::chrono::system_clock, std::chrono::duration< std::int64_t, std::nano > >;
-
 /// Represents a transaction between two entities. A negative amount implies the
 /// account to which this object belongs had a withdrawal. A positive amount
 /// indicates a deposit. If the otherPartyID is nil (see UuidString), the

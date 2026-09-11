@@ -1,6 +1,7 @@
 // dbscqt_displayutil.cpp
 #include "dbscqt_displayutil.h"
 
+#include <dbsc_transaction.h>
 #include <dbsc_uuidstring.h>
 
 auto dbscqt::DisplayUtil::accountNameWithShortenedUuid( QUuid id, QString const& name ) -> QString

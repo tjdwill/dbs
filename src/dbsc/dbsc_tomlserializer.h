@@ -18,10 +18,6 @@
 #include <filesystem>
 
 namespace dbsc {
-class Transaction;
-class Account;
-class AccountBook;
-class UuidString;
 
 /// This class adheres to the dbsc::DbscSerializer concept.
 class DBSC_API TomlSerializer
@@ -38,6 +34,8 @@ public:
   static void writeAccountInternal( OutputType& oDestinationBuf, Account const& account );
   static void writeTransactionInternal( OutputType& oDestinationBuf, Transaction const& transaction );
 };
+
+static_assert( dbsc::DbscSerializer< TomlSerializer > );
 } // namespace dbsc
 
 #endif // include guard

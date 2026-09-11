@@ -11,6 +11,7 @@
 ///@DESCRIPTION: This component defines the application's main window, coordinating the
 ///  logic responsible for managing account books.
 
+#include <dbsc_forward.h>
 #include <dbscqt_sharedapi.h>
 
 #include <QtWidgets/QMainWindow>
@@ -20,10 +21,6 @@
 
 class QWidget;
 class QCloseEvent;
-
-namespace dbsc {
-class AccountBook;
-} // namespace dbsc
 
 namespace dbscqt {
 class PreferencesWidget;

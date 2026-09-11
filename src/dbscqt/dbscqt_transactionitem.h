@@ -11,17 +11,12 @@
 //
 //@DESCRIPTION: This component defines a means to represent displayable transaction data.
 
+#include <dbsc_forward.h>
 #include <dbscqt_sharedapi.h>
 
 #include <QtCore/QDateTime>
 #include <QtCore/QString>
 #include <QtCore/QUuid>
-
-namespace dbsc {
-class Account;
-class AccountBook;
-class Transaction;
-} // namespace dbsc
 
 namespace dbscqt {
 struct TransactionItemData
