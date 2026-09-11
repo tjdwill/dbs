@@ -10,7 +10,7 @@
 namespace dbsc {
 
 UuidString::UuidString()
-  : mData( uuids::to_string( uuids::uuid {} ) )
+  : UuidString( uuids::to_string( uuids::uuid {} ) )
 {
 }
 

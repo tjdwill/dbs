@@ -11,7 +11,7 @@
 //    was provided.
 //  dbsc::UuidString: a non-modifiable string representing a valid
 //    RFC4122 UUID.
-//  dbsc::UuidStringFactory: an interface to create UuidStrings.
+//  dbsc::UuidStringUtil: an interface to create UuidStrings.
 //
 //@DESCRIPTION: This component defines a wrapper to a string that ensures its
 // RFC4122 compliance as a universal unique indentifier (UUID). Since it is

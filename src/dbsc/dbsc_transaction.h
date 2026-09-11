@@ -68,9 +68,9 @@ private:
   UuidString mOwningPartyId;
   /// The other entity involved in the transaction.
   UuidString mOtherPartyId;
+  std::string mNotes;
   BloombergLP::bdldfp::Decimal64 mAmount;
   TimeStamp mTimeStamp;
-  std::string mNotes {};
 };
 
 struct TransactionUtil

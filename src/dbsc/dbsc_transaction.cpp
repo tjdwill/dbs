@@ -25,9 +25,9 @@ Transaction::Transaction( UuidString const& transactionId,
   : mTransactionId( transactionId )
   , mOwningPartyId( owningPartyId )
   , mOtherPartyId( otherPartyID )
+  , mNotes( notes )
   , mAmount( amount )
   , mTimeStamp( timeStamp )
-  , mNotes( notes )
 {
 }
 
