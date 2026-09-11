@@ -16,6 +16,7 @@ if( DBS_BUILD_TUTORIALS )
 endif()
 
 add_library( dbsCompilationConfigs INTERFACE )
+target_compile_features( dbsCompilationConfigs INTERFACE cxx_std_23 )
 if( MSVC )
   target_compile_options( dbsCompilationConfigs INTERFACE /W4 )
 else()
