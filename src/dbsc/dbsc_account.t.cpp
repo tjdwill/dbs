@@ -51,6 +51,32 @@ static void testAccountAccessors()
   BSLS_ASSERT( sampleAccount().balance() == "0.0"_d64 );
 }
 
+static void testTransactionSorters()
+{
+  {
+    // Descending Order
+    auto transactionsInDescendingTimestampOrder =
+      dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( sampleAccount() );
+    BSLS_ASSERT( !transactionsInDescendingTimestampOrder.empty() );
+    for ( int index = 0; index < static_cast< int >( transactionsInDescendingTimestampOrder.size() - 1 ); ++index ) {
+      auto const& [leftId, leftTransaction]   = transactionsInDescendingTimestampOrder[index];
+      auto const& [rightId, rightTransaction] = transactionsInDescendingTimestampOrder[index + 1];
+      BSLS_ASSERT( leftTransaction.get().timestamp() > rightTransaction.get().timestamp() );
+    }
+  }
+  {
+    // Ascending Order
+    auto transactionsInAscendingTimestampOrder =
+      dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( sampleAccount() );
+    BSLS_ASSERT( !transactionsInAscendingTimestampOrder.empty() );
+    for ( int index = 0; index < static_cast< int >( transactionsInAscendingTimestampOrder.size() - 1 ); ++index ) {
+      auto const& [leftId, leftTransaction]   = transactionsInAscendingTimestampOrder[index];
+      auto const& [rightId, rightTransaction] = transactionsInAscendingTimestampOrder[index + 1];
+      BSLS_ASSERT( leftTransaction.get().timestamp() < rightTransaction.get().timestamp() );
+    }
+  }
+}
+
 int main()
 {
   testAccountAccessors();
@@ -76,6 +102,8 @@ int main()
   BSLS_ASSERT( not sampleAccount().isActive() );
   BSLS_ASSERT( sampleAccount().contains( transactionId ) );
   BSLS_ASSERT( sampleAccount() == sampleAccount() );
+
+  testTransactionSorters();
 }
 
 // -----------------------------------------------------------------------------

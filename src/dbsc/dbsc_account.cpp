@@ -6,9 +6,37 @@
 #include <bdldfp_decimal.h>
 #include <bsls_assert.h>
 
+#include <algorithm>
 #include <format>
+#include <ranges>
 
 namespace dbsc {
+
+namespace {
+
+  // Output transaction log in descending order. Use a reference wrapper to prevent
+  // unnecessary copies of the entire transaction log. The referenced object lives
+  // long enough for the reference to remain valid.
+  struct DescendingTransactionSorter
+  {
+    auto operator()( AccountUtils::BorrowedKeyValuePair const& a, AccountUtils::BorrowedKeyValuePair const& b ) -> bool
+    {
+      Transaction const& transactionA = a.second.get();
+      Transaction const& transactionB = b.second.get();
+      return transactionA.timestamp() > transactionB.timestamp();
+    }
+  };
+
+  struct AscendingTransactionSorter
+  {
+    auto operator()( AccountUtils::BorrowedKeyValuePair const& a, AccountUtils::BorrowedKeyValuePair const& b ) -> bool
+    {
+      Transaction const& transactionA = a.second.get();
+      Transaction const& transactionB = b.second.get();
+      return transactionA.timestamp() < transactionB.timestamp();
+    }
+  };
+} // namespace
 
 Account::Account( UuidString const& accountId, std::string const& name, std::string const& description )
   : mId( accountId )
@@ -114,6 +142,33 @@ void Account::deactivate()
 void Account::activate()
 {
   mIsActive = true;
+}
+
+//---
+
+auto dbsc::AccountUtils::transactionsSorted( Account const& account, TransactionSorter sorter )
+  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+{
+  auto transactionsVector = account //
+                          | std::views::transform( []( auto&& keyValPair ) -> dbsc::AccountUtils::BorrowedKeyValuePair {
+                              return { std::cref( keyValPair.first ), std::cref( keyValPair.second ) };
+                            } )
+                          | std::ranges::to< std::vector >();
+  std::ranges::sort( transactionsVector, sorter );
+
+  return transactionsVector;
+}
+
+auto dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( Account const& account )
+  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+{
+  return transactionsSorted( account, dbsc::DescendingTransactionSorter() );
+}
+
+auto dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( Account const& account )
+  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+{
+  return transactionsSorted( account, dbsc::AscendingTransactionSorter() );
 }
 
 } // namespace dbsc

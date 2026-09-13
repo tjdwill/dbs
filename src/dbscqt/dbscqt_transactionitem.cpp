@@ -5,9 +5,6 @@
 #include <dbsc_accountbook.h>
 #include <dbscqt_displayutil.h>
 
-#include <algorithm>
-#include <ranges>
-
 namespace dbscqt {
 class TransactionItem::Private
 {
@@ -85,18 +82,11 @@ auto dbscqt::createTransactionItemData( dbsc::Transaction const& transaction, db
 auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::AccountBook const& accountBook )
   -> std::vector< std::unique_ptr< dbscqt::TransactionItem > >
 {
-  auto transactionsSortedByAscendingDate =
-    account | std::views::transform( []( auto const& transaction ) { return std::cref( transaction ); } )
-    | std::ranges::to< std::vector >();
-  std::ranges::sort( transactionsSortedByAscendingDate, std::less(), []( auto&& item ) -> dbsc::TimeStamp {
-    auto const& [_, transaction] = item.get();
-    return transaction.timestamp();
-  } );
 
   std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
   items.reserve( account.transactionCount() );
-  for ( auto const& item : transactionsSortedByAscendingDate ) {
-    auto const& [id, transaction] = item.get();
+  for ( auto const& item : dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( account ) ) {
+    auto const& [id, transaction] = item;
     items.push_back(
       std::make_unique< dbscqt::TransactionItem >( dbscqt::createTransactionItemData( transaction, accountBook ) ) );
   }
