@@ -1,3 +1,16 @@
+project( dbsTutorialSpace )
+
+find_package( tomlplusplus REQUIRED )
+find_package( stduuid REQUIRED )
+
+# Bloomberg BDE imports
+find_package( Threads REQUIRED )
+find_package( bdl REQUIRED )
+find_package( bsl REQUIRED )
+
+find_package( Qt6 REQUIRED COMPONENTS Core Gui Widgets )
+qt_standard_project_setup()
+
 add_executable( hello hello.m.cpp )
 target_link_libraries( hello PRIVATE tomlplusplus::tomlplusplus )
 

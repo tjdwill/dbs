@@ -4,6 +4,7 @@
     {
       "name": "default",
       "generator": "Ninja",
+      "hidden": true,
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": {
@@ -17,6 +18,7 @@
     {
       "name": "vcpkg",
       "inherits": "default",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",

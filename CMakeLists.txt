@@ -35,6 +35,8 @@ if( CMAKE_HOST_UNIX )
 elseif( CMAKE_HOST_WIN32 )
   # Copy the compile_commands.json file anytime CMake reconfigures. One way to
   # detect this is to detect if CMake-related files change.
+  
+  set( copied_compilation_database ${PROJECT_SOURCE_DIR}/compile_commands.json )
   file( GLOB command_dependencies 
     "CMakeLists.txt"
     "src/**/CMakeLists.txt" 
@@ -42,10 +44,10 @@ elseif( CMAKE_HOST_WIN32 )
     "CMakeModules/*.cmake"
     "src/**/*.cmake"
   )
-  add_custom_command( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+  add_custom_command( OUTPUT ${copied_compilation_database}
     VERBATIM
     COMMENT "Copying compilation database."
-    COMMAND powershell "Copy-Item -Path ${CMAKE_BINARY_DIR}/compile_commands.json -Destination ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json"
+    COMMAND powershell "Copy-Item -Path ${PROJECT_BINARY_DIR}/compile_commands.json -Destination ${copied_compilation_database}"
     DEPENDS
       ${command_dependencies}
   )
@@ -53,7 +55,7 @@ elseif( CMAKE_HOST_WIN32 )
   # Create a custom target that depends on the generated file. This target is
   # then added as a dependency of this project's main target, forcing the file
   # generation before the main target is built.
-  add_custom_target( CopyCompilationDatabase DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json )
+  add_custom_target( CopyCompilationDatabase DEPENDS ${copied_compilation_database} )
   add_dependencies( dbs CopyCompilationDatabase )
 else ()
 endif()
