@@ -31,6 +31,7 @@ namespace {
 
   using TomlDateTimeType = std::string;
   using TomlCurrencyType = std::string;
+
 } // namespace
 
 auto TomlSerializer::readAccountBook( std::filesystem::path const& filePath ) -> AccountBook
@@ -136,8 +137,25 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
   accountTable.insert( kAccountDescriptionKey, accountDescription );
   accountTable.insert( kAccountActiveStatusKey, accountIsActive );
 
+  // Output transaction log in descending order. Use a reference wrapper to prevent
+  // unnecessary copies of the entire transaction log. The referenced object lives
+  // long enough for the reference to remain valid.
+  std::vector< std::reference_wrapper< Transaction const > > sortedTransactions;
+  {
+    /// Helps to sort transactions by most to least recent.
+    struct DescendingTransactionOrderFunctor
+    {
+      auto operator()( Transaction const& a, Transaction const& b ) -> bool { return a.timestamp() > b.timestamp(); }
+    };
+
+    sortedTransactions.reserve( account.transactionCount() );
+    auto transactionView = std::views::transform(
+      account, []( auto&& keyVal ) -> Transaction const& { return std::cref( keyVal.second ); } );
+    std::ranges::copy( transactionView, std::back_inserter( sortedTransactions ) );
+    std::ranges::sort( sortedTransactions, DescendingTransactionOrderFunctor() );
+  }
   toml::array transactionArray {};
-  for ( auto const& [_, transaction] : account ) {
+  for ( auto const& transaction : sortedTransactions ) {
     toml::table transactionTable;
     TomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );

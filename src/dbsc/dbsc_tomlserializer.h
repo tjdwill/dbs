@@ -20,6 +20,7 @@
 namespace dbsc {
 
 /// This class adheres to the dbsc::DbscSerializer concept.
+/// Transactions are written in descending order (most recent to least recent)
 class DBSC_API TomlSerializer
 {
 public:
