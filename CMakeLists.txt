@@ -8,7 +8,7 @@ project( dbs
 enable_testing()
 
 # Register CMakeModules directory to access this project's modules.
-list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules )
+# list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules )
 
 option( DBS_BUILD_TUTORIALS "Build the components in the tutorialSpace directory" OFF )
 if( DBS_BUILD_TUTORIALS )
