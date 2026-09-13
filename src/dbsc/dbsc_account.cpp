@@ -96,7 +96,7 @@ auto Account::transaction( UuidString const& transactionId ) const -> Transactio
 
 void Account::logTransaction( Transaction const& transaction )
 {
-  UuidString const transactionId = transaction.transactionId();
+  UuidString const& transactionId = transaction.transactionId();
 
   try {
     mTransactions.insert( { transactionId, transaction } );
