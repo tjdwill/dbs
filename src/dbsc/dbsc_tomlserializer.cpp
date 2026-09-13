@@ -9,8 +9,11 @@
 #include <bdldfp_decimal.h>
 #include <bsls_assert.h>
 
+#include <algorithm>
 #include <format>
 #include <fstream>
+#include <functional> // std::reference_wrapper
+#include <ranges>
 #include <string_view>
 
 namespace dbsc {
