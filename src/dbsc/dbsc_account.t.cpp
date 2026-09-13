@@ -59,9 +59,9 @@ static void testTransactionSorters()
       dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( sampleAccount() );
     BSLS_ASSERT( !transactionsInDescendingTimestampOrder.empty() );
     for ( int index = 0; index < static_cast< int >( transactionsInDescendingTimestampOrder.size() - 1 ); ++index ) {
-      auto const& [leftId, leftTransaction]   = transactionsInDescendingTimestampOrder[index];
-      auto const& [rightId, rightTransaction] = transactionsInDescendingTimestampOrder[index + 1];
-      BSLS_ASSERT( leftTransaction.get().timestamp() > rightTransaction.get().timestamp() );
+      dbsc::Transaction const& leftTransaction  = transactionsInDescendingTimestampOrder[index];
+      dbsc::Transaction const& rightTransaction = transactionsInDescendingTimestampOrder[index + 1];
+      BSLS_ASSERT( leftTransaction.timestamp() > rightTransaction.timestamp() );
     }
   }
   {
@@ -70,9 +70,9 @@ static void testTransactionSorters()
       dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( sampleAccount() );
     BSLS_ASSERT( !transactionsInAscendingTimestampOrder.empty() );
     for ( int index = 0; index < static_cast< int >( transactionsInAscendingTimestampOrder.size() - 1 ); ++index ) {
-      auto const& [leftId, leftTransaction]   = transactionsInAscendingTimestampOrder[index];
-      auto const& [rightId, rightTransaction] = transactionsInAscendingTimestampOrder[index + 1];
-      BSLS_ASSERT( leftTransaction.get().timestamp() < rightTransaction.get().timestamp() );
+      dbsc::Transaction const& leftTransaction  = transactionsInAscendingTimestampOrder[index];
+      dbsc::Transaction const& rightTransaction = transactionsInAscendingTimestampOrder[index + 1];
+      BSLS_ASSERT( leftTransaction.timestamp() < rightTransaction.timestamp() );
     }
   }
 }

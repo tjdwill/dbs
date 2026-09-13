@@ -19,22 +19,12 @@ namespace {
   // long enough for the reference to remain valid.
   struct DescendingTransactionSorter
   {
-    auto operator()( AccountUtils::BorrowedKeyValuePair const& a, AccountUtils::BorrowedKeyValuePair const& b ) -> bool
-    {
-      Transaction const& transactionA = a.second.get();
-      Transaction const& transactionB = b.second.get();
-      return transactionA.timestamp() > transactionB.timestamp();
-    }
+    auto operator()( Transaction const& a, Transaction const& b ) -> bool { return a.timestamp() > b.timestamp(); }
   };
 
   struct AscendingTransactionSorter
   {
-    auto operator()( AccountUtils::BorrowedKeyValuePair const& a, AccountUtils::BorrowedKeyValuePair const& b ) -> bool
-    {
-      Transaction const& transactionA = a.second.get();
-      Transaction const& transactionB = b.second.get();
-      return transactionA.timestamp() < transactionB.timestamp();
-    }
+    auto operator()( Transaction const& a, Transaction const& b ) -> bool { return a.timestamp() < b.timestamp(); }
   };
 } // namespace
 
@@ -147,12 +137,10 @@ void Account::activate()
 //---
 
 auto dbsc::AccountUtils::transactionsSorted( Account const& account, TransactionSorter sorter )
-  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+  -> std::vector< dbsc::AccountUtils::BorrowedTransaction >
 {
   auto transactionsVector = account //
-                          | std::views::transform( []( auto&& keyValPair ) -> dbsc::AccountUtils::BorrowedKeyValuePair {
-                              return { std::cref( keyValPair.first ), std::cref( keyValPair.second ) };
-                            } )
+                          | std::views::transform( []( auto&& keyValPair ) { return std::cref( keyValPair.second ); } )
                           | std::ranges::to< std::vector >();
   std::ranges::sort( transactionsVector, sorter );
 
@@ -160,13 +148,13 @@ auto dbsc::AccountUtils::transactionsSorted( Account const& account, Transaction
 }
 
 auto dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( Account const& account )
-  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+  -> std::vector< dbsc::AccountUtils::BorrowedTransaction >
 {
   return transactionsSorted( account, dbsc::DescendingTransactionSorter() );
 }
 
 auto dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( Account const& account )
-  -> std::vector< dbsc::AccountUtils::BorrowedKeyValuePair >
+  -> std::vector< dbsc::AccountUtils::BorrowedTransaction >
 {
   return transactionsSorted( account, dbsc::AscendingTransactionSorter() );
 }

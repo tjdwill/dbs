@@ -86,7 +86,7 @@ auto dbscqt::createTransactionItems( dbsc::Account const& account, dbsc::Account
   std::vector< std::unique_ptr< dbscqt::TransactionItem > > items;
   items.reserve( account.transactionCount() );
   for ( auto const& item : dbsc::AccountUtils::transactionsSortedByAscendingTimestamps( account ) ) {
-    auto const& [id, transaction] = item;
+    auto const& transaction = item;
     items.push_back(
       std::make_unique< dbscqt::TransactionItem >( dbscqt::createTransactionItemData( transaction, accountBook ) ) );
   }

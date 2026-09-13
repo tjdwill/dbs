@@ -139,7 +139,7 @@ void TomlSerializer::writeAccountInternal( OutputType& accountTable, Account con
   accountTable.insert( kAccountActiveStatusKey, accountIsActive );
 
   toml::array transactionArray {};
-  for ( auto const& [_, transaction] : dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( account ) ) {
+  for ( auto const& transaction : dbsc::AccountUtils::transactionsSortedByDescendingTimestamps( account ) ) {
     toml::table transactionTable;
     TomlSerializer::writeTransactionInternal( transactionTable, transaction );
     transactionArray.push_back( std::move( transactionTable ) );

@@ -102,30 +102,29 @@ private:
 
 struct AccountUtils
 {
-  using BorrowedKeyValuePair =
-    std::pair< std::reference_wrapper< UuidString const >, std::reference_wrapper< Transaction const > >;
-  using TransactionSorter = std::function< bool( BorrowedKeyValuePair const&, BorrowedKeyValuePair const& ) >;
+  using BorrowedTransaction = std::reference_wrapper< Transaction const >;
+  using TransactionSorter   = std::function< bool( Transaction const&, Transaction const& ) >;
 
   /// @brief Retrieve a sequence of references to the transactions sorted by @a sorter.
   ///
   /// @warning The caller is responsible for ensuring the lifetime of the @a account is
   /// at least as long as the last point-of-use of the references.
   [[nodiscard]] static auto transactionsSorted( Account const& account, TransactionSorter sorter )
-    -> std::vector< BorrowedKeyValuePair >;
+    -> std::vector< BorrowedTransaction >;
 
   /// @brief Retrieve a sequence of references to the transactions sorted from most to least recent.
   ///
   /// @warning The caller is responsible for ensuring the lifetime of the @a account is
   /// at least as long as the last point-of-use of the references.
   [[nodiscard]] static auto transactionsSortedByDescendingTimestamps( Account const& account )
-    -> std::vector< BorrowedKeyValuePair >;
+    -> std::vector< BorrowedTransaction >;
 
   /// @brief Retrieve a sequence of references to the transactions sorted from least to most recent.
   ///
   /// @warning The caller is responsible for ensuring the lifetime of the @a account is
   /// at least as long as the last point-of-use of the references.
   [[nodiscard]] static auto transactionsSortedByAscendingTimestamps( Account const& account )
-    -> std::vector< BorrowedKeyValuePair >;
+    -> std::vector< BorrowedTransaction >;
 };
 
 } // namespace dbsc
