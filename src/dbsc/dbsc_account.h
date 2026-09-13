@@ -76,7 +76,7 @@ public:
   /// Throws `dbsc::DuplicateUuidException` if the transaction is a duplicate.
   /// Throws `dbsc::ClosedAccountException` if the account is closed at the time
   /// this function is called.
-  DBSC_API void logTransaction( Transaction const& transaction );
+  DBSC_API void logTransaction( Transaction transaction );
 
   /// Sets this account's status to "read-only". No further transactions can be
   /// added.

@@ -94,12 +94,12 @@ auto Account::transaction( UuidString const& transactionId ) const -> Transactio
   return mTransactions.at( transactionId );
 }
 
-void Account::logTransaction( Transaction const& transaction )
+void Account::logTransaction( Transaction transaction )
 {
-  UuidString const& transactionId = transaction.transactionId();
+  UuidString const transactionId = transaction.transactionId();
 
   try {
-    mTransactions.insert( { transactionId, transaction } );
+    mTransactions.insert( { transactionId, std::move( transaction ) } );
   } catch ( std::out_of_range& /*error*/ ) {
     throw DuplicateUuidException( std::format( "Transaction {0} already exists.", transactionId.view() ) );
   }
