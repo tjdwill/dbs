@@ -7,8 +7,8 @@
 //@CLASSES:
 //  dbscqt::AccountModel: Adheres to the Qt Model/View interface.
 //
-//@DESCRIPTION: This component contains the implementation of the Model/View paradigm for
-//  the dbsc::Account class.
+//@DESCRIPTION: This component contains the implementation of the Model/View
+//  paradigm for the dbsc::Account class.
 
 #include <dbscqt_sharedapi.h>
 
@@ -35,9 +35,10 @@ class DBSCQT_API AccountModel final : public QAbstractTableModel
   Q_OBJECT
 
 public:
-  /// @param accountToModel is internally sorted by date.
+  /// @param transactionItems are sorted by ascending timestamp so that adding
+  ///   to the model is a simple pushback..
   AccountModel( std::vector< std::unique_ptr< TransactionItem > > transactionItems, QObject* parent = nullptr );
-  ~AccountModel() override;
+  ~AccountModel() final;
 
   [[nodiscard]] auto rowCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
   [[nodiscard]] auto columnCount( QModelIndex const& parent = QModelIndex() ) const -> int final;
@@ -46,7 +47,7 @@ public:
     -> QVariant final;
 
   /// @note Assumes validation has been done on this transaction before adding to the
-  /// model. Takes ownership of the incoming transaction item.
+  ///   model. Takes ownership of the incoming transaction item.
   void addTransactionItem( std::unique_ptr< TransactionItem > transactionItemPtr );
 
 public Q_SLOTS:

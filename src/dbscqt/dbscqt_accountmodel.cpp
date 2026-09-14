@@ -124,12 +124,8 @@ void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::Transact
   // Check greater than or equal to in case the timestamps are truncated to the
   // same value when converting from nanosecond precision to millisecond.
   BSLS_ASSERT( ( rowCount() > 0 ? transactionItemPtr->timeStamp() >= mImp->mItems.back()->timeStamp() : true ) );
-
-  beginInsertRows( QModelIndex(), 0, 0 );
-  {
-    mImp->mItems.push_back( std::move( transactionItemPtr ) );
-  }
-  endInsertRows();
+  mImp->mItems.push_back( std::move( transactionItemPtr ) );
+  // endInsertRows();
 }
 
 // -----------------------------------------------------------------------------

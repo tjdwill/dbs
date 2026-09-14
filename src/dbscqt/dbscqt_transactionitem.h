@@ -2,14 +2,15 @@
 #ifndef INCLUDED_DBSCQT_TRANSACTIONITEM
 #define INCLUDED_DBSCQT_TRANSACTIONITEM
 
-//@PURPOSE: Create a Qt-compatible representation of a dbsc::Transaction for use in
-//  Model/View programming
+//@PURPOSE: Create a Qt-compatible representation of a dbsc::Transaction for use
+// in Model/View programming
 //
 //@CLASSES:
 //  dbscqt::TransactionItem: Represents data for a single transaction.
-//  dbscqt::TransactionItemData: POD data for the trasnaction item.
+//  dbscqt::TransactionItemData: POD data for the transaction item.
 //
-//@DESCRIPTION: This component defines a means to represent displayable transaction data.
+//@DESCRIPTION: This component defines a means to represent displayable
+//  transaction data.
 
 #include <dbsc_forward.h>
 #include <dbscqt_sharedapi.h>

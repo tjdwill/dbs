@@ -41,8 +41,9 @@ struct AccountItemData
 class DBSCQT_API AccountItem : public QTreeWidgetItem
 {
 public:
-  // Since AccountItems are classified according to account active/inactive status, there will never be
-  // a top-level AccountItem in an AccountBookTreeWidget. Therefore, the constructor with a
+  // Since AccountItems are classified according to account active/inactive
+  // status, there will never be a top-level AccountItem in an
+  // AccountBookTreeWidget. Therefore, the constructor with a
   // dbscqt::AccountBookTreeWidget parent item is omitted.
 
   ///@param accountModel takes ownership of the model

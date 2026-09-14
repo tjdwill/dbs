@@ -106,8 +106,8 @@ dbscqt::AccountBookTreeWidget::AccountBookTreeWidget( std::shared_ptr< dbsc::Acc
   BSLS_ASSERT( accountBookHandle );
 
   setHeaderLabel( "Accounts" );
-  // Create categorization items. Open accounts should be listed first, so use a name
-  // beginning with 'A'.
+  // Create categorization items. Open accounts should be listed first, so use a
+  // name beginning with 'A'.
   mImp->mActiveAccountsCategoryItem   = new QTreeWidgetItem( this, { dbscqt::kActiveAccountsCategoryLabel } );
   mImp->mInactiveAccountsCategoryItem = new QTreeWidgetItem( this, { dbscqt::kInactiveAccountsCategoryLabel } );
 
