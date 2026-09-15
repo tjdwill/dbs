@@ -1,3 +1,4 @@
+include( dbsHelpers )
 find_package( tomlplusplus REQUIRED )
 find_package( stduuid REQUIRED )
 
@@ -177,6 +178,7 @@ target_link_libraries( dbs
     Qt::Core
     Qt::Widgets
 )
+dbs_copy_target_dependencies( dbs )
 
 # Since we are building test programs, we need to link Qt in order to run the Executabls on Windows.
 if ( WIN32 )
