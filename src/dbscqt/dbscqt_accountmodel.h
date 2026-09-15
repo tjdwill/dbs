@@ -50,9 +50,8 @@ public:
   ///   model. Takes ownership of the incoming transaction item.
   void addTransactionItem( std::unique_ptr< TransactionItem > transactionItemPtr );
 
-public Q_SLOTS:
-  //  /// Implement sorting by a given column
-  //  void sortBy( int column, Qt::SortOrder sortOrder = Qt::DescendingOrder );
+  /// Implement sorting by a given column
+  void sort( int column, Qt::SortOrder sortOrder = Qt::DescendingOrder ) final;
 
 private:
   AccountModel( AccountModel const& )                    = delete;

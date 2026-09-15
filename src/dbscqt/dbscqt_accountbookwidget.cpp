@@ -208,6 +208,7 @@ void dbscqt::AccountBookWidget::handleAccountSelected( dbscqt::AccountItem* sele
   mImp->mAccountTableView->setModel( selectedItem->accountModel() );
   {
     mImp->mAccountTableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+    mImp->mAccountTableView->setSortingEnabled( true );
   }
 
   mImp->mUi.mTransactionButton->show();

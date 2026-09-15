@@ -37,6 +37,7 @@ public:
   }
 
   std::vector< std::unique_ptr< TransactionItem > > mItems;
+  Qt::SortOrder mCurrentSortOrder = Qt::DescendingOrder;
 };
 
 } // namespace dbscqt
@@ -50,14 +51,20 @@ dbscqt::AccountModel::AccountModel( std::vector< std::unique_ptr< TransactionIte
 
 dbscqt::AccountModel::~AccountModel() = default;
 
-auto dbscqt::AccountModel::rowCount( QModelIndex const& /* parent */ ) const -> int
+auto dbscqt::AccountModel::rowCount( QModelIndex const& parent ) const -> int
 {
-  return static_cast< int >( mImp->mItems.size() );
+  /// Per [Qt docs](https://doc.qt.io/qt-6/qabstractitemmodel.html#rowCount),
+  /// "When implementing a table based model, rowCount() should return 0 when
+  /// the parent is valid."
+  return parent.isValid() ? 0 : static_cast< int >( mImp->mItems.size() );
 }
 
-auto dbscqt::AccountModel::columnCount( QModelIndex const& /* parent */ ) const -> int
+auto dbscqt::AccountModel::columnCount( QModelIndex const& parent ) const -> int
 {
-  return dbsutl::enumAsIntegral( AccountModelColumnType::kVariantCount );
+  /// Per [Qt docs](https://doc.qt.io/qt-6/qabstractitemmodel.html#columnCount),
+  /// "When implementing a table based model, columnCount() should return 0 when
+  /// the parent is valid."
+  return parent.isValid() ? 0 : dbsutl::enumAsIntegral( AccountModelColumnType::kVariantCount );
 }
 
 auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> QVariant
@@ -69,29 +76,36 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
     return QVariant();
   }
 
-  if ( role == Qt::DisplayRole ) {
-    // The items vector is sorted such that the most recent transaction is at the back.
-    // We present items such that the most recent is listed first.
-    int const itemIndex = ( rowCount() - 1 ) - row;
-    auto const& item    = mImp->mItems.at( itemIndex );
-    switch ( column ) {
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kTransactionId ):
-        return item->transactionId().toString( QUuid::WithoutBraces );
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
-        return item->amount();
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ): {
-        auto const timeStamp         = item->timeStamp();
-        auto const localTime         = timeStamp.toLocalTime();
-        auto const timeDisplayString = localTime.toString( "yyyy-MM-dd hh:mm:ss.zzz" );
-        return timeDisplayString;
+  // The items vector is sorted such that the most recent transaction is at the back.
+  // We present items based on the current sorting order.
+  int const itemIndex = mImp->mCurrentSortOrder == Qt::DescendingOrder ? ( rowCount() - 1 ) - row : row;
+  auto const& item    = mImp->mItems.at( itemIndex );
+  switch ( role ) {
+    case Qt::DisplayRole: {
+      switch ( column ) {
+        case dbsutl::enumAsIntegral( AccountModelColumnType::kTransactionId ):
+          return item->transactionId().toString( QUuid::WithoutBraces );
+        case dbsutl::enumAsIntegral( AccountModelColumnType::kAmount ):
+          return item->amount();
+        case dbsutl::enumAsIntegral( AccountModelColumnType::kDateTime ): {
+          auto const timeStamp         = item->timeStamp();
+          auto const localTime         = timeStamp.toLocalTime();
+          auto const timeDisplayString = localTime.toString( "yyyy-MM-dd hh:mm:ss.zzz" );
+          return timeDisplayString;
+        }
+        case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
+          return item->otherPartyDisplayName();
+        case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
+          return item->notes();
+        default:
+          throw std::invalid_argument( "Unhandled enum variant" );
       }
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kOtherPartyIdentifier ):
-        return item->otherPartyDisplayName();
-      case dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ):
-        return item->notes();
-      default:
-        throw std::invalid_argument( "Unhandled enum variant" );
     }
+      // case Qt::ToolTipRole: {
+      //   if ( column == dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ) ) {
+      //     return item->notes();
+      //   }
+      // }
   }
   return QVariant();
 }
@@ -125,7 +139,13 @@ void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::Transact
   // same value when converting from nanosecond precision to millisecond.
   BSLS_ASSERT( ( rowCount() > 0 ? transactionItemPtr->timeStamp() >= mImp->mItems.back()->timeStamp() : true ) );
   mImp->mItems.push_back( std::move( transactionItemPtr ) );
-  // endInsertRows();
+}
+
+void dbscqt::AccountModel::sort( int column, Qt::SortOrder sortOrder )
+{
+  if ( column == dbsutl::enumAsIntegral( dbscqt::AccountModelColumnType::kDateTime ) ) {
+    mImp->mCurrentSortOrder = sortOrder;
+  }
 }
 
 // -----------------------------------------------------------------------------

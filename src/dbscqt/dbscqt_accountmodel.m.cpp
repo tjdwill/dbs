@@ -37,6 +37,7 @@ int main( int argc, char* argv[] )
     auto* tableModel   = new dbscqt::AccountModel( dbscqt::createTransactionItems( kAccount, kAccountBook ), nullptr );
     tableView->setModel( tableModel );
     tableView->horizontalHeader()->setSectionResizeMode( QHeaderView::Stretch );
+    tableView->setSortingEnabled( true );
     widgetLayout->addWidget( tableView );
   }
   // NOLINTEND(cppcoreguidelines-owning-memory)
