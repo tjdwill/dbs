@@ -24,7 +24,6 @@
 #include <memory>
 #include <optional>
 
-
 namespace dbscqt {
 namespace {
   static QString const kSplitterStateKey { "state/AccountBookWidgetSplitter" };
@@ -189,6 +188,7 @@ void dbscqt::AccountBookWidget::createTransaction()
 
 void dbscqt::AccountBookWidget::handleAccountBookSet( std::shared_ptr< dbsc::AccountBook > accountBookPtr )
 {
+  clearDisplay();
   mImp->mAccountBookHandle = std::move( accountBookPtr );
   if ( mImp->mTreeWidgetHandle ) {
     mImp->mTreeWidgetHandle.get()->deleteLater();
