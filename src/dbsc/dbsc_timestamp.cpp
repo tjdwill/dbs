@@ -2,7 +2,7 @@
 #include "dbsc_timestamp.h"
 
 // -----------------------------------------------------------------------------
-// Copyright (C) 2025 Terrance Williams
+// Copyright (C) 2026 Terrance Williams
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
