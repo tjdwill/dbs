@@ -101,11 +101,11 @@ auto dbscqt::AccountModel::data( QModelIndex const& index, int role ) const -> Q
           throw std::invalid_argument( "Unhandled enum variant" );
       }
     }
-      // case Qt::ToolTipRole: {
-      //   if ( column == dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ) ) {
-      //     return item->notes();
-      //   }
-      // }
+    case Qt::ToolTipRole: {
+      if ( column == dbsutl::enumAsIntegral( AccountModelColumnType::kNotes ) ) {
+        return item->notes();
+      }
+    }
   }
   return QVariant();
 }
