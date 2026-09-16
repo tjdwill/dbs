@@ -22,6 +22,7 @@ target_sources( dbsutl
       dbsutl_helpers.h
       ${CMAKE_CURRENT_BINARY_DIR}/dbsutl_sharedapi.h
 )
+target_link_libraries( dbsutl PRIVATE dbsCompilationConfigs )
 
 add_executable( dbsutl_helpers.t )
 target_sources( dbsutl_helpers.t PRIVATE dbsutl_helpers.t.cpp )
