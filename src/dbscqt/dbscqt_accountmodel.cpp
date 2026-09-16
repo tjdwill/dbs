@@ -144,7 +144,11 @@ void dbscqt::AccountModel::addTransactionItem( std::unique_ptr< dbscqt::Transact
 void dbscqt::AccountModel::sort( int column, Qt::SortOrder sortOrder )
 {
   if ( column == dbsutl::enumAsIntegral( dbscqt::AccountModelColumnType::kDateTime ) ) {
+    // Inform any attached views that the underlying model data structure layout has changed,
+    // forcing the view to refresh.
+    Q_EMIT layoutAboutToBeChanged( {}, QAbstractItemModel::VerticalSortHint );
     mImp->mCurrentSortOrder = sortOrder;
+    Q_EMIT layoutChanged();
   }
 }
 
