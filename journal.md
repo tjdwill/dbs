@@ -1,5 +1,25 @@
 # DBS Journal
 
+## 15 September 2026
+
+* Verified current changes on Linux
+* Implemented sorting on account model.
+* Implemented notes tooltip in table viewer.
+* Improved CMake build.
+
+## 14 September 2026
+
+* Fix bug where balance would not clear when changing account books.
+
+## 13 September 2026
+
+* Implement helper function to retrieve transactions in descending/ascending
+  order.
+
+## 12 September 2026
+
+* Serialize transactions in descending transaction timestamp order.
+
 ## 10 September 2026
 
 After a hiatus, I have come back to continue development. To begin with, I plan
