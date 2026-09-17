@@ -376,12 +376,11 @@ void dbscqt::MainWindow::showAboutPage()
 
   ## Libraries
 
-  The following libraries are used in this application:
+  The following additional libraries are used in this application:
 
   - [bde](https://github.com/bloomberg/bde) by Bloomberg
-  - [Qt](https://qt.io) (v6.9.x) by Qt Group (The Qt Company)
-  - [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
-  - [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer (v3.4.0)
+  - [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila
+  - [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer 
 
   ## Icons
 

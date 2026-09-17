@@ -1,9 +1,13 @@
 ## Dependencies
 
-- [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila (v1.2.3)
-- [Qt](https://qt.io) (v6.9.x) by Qt Group (The Qt Company)
+- [stduuid](https://github.com/mariusbancila/stduuid) by @mariusbancila
+- [Qt](https://qt.io) (>= v6.9.x) by Qt Group (The Qt Company)
 - [bde](https://github.com/bloomberg/bde) by Bloomberg
-- [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer (v3.4.0)
+- [tomlplusplus](https://github.com/marzer/tomlplusplus) by @marzer
+
+For bde, stduuid, and tomlplusplus, consider using the
+`utilities/install3rdparty.sh` script for an automated build/installation. The
+libraries will be installed into `3rdparty/_lib`. Otherwise:
 
 ### Installing `bde`
 
