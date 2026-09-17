@@ -28,9 +28,9 @@ installHeaderOnlyLibraries()
 buildAndInstallBde()
 {
     cd "$topLevelProject/3rdparty"
+    
     local oldPATH="$PATH"
     export PATH=$(realpath bde-tools/bin):"$PATH"
-    
     declare -A configurationsMap=(
         [Debug]=dbg
         [Release]=opt
@@ -49,7 +49,10 @@ buildAndInstallBde()
         bbs_build build
         bbs_build install
     done
+    
+    # Clean up
     rm -rf "$buildDirPrefix"
+    export PATH="${oldPATH}"
 }
 
 installQt(){
