@@ -1,8 +1,11 @@
+# File types
 *.png
+# Directories
 .clangd
 .cache
-build*
-CMakeUserPresets.json
-3rdparty
 .vscode
+build*
+3rdparty/_lib
+# Top-level files
+CMakeUserPresets.json
 compile_commands.json

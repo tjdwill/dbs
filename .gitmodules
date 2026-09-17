@@ -1,0 +1,12 @@
+[submodule "3rdparty/stduuid"]
+	path = 3rdparty/stduuid
+	url = https://github.com/mariusbancila/stduuid.git
+[submodule "3rdparty/bde"]
+	path = 3rdparty/bde
+	url = https://github.com/bloomberg/bde.git
+[submodule "3rdparty/bde-tools"]
+	path = 3rdparty/bde-tools
+	url = https://github.com/bloomberg/bde-tools.git
+[submodule "3rdparty/tomlplusplus"]
+	path = 3rdparty/tomlplusplus
+	url = https://github.com/marzer/tomlplusplus
