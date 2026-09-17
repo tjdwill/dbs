@@ -1,27 +1,27 @@
+# !/bin/bash
 # Must run from top-level project directory
+topLevelProject="$(pwd)"
 
 printBlankLine()
 { 
     echo ""
 }
 
-
-topLevelProject=$(pwd)
-
 # stduuid, tomlplusplus
 installHeaderOnlyLibraries()
 {
-    cd "$topLevelProject/3rdparty"
+    cd "${topLevelProject}/3rdparty"
     for repo in stduuid tomlplusplus
     do 
         printBlankLine
         echo "Installing ${repo}"
-        local buildDir="_lib/_tmp$repo"
-        mkdir -p "$buildDir"
-        cmake -S "$repo" -B "$buildDir"
-        cmake --install "$buildDir" --prefix=$(realpath _lib)/"$repo"
-        rm -rf "$buildDir"
+        local buildDir="_lib/_tmp${repo}"
+        mkdir -p "${buildDir}"
+        cmake -S "${repo}" -B "${buildDir}"
+        cmake --install "${buildDir}" --prefix="$(realpath _lib)/${repo}"
+        rm -rf "${buildDir}"
     done
+    cd "${topLevelProject}"
 }
 
 # Build and Install BDE for all three configurations using the default profile
@@ -29,30 +29,30 @@ buildAndInstallBde()
 {
     cd "$topLevelProject/3rdparty"
     
-    local oldPATH="$PATH"
-    export PATH=$(realpath bde-tools/bin):"$PATH"
+    local oldPATH="${PATH}"
+    export PATH="$(realpath bde-tools/bin):${PATH}"
     declare -A configurationsMap=(
         [Debug]=dbg
         [Release]=opt
         [RelWithDebInfo]=opt_dbg
     )
-    local buildDirPrefix="$topLevelProject/3rdparty/_lib/_tmpBde"
-    local installDirPrefix="$topLevelProject/3rdparty/_lib/bde"
+    local buildDirPrefix="${topLevelProject}/3rdparty/_lib/_tmpBde"
+    local installDirPrefix="${topLevelProject}/3rdparty/_lib/bde"
     cd bde
     printBlankLine
     for config in "${!configurationsMap[@]}"
     do
         echo "Building and installing BDE ${config} configuration."
-        local ufidString="${configurationsMap[$config]}_64_cpp23_pic"
-        eval `bbs_build_env --install-dir "$installDirPrefix/$config" --build-dir "$buildDirPrefix/$config" --ufid "${ufidString}"`
+        local ufidString="${configurationsMap[${config}]}_64_cpp23_pic"
+        eval `bbs_build_env --install-dir "${installDirPrefix}/${config}" --build-dir "${buildDirPrefix}/${config}" --ufid "${ufidString}"`
         bbs_build configure --clean
         bbs_build build
         bbs_build install
     done
     
     # Clean up
-    rm -rf "$buildDirPrefix"
-    export PATH="${oldPATH}"
+    rm -rf "${buildDirPrefix}"
+    cd "${topLevelProject}"
 }
 
 installQt(){
@@ -66,3 +66,4 @@ git submodule update --init
 installHeaderOnlyLibraries
 buildAndInstallBde
 installQt
+

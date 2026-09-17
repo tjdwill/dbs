@@ -25,13 +25,14 @@ endif()
 
 add_subdirectory( src )
 
+set( copied_compilation_database ${PROJECT_SOURCE_DIR}/compile_commands.json )
 if( CMAKE_HOST_UNIX )
   # Create a symbolic link to point to the correct compile_commands.json directory
   execute_process(
-    COMMAND       rm ${PROJECT_SOURCE_DIR}/build
+    COMMAND       rm ${copied_compilation_database}
     ERROR_FILE    /dev/null
   )
-  execute_process( COMMAND ln -s ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/build )
+  execute_process( COMMAND ln -s ${PROJECT_BINARY_DIR}/compile_commands.json ${copied_compilation_database} )
 elseif( CMAKE_HOST_WIN32 )
   # Copy the compile_commands.json file anytime CMake reconfigures. One way to
   # detect this is to detect if CMake-related files change.

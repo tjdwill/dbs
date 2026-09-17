@@ -4,7 +4,7 @@
 .clangd
 .cache
 .vscode
-build*/**
+build*/
 3rdparty/_lib
 # Top-level files
 CMakeUserPresets.json
