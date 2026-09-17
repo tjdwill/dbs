@@ -8,7 +8,7 @@ cd 3rdparty
 for repo in stduuid tomlplusplus
 do 
     buildDir="_lib/_temp$repo"
-    mkdir "$buildDir"
+    mkdir -p "$buildDir"
     cmake -S "$repo" -B "$buildDir"
     cmake --install "$buildDir" --prefix=$(realpath _lib)
     rm -rf "$buildDir"
