@@ -1,7 +1,10 @@
 # Must run from top-level project directory
 
-# Ensure submodules are initialized
-git submodule update --init
+printBlankLine()
+{ 
+    echo ""
+}
+
 
 topLevelProject=$(pwd)
 
@@ -11,6 +14,7 @@ installHeaderOnlyLibraries()
     cd "$topLevelProject/3rdparty"
     for repo in stduuid tomlplusplus
     do 
+        printBlankLine
         echo "Installing ${repo}"
         local buildDir="_lib/_tmp$repo"
         mkdir -p "$buildDir"
@@ -27,11 +31,16 @@ buildAndInstallBde()
     local oldPATH="$PATH"
     export PATH=$(realpath bde-tools/bin):"$PATH"
     
-    local configurationsMap=([Debug]=dbg [Release]=opt [RelWithDebInfo]=opt_dbg)
+    declare -A configurationsMap=(
+        [Debug]=dbg
+        [Release]=opt
+        [RelWithDebInfo]=opt_dbg
+    )
     local buildDirPrefix="$topLevelProject/3rdparty/_lib/_tmpBde"
     local installDirPrefix="$topLevelProject/3rdparty/_lib/bde"
     cd bde
-    for config in ${!configurationsMap[@]}
+    printBlankLine
+    for config in "${!configurationsMap[@]}"
     do
         echo "Building and installing BDE ${config} configuration."
         local ufidString="${configurationsMap[$config]}_64_cpp23_pic"
@@ -43,7 +52,14 @@ buildAndInstallBde()
     rm -rf "$buildDirPrefix"
 }
 
+installQt(){
+    printBlankLine
+    echo "Qt: Add a symbolic link to your Qt installation to 3rdparty/_lib if necessary."
+}
 # ---
 
+# Ensure submodules are initialized
+git submodule update --init
 installHeaderOnlyLibraries
 buildAndInstallBde
+installQt
