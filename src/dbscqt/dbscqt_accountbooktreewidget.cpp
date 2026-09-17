@@ -178,7 +178,7 @@ auto dbscqt::AccountBookTreeWidget::addAccountItem( AccountItem* accountItemCand
   if ( mImp->mAccountItems.contains( accountItemCandidate->accountId() ) ) {
     return false;
   }
-  auto [_, insertSuccessful] =
+  auto const [_, insertSuccessful] =
     mImp->mAccountItems.insert( { accountItemCandidate->accountId(), accountItemCandidate } );
 
   if ( insertSuccessful ) {
