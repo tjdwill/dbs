@@ -1,5 +1,12 @@
 # DBS Journal
 
+## 17 September 2026
+
+* Added submodules to preserve 3rdparty lib versions
+* Improved Linux build
+* Created a utility script to automate third party library installation
+* v0.3.0 release! (PY)
+
 ## 15 September 2026
 
 * Verified current changes on Linux
