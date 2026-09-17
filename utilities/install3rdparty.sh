@@ -2,14 +2,12 @@
 # Must run from top-level project directory
 topLevelProject="$(pwd)"
 
-printBlankLine()
-{ 
+printBlankLine() { 
     echo ""
 }
 
 # stduuid, tomlplusplus
-installHeaderOnlyLibraries()
-{
+installHeaderOnlyLibraries() {
     cd "${topLevelProject}/3rdparty"
     for repo in stduuid tomlplusplus
     do 
@@ -25,8 +23,7 @@ installHeaderOnlyLibraries()
 }
 
 # Build and Install BDE for all three configurations using the default profile
-buildAndInstallBde()
-{
+buildAndInstallBde() {
     cd "$topLevelProject/3rdparty"
     
     local oldPATH="${PATH}"
@@ -55,7 +52,7 @@ buildAndInstallBde()
     cd "${topLevelProject}"
 }
 
-installQt(){
+installQt() {
     printBlankLine
     echo "Qt: Add a symbolic link to your Qt installation to 3rdparty/_lib if necessary."
 }
